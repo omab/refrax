@@ -1,0 +1,68 @@
+{
+  "name": "refrax",
+  "version": "0.1.0",
+  "description": "A framework for building api-based data-driven applications.",
+  "author": "Joshua Hollenbeck",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "data",
+    "partial",
+    "api",
+    "react",
+    "refrax",
+    "rest"
+  ],
+  "bugs": "https://github.com/netarc/refrax/issues",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/",
+    "lib/"
+  ],
+  "main": "lib/Refrax.js",
+  "scripts": {
+    "build": "gulp",
+    "lint": "eslint ./src",
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/netarc/refrax.git"
+  },
+  "dependencies": {
+    "eventemitter3": "^1.2.0",
+    "axios": "^0.7.0",
+    "es6-promise": "^3.0.2",
+    "pluralize": "1.2.1"
+  },
+  "devDependencies": {
+    "babel": "^5.8.25",
+    "babel-core": "^5.8.25",
+    "babel-eslint": "^6.0.0",
+    "del": "^1.2.0",
+    "eslint": "^2.5.1",
+    "eslint-plugin-react": "^4.2.3",
+    "fbjs-scripts": "^0.5.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-derequire": "^2.1.0",
+    "gulp-flatten": "^0.1.0",
+    "gulp-header": "^1.2.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-util": "^3.0.6",
+    "run-sequence": "^1.1.2",
+    "webpack-stream": "^2.1.0",
+    "webpack": "1.11.0",
+    "object-assign": "^3.0.0",
+
+    "chai": "~3.0.0",
+    "gulp-sourcemaps": "1.6.0",
+    "source-map-support": "0.4.0",
+    "mocha": "~2.2.5",
+    "nock": "3.5.0",
+    "sinon": "^1.10.3"
+  },
+  "peerDependencies": {
+    "react": ">=0.12.2"
+  }
+}

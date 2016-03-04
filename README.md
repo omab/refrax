@@ -1,6 +1,6 @@
-# [Refrax](https://github.com/netarc/react-refrax/) [![npm version](https://badge.fury.io/js/react-refrax.svg)](http://badge.fury.io/js/react-refrax)
+# [Refrax](https://github.com/netarc/refrax/) [![npm version](https://badge.fury.io/js/refrax.svg)](http://badge.fury.io/js/refrax)
 
-Refrax is a JavaScript framework for building api-based data-driven React applications. Inspired by collaboration with [sarahhenkens](https://github.com/sarahhenkens) and [omab](https://github.com/omab) and similar libraries.
+Refrax is a JavaScript framework for building api-based data-driven applications. Inspired by collaboration with [sarahhenkens](https://github.com/sarahhenkens) and [omab](https://github.com/omab) and similar libraries.
 
 * **Unidirectional:** User interaction in views propagates **actions** that will affect **stores** and trigger view updates when needed to components using data from **stores**.
 * **Colocation:** Resource Descriptors and actions can live next to the views that rely on them, so you can easily reason about your app.
@@ -14,8 +14,8 @@ Refrax is a JavaScript framework for building api-based data-driven React applic
 The repository comes with an implementation of [TodoMVC](http://todomvc.com/). To try it out:
 
 ```
-git clone https://github.com/netarc/react-refrax.git
-cd react-refrax/examples/todo && npm install
+git clone https://github.com/netarc/refrax.git
+cd refrax/examples/todo && npm install
 npm start
 ```
 
