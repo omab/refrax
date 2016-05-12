@@ -13,16 +13,18 @@ const prototypeActionTemplate = {};
 
 
 class ActionInvoker {
+  constructor(options) {
+    Object.defineProperty(self, '_options', options);
+  }
+
   from(accessor) {
-    return RefraxMutableResource.from(accessor, this.options);
+    return RefraxMutableResource.from(accessor, this._options);
   }
 }
 
 function createLocalizedAction(template, method, options) {
   var mutable = {}
-    , self = new ActionInvoker();
-
-  Object.defineProperty(self, 'options', {value: options});
+    , self = new ActionInvoker(options);
 
   function invoke(params) {
     var promise;
@@ -31,8 +33,8 @@ function createLocalizedAction(template, method, options) {
     Action.emit('start');
     promise = method.call(self, RefraxTools.extend({}, mutable, params));
 
-    if (RefraxTools.objToString.call(promise) !== '[object Promise]') {
-      promise =  new Promise(function(resolve, reject) {
+    if (!RefraxTools.isPromise(promise)) {
+      promise = new Promise(function(resolve, reject) {
         resolve();
       });
     }
@@ -72,11 +74,13 @@ function createLocalizedAction(template, method, options) {
   Action.setterHandler = function(attribute) {
     return function(event) {
       mutable[attribute] = event.target.value;
+      Action.emit('change');
     };
   };
 
   Action.unset = function() {
     mutable = {};
+    Action.emit('change');
   };
 
   return Action;

@@ -201,3 +201,9 @@ export function randomString(length) {
   }
   return str;
 }
+
+export function isPromise(obj) {
+  return isObject(obj) &&
+         isFunction(obj.then) &&
+         isFunction(obj.catch);
+}

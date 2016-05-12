@@ -18,32 +18,32 @@ const SHIMS = {
   }
 };
 
-function detectMediary(targets, predicate) {
+function detectResource(targets, predicate) {
   refraxifyComponent(this);
 
-  return RefraxTools.any(this.__refrax.mediaries, function(mediary) {
-    if (targets && targets.length > 0 && targets.indexOf(mediary) === -1) {
+  return RefraxTools.any(this.__refrax.resources, function(resource) {
+    if (targets && targets.length > 0 && targets.indexOf(resource) === -1) {
       return false;
     }
 
-    return predicate(mediary);
+    return predicate(resource);
   });
 }
 
-var MixinStatusMediary = {
+var MixinResourceStatus = {
   isLoading: function(...targets) {
-    return detectMediary.call(this, targets, function(mediary) {
-      return mediary.isLoading();
+    return detectResource.call(this, targets, function(resource) {
+      return resource.isLoading();
     });
   },
   hasData: function(...targets) {
-    return !detectMediary.call(this, targets, function(mediary) {
-      return !mediary.hasData();
+    return !detectResource.call(this, targets, function(resource) {
+      return !resource.hasData();
     });
   },
   isStale: function(...targets) {
-    return !detectMediary.call(this, targets, function(mediary) {
-      return mediary.isStale();
+    return !detectResource.call(this, targets, function(resource) {
+      return resource.isStale();
     });
   }
 };
@@ -71,14 +71,14 @@ function refraxifyComponent(component) {
 
   Object.defineProperty(component, '__refrax', {
     value: {
-      mediaries: [],
+      resources: [],
       disposers: []
     }
   });
 
   // quick-check for
   if (component.attach === MixinBase.attach) {
-    RefraxTools.extend(component, MixinBase, MixinStatusMediary);
+    RefraxTools.extend(component, MixinBase, MixinResourceStatus);
   }
 
   // Hook existing componentWillUnmount for cleanup
@@ -89,10 +89,10 @@ function refraxifyComponent(component) {
     });
     this.__refrax.disposers = [];
 
-    RefraxTools.each(this.__refrax.mediaries, function(mediary) {
-      mediary._dispose();
+    RefraxTools.each(this.__refrax.resources, function(resource) {
+      resource._dispose();
     });
-    this.__refrax.mediaries = [];
+    this.__refrax.resources = [];
 
     if (_componentWillUnmount) {
       _componentWillUnmount();
@@ -101,7 +101,7 @@ function refraxifyComponent(component) {
 }
 
 function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
-  var mediary;
+  var resource;
 
   options = RefraxTools.extend({
     paramsGenerator: function() {
@@ -109,24 +109,34 @@ function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
     }
   }, options);
 
-  mediary = new RefraxResource(accessor, options);
-  component.__refrax.mediaries.push(mediary);
-  component.__refrax.disposers.push(mediary.subscribe('change', function() {
+  resource = new RefraxResource(accessor, options);
+  component.__refrax.resources.push(resource);
+  component.__refrax.disposers.push(resource.subscribe('change', function() {
     RefraxTools.nextTick(function() {
       component.forceUpdate();
     });
   }));
-  return mediary;
+  return resource;
 }
 
 function attachActionTemplateToComponent(component, ActionTemplate, options) {
+  var template;
+
   options = RefraxTools.extend({
     paramsGenerator: function() {
       return SHIMS.getComponentParams.call(component);
     }
   }, options);
 
-  return new ActionTemplate(options);
+  template = new ActionTemplate(options);
+
+  component.__refrax.disposers.push(template.subscribe('change', function() {
+    RefraxTools.nextTick(function() {
+      component.forceUpdate();
+    });
+  }));
+
+  return template;
 }
 
 function attach(component, target, options) {
@@ -151,7 +161,7 @@ function mixin(component) {
   // ES6 - class XYZ extends RefraxReact.mixin(React.Component)
   if (typeof(component) === 'function') {
     component = (class extends component {});
-    RefraxTools.extend(component.prototype, MixinBase, MixinStatusMediary);
+    RefraxTools.extend(component.prototype, MixinBase, MixinResourceStatus);
   }
   // Manual - RefraxReact.mixin(this)
   else {
