@@ -75,6 +75,8 @@ function createActionFromTemplate(template, method, options) {
     var promise
       , self = new ActionInvoker(Action, options);
 
+    // reset errors on invocation
+    errors = {};
     params = RefraxTools.extend({}, mutable, params);
     promise = invokeAction.call(self, method, [template, Action], params);
 
