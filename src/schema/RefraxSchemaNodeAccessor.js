@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxTools = require('RefraxTools');
-const RefraxResource = require('RefraxResource');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 
 const SchemaAccescessorMixins = [];
@@ -38,13 +37,13 @@ class RefraxSchemaNodeAccessor {
     });
   }
 
-  addLeaf(literal, leaf) {
+  addLeaf(identifier, leaf) {
     var node = this.__node
       , stack = this.__stack;
 
     if (!leaf) {
-      leaf = literal;
-      literal = null;
+      leaf = identifier;
+      identifier = null;
     }
 
     if (leaf instanceof RefraxSchemaNodeAccessor) {
@@ -56,15 +55,16 @@ class RefraxSchemaNodeAccessor {
       );
     }
 
-    if (!literal && !(literal = leaf.literal)) {
+    if (!identifier && !(identifier = leaf.identifier)) {
       throw new TypeError(
-        'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit literal.'
+        'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit identifier.'
       );
     }
 
-    node.leafs[literal] = leaf;
+    identifier = RefraxTools.cleanIdentifier(identifier);
+    node.leafs[identifier] = leaf;
 
-    Object.defineProperty(this, literal, {
+    Object.defineProperty(this, identifier, {
       get() {
         return new RefraxSchemaNodeAccessor(leaf, node, [].concat(stack || [], leaf.payload));
       }

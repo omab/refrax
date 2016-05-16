@@ -8,18 +8,18 @@
 
 
 class RefraxSchemaNode {
-  constructor(payload, literal) {
-    if (literal && typeof(literal) !== 'string') {
+  constructor(payload, identifier) {
+    if (identifier && typeof(identifier) !== 'string') {
       throw new TypeError(
-        'RefraxSchemaNode - A literal argument can only be of type `String`, ' +
-        'but found type `' + typeof(literal)+ '`.'
+        'RefraxSchemaNode - A identifier argument can only be of type `String`, ' +
+        'but found type `' + typeof(identifier)+ '`.'
       );
     }
 
     Object.defineProperty(this, 'payload', {value: payload});
     Object.defineProperty(this, 'leafs', {value: {}});
     // TODO: are we mutable?
-    this.literal = literal;
+    this.identifier = identifier;
   }
 }
 
