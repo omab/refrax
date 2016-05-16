@@ -14,8 +14,8 @@ const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 
 
 function createCollection(literal, store, options) {
-  var treeNodeCollection, schemaNodeCollection, accessorNodeCollection
-    , treeNodeMember, schemaNodeMember
+  var treeNodeCollection, accessorNodeCollection
+    , treeNodeMember
     , memberLiteral, memberId;
 
   options = options || {};
@@ -44,8 +44,9 @@ function createCollection(literal, store, options) {
     coerce: 'collection'
   }, options.collection));
 
-  schemaNodeCollection = new RefraxSchemaNode([store, treeNodeCollection], literal);
-  accessorNodeCollection = new RefraxSchemaNodeAccessor(schemaNodeCollection);
+  accessorNodeCollection = new RefraxSchemaNodeAccessor(
+    new RefraxSchemaNode([store, treeNodeCollection], literal)
+  );
 
   // Member Node
 
@@ -59,11 +60,13 @@ function createCollection(literal, store, options) {
   }
 
   treeNodeMember = new RefraxTreeNode(RefraxTools.extend({
-    paramId: memberId
+    paramId: memberId,
+    coerce: 'item'
   }, options.member));
 
-  schemaNodeMember = new RefraxSchemaNode(treeNodeMember, memberLiteral);
-  accessorNodeCollection.addLeaf(schemaNodeMember);
+  accessorNodeCollection.addLeaf(
+    new RefraxSchemaNode(treeNodeMember, memberLiteral)
+  );
 
   return accessorNodeCollection;
 }
