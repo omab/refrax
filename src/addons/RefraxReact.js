@@ -12,37 +12,42 @@ const RefraxMutableResource = require('RefraxMutableResource');
 const createAction = require('createAction');
 
 
-const SHIMS = {
+export const SHIMS = {
   getComponentParams: function() {
     return RefraxTools.extend({}, this.props);
   }
 };
 
-function detectResource(targets, predicate) {
+function detect(array, targets, predicate) {
   refraxifyComponent(this);
 
-  return RefraxTools.any(this.__refrax.resources, function(resource) {
-    if (targets && targets.length > 0 && targets.indexOf(resource) === -1) {
+  return RefraxTools.any(array, function(other) {
+    if (targets && targets.length > 0 && targets.indexOf(other) === -1) {
       return false;
     }
 
-    return predicate(resource);
+    return predicate(other);
   });
 }
 
-var MixinResourceStatus = {
+const MixinResourceStatus = {
   isLoading: function(...targets) {
-    return detectResource.call(this, targets, function(resource) {
+    return detect.call(this, this.__refrax.resources, targets, function(resource) {
       return resource.isLoading();
     });
   },
+  isPending: function(...targets) {
+    return detect.call(this, this.__refrax.actions, targets, function(action) {
+      return action.isPending();
+    });
+  },
   hasData: function(...targets) {
-    return !detectResource.call(this, targets, function(resource) {
+    return !detect.call(this, this.__refrax.resources, targets, function(resource) {
       return !resource.hasData();
     });
   },
   isStale: function(...targets) {
-    return !detectResource.call(this, targets, function(resource) {
+    return !detect.call(this, this.__refrax.resources, targets, function(resource) {
       return resource.isStale();
     });
   }
@@ -72,12 +77,13 @@ function refraxifyComponent(component) {
   Object.defineProperty(component, '__refrax', {
     value: {
       resources: [],
+      actions: [],
       disposers: []
     }
   });
 
   // quick-check for
-  if (component.attach === MixinBase.attach) {
+  if (component.attach !== MixinBase.attach) {
     RefraxTools.extend(component, MixinBase, MixinResourceStatus);
   }
 
@@ -120,7 +126,7 @@ function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
 }
 
 function attachActionTemplateToComponent(component, ActionTemplate, options) {
-  var template;
+  var action;
 
   options = RefraxTools.extend({
     paramsGenerator: function() {
@@ -128,18 +134,18 @@ function attachActionTemplateToComponent(component, ActionTemplate, options) {
     }
   }, options);
 
-  template = new ActionTemplate(options);
-
-  component.__refrax.disposers.push(template.subscribe('change', function() {
+  action = new ActionTemplate(options);
+  component.__refrax.actions.push(action);
+  component.__refrax.disposers.push(action.subscribe('change', function() {
     RefraxTools.nextTick(function() {
       component.forceUpdate();
     });
   }));
 
-  return template;
+  return action;
 }
 
-function attach(component, target, options) {
+export function attach(component, target, options) {
   refraxifyComponent(component);
 
   if (target instanceof RefraxSchemaNodeAccessor) {
@@ -154,16 +160,16 @@ function attach(component, target, options) {
 }
 
 /**
- * Mixin lives as a function so we can use it on ES6 React component classes, but
+ * Extend lives as a function so we can use it on ES6 React component classes, but
  * we extend with the MixinBase so it can be used in legacy React component classes.
  */
-function mixin(component) {
-  // ES6 - class XYZ extends RefraxReact.mixin(React.Component)
+export function extend(component) {
+  // ES6 - class XYZ extends RefraxReact.extend(React.Component)
   if (typeof(component) === 'function') {
     component = (class extends component {});
     RefraxTools.extend(component.prototype, MixinBase, MixinResourceStatus);
   }
-  // Manual - RefraxReact.mixin(this)
+  // Manual - RefraxReact.extend(this)
   else {
     refraxifyComponent(component);
   }
@@ -171,14 +177,10 @@ function mixin(component) {
   return component;
 }
 
-mixin.componentWillMount = function() {
-  refraxifyComponent(this);
+export var mixin = {
+  componentWillMount: function() {
+    refraxifyComponent(this);
+  }
 };
 
 RefraxTools.extend(mixin, MixinBase);
-
-export default {
-  SHIMS,
-  mixin,
-  attach
-};
