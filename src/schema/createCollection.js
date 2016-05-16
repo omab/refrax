@@ -44,6 +44,8 @@ function createCollection(literal, store, options) {
     coerce: 'collection'
   }, options.collection));
 
+  literal = RefraxTools.cleanIdentifier(literal);
+
   accessorNodeCollection = new RefraxSchemaNodeAccessor(
     new RefraxSchemaNode([store, treeNodeCollection], literal)
   );

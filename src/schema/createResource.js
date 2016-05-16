@@ -39,6 +39,8 @@ function createResource(literal, store, options) {
     coerce: 'item'
   }, options));
 
+  literal = RefraxTools.cleanIdentifier(literal);
+
   accessorNode = new RefraxSchemaNodeAccessor(
     new RefraxSchemaNode([store, treeNode], literal)
   );

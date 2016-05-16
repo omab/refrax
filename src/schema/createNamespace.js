@@ -26,6 +26,8 @@ function createNamespace(literal, options) {
     uri: literal
   }, options));
 
+  literal = RefraxTools.cleanIdentifier(literal);
+
   accessorNode = new RefraxSchemaNodeAccessor(
     new RefraxSchemaNode(treeNode, literal)
   );

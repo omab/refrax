@@ -207,3 +207,8 @@ export function isPromise(obj) {
          isFunction(obj.then) &&
          isFunction(obj.catch);
 }
+
+export function cleanIdentifier(identifier) {
+  return identifier.replace('-', '_')
+                   .replace(/[^\w]+/g, '');
+}
