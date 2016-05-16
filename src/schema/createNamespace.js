@@ -9,27 +9,23 @@ const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaTools = require('RefraxSchemaTools');
 
 
-function createNamespace(literal, options) {
-  var treeNode, accessorNode;
+function createNamespace(path, options) {
+  var treeNode, accessorNode, identifier;
+
+  RefraxSchemaTools.validatePath('createNamespace', path);
 
   options = options || {};
-
-  if (!literal || typeof(literal) !== 'string' || literal.length === 0) {
-    throw new TypeError(
-      'createNamespace - A valid literal must be passed, but found type `' + typeof(literal)+ '` with value `' + literal + '`.'
-    );
-  }
+  identifier = RefraxTools.cleanIdentifier(path);
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
-    uri: literal
+    uri: path
   }, options));
 
-  literal = RefraxTools.cleanIdentifier(literal);
-
   accessorNode = new RefraxSchemaNodeAccessor(
-    new RefraxSchemaNode(treeNode, literal)
+    new RefraxSchemaNode(treeNode, identifier)
   );
 
   return accessorNode;

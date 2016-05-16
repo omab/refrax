@@ -7,42 +7,27 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
-const RefraxStore = require('RefraxStore');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaTools = require('RefraxSchemaTools');
 
 
-function createResource(literal, store, options) {
-  var treeNode, accessorNode;
+function createResource(path, store, options) {
+  var treeNode, accessorNode, identifier;
+
+  RefraxSchemaTools.validatePath('createResource', path);
 
   options = options || {};
-
-  if (!literal || typeof(literal) !== 'string' || literal.length === 0) {
-    throw new TypeError(
-      'createResource - A valid literal must be passed, but found type `' + typeof(literal)+ '` with value `' + literal + '`.'
-    );
-  }
-
-  if (!store || !(typeof(store) === 'string' || store instanceof RefraxStore)) {
-    throw new TypeError(
-      'createResource - A valid store reference of either a `String` or `Store` type must be passed, ' +
-      'but found type `' + typeof(store)+ '`.'
-    );
-  }
-
-  if (typeof(store) === 'string') {
-    store = RefraxStore.get(store);
-  }
+  identifier = RefraxTools.cleanIdentifier(path);
+  store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
-    uri: literal,
+    uri: path,
     coerce: 'item'
   }, options));
 
-  literal = RefraxTools.cleanIdentifier(literal);
-
   accessorNode = new RefraxSchemaNodeAccessor(
-    new RefraxSchemaNode([store, treeNode], literal)
+    new RefraxSchemaNode([store, treeNode], identifier)
   );
 
   return accessorNode;

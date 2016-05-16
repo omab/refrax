@@ -8,57 +8,43 @@
 const pluralize = require('pluralize');
 const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
-const RefraxStore = require('RefraxStore');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaTools = require('RefraxSchemaTools');
 
 
-function createCollection(literal, store, options) {
+function createCollection(path, store, options) {
   var treeNodeCollection, accessorNodeCollection
     , treeNodeMember
-    , memberLiteral, memberId;
+    , memberIdentifier, memberId
+    , identifier;
+
+  RefraxSchemaTools.validatePath('createCollection', path);
 
   options = options || {};
-
-  if (!literal || typeof(literal) !== 'string' || literal.length === 0) {
-    throw new TypeError(
-      'createCollection - A valid literal must be passed, but found type `' + typeof(literal)+ '` with value `' + literal + '`.'
-    );
-  }
-
-  if (!store || !(typeof(store) === 'string' || store instanceof RefraxStore)) {
-    throw new TypeError(
-      'createCollection - A valid store reference of either a `String` or `Store` type must be passed, ' +
-      'but found type `' + typeof(store)+ '`.'
-    );
-  }
-
-  if (typeof(store) === 'string') {
-    store = RefraxStore.get(store);
-  }
+  identifier = RefraxTools.cleanIdentifier(path);
+  store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
 
   // Collection Node
 
   treeNodeCollection = new RefraxTreeNode(RefraxTools.extend({
-    uri: literal,
+    uri: path,
     coerce: 'collection'
   }, options.collection));
 
-  literal = RefraxTools.cleanIdentifier(literal);
-
   accessorNodeCollection = new RefraxSchemaNodeAccessor(
-    new RefraxSchemaNode([store, treeNodeCollection], literal)
+    new RefraxSchemaNode([store, treeNodeCollection], identifier)
   );
 
   // Member Node
 
-  memberLiteral = pluralize.singular(literal);
-  if (memberLiteral == literal) {
-    memberLiteral = 'member';
-    memberId = literal + 'Id';
+  memberIdentifier = pluralize.singular(identifier);
+  if (memberIdentifier == identifier) {
+    memberIdentifier = 'member';
+    memberId = identifier + 'Id';
   }
   else {
-    memberId = memberLiteral + 'Id';
+    memberId = memberIdentifier + 'Id';
   }
 
   treeNodeMember = new RefraxTreeNode(RefraxTools.extend({
@@ -67,7 +53,7 @@ function createCollection(literal, store, options) {
   }, options.member));
 
   accessorNodeCollection.addLeaf(
-    new RefraxSchemaNode(treeNodeMember, memberLiteral)
+    new RefraxSchemaNode(treeNodeMember, memberIdentifier)
   );
 
   return accessorNodeCollection;
