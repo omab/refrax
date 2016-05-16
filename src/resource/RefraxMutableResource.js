@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxResourceBase = require('RefraxResourceBase');
+const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const invokeDescriptor = require('invokeDescriptor');
 
 
@@ -18,6 +19,13 @@ class RefraxMutableResource extends RefraxResourceBase {
   }
 
   constructor(accessor, ...args) {
+    if (!(accessor instanceof RefraxSchemaNodeAccessor)) {
+      throw new TypeError(
+        'RefraxMutableResource - Expected accessor of type RefraxSchemaNodeAccessor ' +
+        'but found `' + typeof(accessor) + '`'
+      );
+    }
+
     super(accessor, ...args);
   }
 
