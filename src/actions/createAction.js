@@ -30,8 +30,8 @@ class ActionInvoker {
     Object.defineProperty(this, '_options', {value: options});
   }
 
-  mutableFrom(accessor) {
-    return RefraxMutableResource.from(accessor, this._options);
+  mutableFrom(accessor, ...args) {
+    return RefraxMutableResource.from(accessor, this._options, ...args);
   }
 }
 
