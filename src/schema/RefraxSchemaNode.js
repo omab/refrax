@@ -18,6 +18,7 @@ class RefraxSchemaNode {
 
     Object.defineProperty(this, 'payload', {value: payload});
     Object.defineProperty(this, 'leafs', {value: {}});
+    Object.defineProperty(this, 'leafs_detached', {value: {}});
     // TODO: are we mutable?
     this.identifier = identifier;
   }

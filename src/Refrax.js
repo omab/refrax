@@ -12,6 +12,8 @@ const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const createAction = require('createAction');
 const createCollection = require('createCollection');
+const createResource = require('createResource');
+const createNamespace = require('createNamespace');
 const RefraxStore = require('RefraxStore');
 
 
@@ -22,6 +24,8 @@ export default {
   Tools: RefraxTools,
   createAction,
   createCollection,
+  createResource,
+  createNamespace,
   Resource: RefraxResource,
   MutableResource: RefraxMutableResource
 };

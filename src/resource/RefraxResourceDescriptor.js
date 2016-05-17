@@ -45,13 +45,13 @@ function fillURI(uri, params, paramMap) {
  * Given a stack representing a path in our Schema tree and options affecting it, we
  * reduce and resolve it down to a descriptor describing a resource.
  */
-function processStack(resourceDescriptor, stack) {
+function processStack(resourceDescriptor, stack, resolveParams) {
   var resolvedParams = {}
     , resolvedParamMap = {}
     , resolvedPartial = null
     , resolvedType = null
     , resolvedStore = null
-    , resolvedPath = ''
+    , resolvedPath = []
     , resolvedFragments = []
     , resolvedParamId = null
     , resolvedPayload = {}
@@ -118,19 +118,21 @@ function processStack(resourceDescriptor, stack) {
 
     if (item instanceof RefraxTreeNode) {
       if (definition.uri) {
-        result = fillURI(definition.uri, resolvedParams, resolvedParamMap);
-        resolvedPath+= result.uri;
+        result = resolveParams ? fillURI(definition.uri, resolvedParams, resolvedParamMap)
+                               : {uri: definition.uri};
+        resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
       else if (definition.paramId) {
-        result = fillURI('/:'+definition.paramId, resolvedParams, resolvedParamMap);
-        resolvedPath+= result.uri;
+        result = resolveParams ? fillURI(':'+definition.paramId, resolvedParams, resolvedParamMap)
+                               : {uri: ':'+definition.paramId};
+        resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
     }
   }
 
-  resolvedPath = RefraxConfig.hostname + resolvedPath;
+  resolvedPath = RefraxConfig.hostname + resolvedPath.join('/');
 
   key = resolvedParamId || lastURIParamId || 'id';
   if (resolvedParamMap[key]) {
@@ -155,8 +157,8 @@ function processStack(resourceDescriptor, stack) {
 }
 
 class ResourceDescriptor {
-  constructor(stack) {
-    processStack(this, stack);
+  constructor(stack, resolveParams = true) {
+    processStack(this, stack, resolveParams);
   }
 
   // Using our own descriptor's rules, grab an id from an object

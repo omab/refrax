@@ -78,7 +78,10 @@ class RefraxTreeNode {
   constructor(definition) {
     validateDefinition(definition);
 
-    Object.defineProperty(this, 'definition', {value: definition});
+    Object.defineProperty(this, 'definition', {
+      value: definition,
+      enumerable: true
+    });
   }
 }
 

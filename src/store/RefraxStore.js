@@ -49,7 +49,16 @@ class RefraxStore {
   constructor(definition) {
     mixinSubscribable(this);
 
-    this.definition = definition;
+    Object.defineProperty(this, 'definition', {
+      value: definition,
+      enumerable: true
+    });
+
+    Object.defineProperty(this, 'cache', {
+      value: null,
+      writable: true
+    });
+
     this.reset();
   }
 
@@ -70,7 +79,6 @@ class RefraxStore {
   //
 
   notifyChange(resourceDescriptor) {
-    console.info('Store::notifyChange(%o) notify[%i]', this.definition.type, resourceDescriptor.id);
     this.emit('change');
     if (resourceDescriptor.id) {
       this.emit('change:' + resourceDescriptor.id);
