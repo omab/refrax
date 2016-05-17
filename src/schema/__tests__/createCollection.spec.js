@@ -46,13 +46,13 @@ describe('createCollection', function() {
       expect(collectionUsers).to.be.an.instanceof(RefraxSchemaNodeAccessor);
       expect(collectionUsers).to.have.property('__node')
         .that.is.an.instanceof(RefraxSchemaNode)
-        .to.have.property('payload')
+        .to.have.property('subject')
           .that.is.an.instanceof(Array);
 
       expect(collectionUsers.__node).to.have.property('literal', 'users');
-      expect(collectionUsers.__node.payload).with.deep.property('[0]')
+      expect(collectionUsers.__node.subject).with.deep.property('[0]')
         .that.is.an.instanceof(RefraxStore);
-      expect(collectionUsers.__node.payload).with.deep.property('[1]')
+      expect(collectionUsers.__node.subject).with.deep.property('[1]')
         .that.is.an.instanceof(RefraxTreeNode);
 
       expect(collectionUsers).to.have.property('user')

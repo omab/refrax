@@ -8,17 +8,18 @@
 
 
 class RefraxSchemaNode {
-  constructor(payload, identifier) {
+  constructor(subject, identifier) {
     if (identifier && typeof(identifier) !== 'string') {
       throw new TypeError(
         'RefraxSchemaNode - A identifier argument can only be of type `String`, ' +
         'but found type `' + typeof(identifier)+ '`.'
       );
     }
+    subject = [].concat(subject || []);
 
-    Object.defineProperty(this, 'payload', {value: payload});
+    Object.defineProperty(this, 'subject', {value: subject});
     Object.defineProperty(this, 'leafs', {value: {}});
-    Object.defineProperty(this, 'leafs_detached', {value: {}});
+
     // TODO: are we mutable?
     this.identifier = identifier;
   }

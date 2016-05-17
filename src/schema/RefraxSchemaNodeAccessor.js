@@ -19,12 +19,42 @@ function compareStack(part, stack) {
 
 function enumerateLeafs(node, stack, action) {
   RefraxTools.each(node.leafs, function(leaf, key) {
-    action(key, leaf, [].concat(stack, leaf.payload));
+    if (!leaf.stack || compareStack(leaf.stack, stack)) {
+      action(key, leaf.node, stack.concat(leaf.node.subject));
+    }
   });
+}
 
-  RefraxTools.each(node.leafs_detached, function(detached, key) {
-    if (compareStack(detached.stack, stack)) {
-      action(key, detached.leaf, [].concat(stack, detached.leaf.payload));
+function createLeaf(accessor, detached, identifier, leafNode) {
+  var node = accessor.__node
+    , stack = accessor.__stack;
+
+  if (!leafNode) {
+    leafNode = identifier;
+    identifier = null;
+  }
+
+  if (leafNode instanceof RefraxSchemaNodeAccessor) {
+    leafNode = leafNode.__node;
+  }
+  else if (!(leafNode instanceof RefraxSchemaNode)) {
+    throw new TypeError(
+      'RefraxSchemaNodeAccessor:addLeaf - Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode'
+    );
+  }
+
+  if (!identifier && !(identifier = leafNode.identifier)) {
+    throw new TypeError(
+      'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit identifier.'
+    );
+  }
+
+  identifier = RefraxTools.cleanIdentifier(identifier);
+  node.leafs[identifier] = {node: leafNode, stack: detached ? stack : null};
+
+  Object.defineProperty(accessor, identifier, {
+    get: function() {
+      return new RefraxSchemaNodeAccessor(leafNode, node, stack.concat(leafNode.subject));
     }
   });
 }
@@ -40,7 +70,7 @@ class RefraxSchemaNodeAccessor {
     }
 
     if (!stack) {
-      stack = [].concat(node.payload || []);
+      stack = [].concat(node.subject);
     }
 
     Object.defineProperty(this, '__node', {value: node});
@@ -51,99 +81,36 @@ class RefraxSchemaNodeAccessor {
       RefraxTools.extend(this, mixin);
     });
 
-    enumerateLeafs(node, stack, function(key, leaf, leafStack) {
+    enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
       Object.defineProperty(self, key, {
         get: function() {
-          return new RefraxSchemaNodeAccessor(leaf, node, leafStack);
+          return new RefraxSchemaNodeAccessor(leafNode, node, leafStack);
         }
       });
     });
   }
 
-  inspect() {
+  inspect(result = {}) {
     var node = this.__node
-      , stack = this.__stack || []
-      , result = {};
+      , stack = this.__stack;
 
-    enumerateLeafs(node, stack, function(key, leaf, leafStack) {
+    enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
       var descriptor = new RefraxResourceDescriptor(leafStack, false);
       result[descriptor.path] = descriptor.store && descriptor.store.definition.type;
-      RefraxTools.extend(result, new RefraxSchemaNodeAccessor(leaf, node, leafStack).inspect());
+      new RefraxSchemaNodeAccessor(leafNode, node, leafStack).inspect(result);
     });
 
     return result;
   }
 
   addLeaf(identifier, leaf) {
-    var node = this.__node
-      , stack = this.__stack;
-
-    if (!leaf) {
-      leaf = identifier;
-      identifier = null;
-    }
-
-    if (leaf instanceof RefraxSchemaNodeAccessor) {
-      leaf = leaf.__node;
-    }
-    else if (!(leaf instanceof RefraxSchemaNode)) {
-      throw new TypeError(
-        'RefraxSchemaNodeAccessor:addLeaf - Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode'
-      );
-    }
-
-    if (!identifier && !(identifier = leaf.identifier)) {
-      throw new TypeError(
-        'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit identifier.'
-      );
-    }
-
-    identifier = RefraxTools.cleanIdentifier(identifier);
-    node.leafs[identifier] = leaf;
-
-    Object.defineProperty(this, identifier, {
-      get() {
-        return new RefraxSchemaNodeAccessor(leaf, node, [].concat(stack || [], leaf.payload));
-      }
-    });
-
-    return new RefraxSchemaNodeAccessor(leaf, this.__parent);
+    createLeaf(this, false, identifier, leaf);
+    return this;
   }
 
   addDetachedLeaf(identifier, leaf) {
-    var node = this.__node
-      , stack = this.__stack;
-
-    if (!leaf) {
-      leaf = identifier;
-      identifier = null;
-    }
-
-    if (leaf instanceof RefraxSchemaNodeAccessor) {
-      leaf = leaf.__node;
-    }
-    else if (!(leaf instanceof RefraxSchemaNode)) {
-      throw new TypeError(
-        'RefraxSchemaNodeAccessor:addLeaf - Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode'
-      );
-    }
-
-    if (!identifier && !(identifier = leaf.identifier)) {
-      throw new TypeError(
-        'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit identifier.'
-      );
-    }
-
-    identifier = RefraxTools.cleanIdentifier(identifier);
-    node.leafs_detached[identifier] = {stack: stack, leaf: leaf};
-
-    Object.defineProperty(this, identifier, {
-      get() {
-        return new RefraxSchemaNodeAccessor(leaf, node, [].concat(stack || [], leaf.payload));
-      }
-    });
-
-    return new RefraxSchemaNodeAccessor(leaf, this.__parent);
+    createLeaf(this, true, identifier, leaf);
+    return this;
   }
 }
 
