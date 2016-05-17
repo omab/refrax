@@ -7,6 +7,7 @@
  */
 const pluralize = require('pluralize');
 const RefraxStore = require('RefraxStore');
+const RefraxTools = require('RefraxTools');
 
 
 export function validatePath(scope, path) {
@@ -15,6 +16,8 @@ export function validatePath(scope, path) {
       scope + ' - A valid path must be passed, but found type `' + typeof(path)+ '` with value `' + path + '`.'
     );
   }
+
+  return RefraxTools.cleanPath(path);
 }
 
 export function defaultStore(scope, store, identifier) {

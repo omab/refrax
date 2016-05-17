@@ -212,3 +212,7 @@ export function cleanIdentifier(identifier) {
   return identifier.replace('-', '_')
                    .replace(/[^\w]+/g, '');
 }
+
+export function cleanPath(path) {
+  return path.replace(/^[\/\s]+|[\/\s]+$/g, '');
+}

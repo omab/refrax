@@ -19,7 +19,7 @@ function createCollection(path, store, options) {
     , memberIdentifier, memberId
     , identifier;
 
-  RefraxSchemaTools.validatePath('createCollection', path);
+  path = RefraxSchemaTools.validatePath('createCollection', path);
 
   options = options || {};
   identifier = RefraxTools.cleanIdentifier(path);

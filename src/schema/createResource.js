@@ -15,7 +15,7 @@ const RefraxSchemaTools = require('RefraxSchemaTools');
 function createResource(path, store, options) {
   var treeNode, accessorNode, identifier;
 
-  RefraxSchemaTools.validatePath('createResource', path);
+  path = RefraxSchemaTools.validatePath('createResource', path);
 
   options = options || {};
   identifier = RefraxTools.cleanIdentifier(path);

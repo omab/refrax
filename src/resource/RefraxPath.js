@@ -5,6 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+const RefraxTools = require('RefraxTools');
+
 
 /**
  * A RefraxStore is a wrapper around the RefraxFragmentCache object that offers
@@ -12,7 +14,7 @@
  */
 class RefraxPath {
   constructor(path) {
-    this.path = path;
+    this.path = RefraxTools.cleanPath(path);
   }
 }
 

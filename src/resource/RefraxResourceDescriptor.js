@@ -56,7 +56,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
     , resolvedParamId = null
     , resolvedPayload = {}
     , resolvedCoercion = null
-    , pathAppend = ''
+    , resolvedAppendPaths = []
     , i, item, definition
     , lastURIParamId = null
     , key, event, result;
@@ -104,7 +104,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
       resolvedParams = RefraxTools.extend(resolvedParams, item.params);
     }
     else if (item instanceof RefraxPath) {
-      pathAppend += item.path;
+      resolvedAppendPaths.push(item.path);
     }
     else if (RefraxTools.isPlainObject(item)) {
       resolvedPayload = RefraxTools.extend(resolvedPayload, item);
@@ -132,7 +132,11 @@ function processStack(resourceDescriptor, stack, resolveParams) {
     }
   }
 
-  resolvedPath = RefraxConfig.hostname + resolvedPath.join('/');
+  resourceDescriptor.basePath =
+    resourceDescriptor.path = RefraxConfig.hostname + '/' + resolvedPath.join('/');
+  if (resolvedAppendPaths.length > 0) {
+    resourceDescriptor.path+= '/' + resolvedAppendPaths.join('/');
+  }
 
   key = resolvedParamId || lastURIParamId || 'id';
   if (resolvedParamMap[key]) {
@@ -149,8 +153,6 @@ function processStack(resourceDescriptor, stack, resolveParams) {
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.params = resolvedParams;
   resourceDescriptor.fragments = resolvedFragments.reverse();
-  resourceDescriptor.basePath = resolvedPath;
-  resourceDescriptor.path = resolvedPath + pathAppend;
   resourceDescriptor.payload = resolvedPayload;
   resourceDescriptor.store = resolvedStore;
   resourceDescriptor.type = resolvedType;

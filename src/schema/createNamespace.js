@@ -15,7 +15,7 @@ const RefraxSchemaTools = require('RefraxSchemaTools');
 function createNamespace(path, options) {
   var treeNode, accessorNode, identifier;
 
-  RefraxSchemaTools.validatePath('createNamespace', path);
+  path = RefraxSchemaTools.validatePath('createNamespace', path);
 
   options = options || {};
   identifier = RefraxTools.cleanIdentifier(path);
