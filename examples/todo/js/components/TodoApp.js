@@ -6,7 +6,7 @@ import TodoTextInput from './TodoTextInput';
 import {actionCreateTodo} from 'schema/schema.js';
 
 
-class TodoApp extends RefraxReact.mixin(React.Component) {
+class TodoApp extends RefraxReact.extend(React.Component) {
   componentWillMount() {
     console.groupCollapsed('TodoApp::componentWillMount::start');
     this.todos = this.attach(Refrax.Schema.todos);
@@ -15,7 +15,6 @@ class TodoApp extends RefraxReact.mixin(React.Component) {
   }
 
   render() {
-    console.info('TodoApp::render');
     var hasTodos = this.todos.data.length > 0;
 
     return (
@@ -66,10 +65,10 @@ class TodoApp extends RefraxReact.mixin(React.Component) {
     if (e.keyCode === 13) {
       this.createTodo()
         .then(function() {
-          console.info("createtodo then!");
           self.createTodo.unset();
         });
     }
+    return true;
   };
 
   _onTodoSave = (text) => {

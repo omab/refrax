@@ -4,17 +4,11 @@ import RefraxReact from 'refrax/lib/RefraxReact';
 import {IndexLink, Link} from 'react-router';
 
 
-class TodoListFooter extends RefraxReact.mixin(React.Component) {
+class TodoListFooter extends RefraxReact.extend(React.Component) {
   _handleRemoveCompletedTodosClick = () => {
     this
       .from(Refrax.Schema.todos, '/completed')
       .destroy();
-    // Relay.Store.commitUpdate(
-    //   new RemoveCompletedTodosMutation({
-    //     todos: this.props.viewer.todos,
-    //     viewer: this.props.viewer,
-    //   })
-    // );
   };
 
   render() {

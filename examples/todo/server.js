@@ -65,8 +65,10 @@ router.get('/todos', function(req, res, next) {
 });
 
 router.post('/todos', function(req, res, next) {
-  DATA_TODOS.push({id: ++TODO_ID, text: req.body.text});
-  res.status(201).json(DATA_TODOS);
+  setTimeout(function() {
+    DATA_TODOS.push({id: ++TODO_ID, text: req.body.text});
+    res.status(201).json(DATA_TODOS);
+  }, 3000);
 });
 
 router.put('/todos', function(req, res, next) {

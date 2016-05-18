@@ -4,16 +4,12 @@ import RefraxReact from 'refrax/lib/RefraxReact';
 import Todo from './Todo';
 
 
-class TodoList extends RefraxReact.mixin(React.Component) {
+class TodoList extends RefraxReact.extend(React.Component) {
   componentWillMount() {
-    console.groupCollapsed('TodoList::componentWillMount::start');
     this.todos = this.attach(Refrax.Schema.todos);
-    console.groupEnd('TodoList::componentWillMount::end');
   }
 
   render() {
-    console.info('TodoList::render');
-
     var numTodos = this.todos.data.length;
     var numCompletedTodos = Refrax.Tools.select(this.todos.data, todo => {
       return todo.complete;

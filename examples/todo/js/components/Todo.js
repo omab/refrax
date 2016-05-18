@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import {actionDeleteTodo} from 'schema/schema.js';
 
 
-class Todo extends RefraxReact.mixin(React.Component) {
+class Todo extends RefraxReact.extend(React.Component) {
   state = {
     isEditing: false
   }
