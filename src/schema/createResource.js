@@ -10,6 +10,8 @@ const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaTools = require('RefraxSchemaTools');
+const RefraxConstants = require('RefraxConstants');
+const COERCE_ITEM = RefraxConstants.coerce.item;
 
 
 function createResource(path, store, options) {
@@ -23,7 +25,7 @@ function createResource(path, store, options) {
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
     uri: path,
-    coerce: 'item'
+    coerce: COERCE_ITEM
   }, options));
 
   accessorNode = new RefraxSchemaNodeAccessor(

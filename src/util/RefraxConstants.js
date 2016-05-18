@@ -21,5 +21,9 @@ export default {
     fetch: 'GET',
     save: 'SAVE',
     delete: 'DELETE'
+  },
+  coerce: {
+    collection: 'collection',
+    item: 'item'
   }
 };

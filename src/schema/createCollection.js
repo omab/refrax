@@ -11,6 +11,9 @@ const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaTools = require('RefraxSchemaTools');
+const RefraxConstants = require('RefraxConstants');
+const COERCE_COLLECTION = RefraxConstants.coerce.collection;
+const COERCE_ITEM = RefraxConstants.coerce.item;
 
 
 function createCollection(path, store, options) {
@@ -29,7 +32,7 @@ function createCollection(path, store, options) {
 
   treeNodeCollection = new RefraxTreeNode(RefraxTools.extend({
     uri: path,
-    coerce: 'collection'
+    coerce: COERCE_COLLECTION
   }, options.collection));
 
   accessorNodeCollection = new RefraxSchemaNodeAccessor(
@@ -49,7 +52,7 @@ function createCollection(path, store, options) {
 
   treeNodeMember = new RefraxTreeNode(RefraxTools.extend({
     paramId: memberId,
-    coerce: 'item'
+    coerce: COERCE_ITEM
   }, options.member));
 
   accessorNodeCollection.addLeaf(
