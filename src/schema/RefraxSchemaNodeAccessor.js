@@ -96,7 +96,7 @@ class RefraxSchemaNodeAccessor {
 
     enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
       var descriptor = new RefraxResourceDescriptor(leafStack, false);
-      result[descriptor.path] = descriptor.store && descriptor.store.definition.type;
+      result[descriptor.path] = descriptor;
       new RefraxSchemaNodeAccessor(leafNode, node, leafStack).inspect(result);
     });
 
