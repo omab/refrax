@@ -10,7 +10,7 @@ const RefraxTools = require('RefraxTools');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const mixinSubscribable = require('mixinSubscribable');
-const prototypeActionTemplate = {};
+const prototypeAction = {};
 
 
 const MixinStatus = {
@@ -70,24 +70,24 @@ function invokeAction(method, emitters, params) {
   return promise;
 }
 
-function createActionFromTemplate(template, method, options) {
+function createActionInstance(template, method, options) {
   var mutable = {}
     , errors = {};
 
-  function Action(params) {
+  function ActionInstance(params) {
     var promise
-      , self = new ActionInvoker(Action, options);
+      , self = new ActionInvoker(ActionInstance, options);
 
     // reset errors on invocation
     errors = {};
     params = RefraxTools.extend({}, mutable, getDefaultMutable(), params);
-    promise = invokeAction.call(self, method, [template, Action], params);
+    promise = invokeAction.call(self, method, [template, ActionInstance], params);
 
     promise.catch(function(response) {
       if (RefraxTools.isPlainObject(response.data)) {
         errors = RefraxTools.extend({}, response.data);
       }
-      Action.emit('change');
+      ActionInstance.emit('change');
     });
 
     return promise;
@@ -104,48 +104,48 @@ function createActionFromTemplate(template, method, options) {
       result = result.data || {};
     }
     else if (!RefraxTools.isPlainObject(result)) {
-      throw new TypeError('Action ' + template + ' failed to resolve default value');
+      throw new TypeError('ActionInstance ' + template + ' failed to resolve default value');
     }
 
     return result;
   }
 
-  mixinSubscribable(Action);
-  mixinStatus(Action);
+  mixinSubscribable(ActionInstance);
+  mixinStatus(ActionInstance);
 
   // @TODO these seem like a "mutable" mixin candidate that could also be used on MutableResource
 
-  Action.get = function(attribute) {
+  ActionInstance.get = function(attribute) {
     return mutable[attribute] || getDefaultMutable()[attribute];
   };
 
-  Action.set = function(attribute, value) {
+  ActionInstance.set = function(attribute, value) {
     mutable[attribute] = value;
   };
 
-  Action.setter = function(attribute) {
+  ActionInstance.setter = function(attribute) {
     return function(value) {
       mutable[attribute] = value;
     };
   };
 
-  Action.setterHandler = function(attribute) {
+  ActionInstance.setterHandler = function(attribute) {
     return function(event) {
       mutable[attribute] = event.target.value;
-      Action.emit('change');
+      ActionInstance.emit('change');
     };
   };
 
-  Action.unset = function() {
+  ActionInstance.unset = function() {
     mutable = {};
-    Action.emit('change');
+    ActionInstance.emit('change');
   };
 
-  Action.getErrors = function(attribute) {
+  ActionInstance.getErrors = function(attribute) {
     return errors[attribute];
   };
 
-  return Action;
+  return ActionInstance;
 }
 
 function createAction(method) {
@@ -154,28 +154,28 @@ function createAction(method) {
   }
 
   /**
-   * An ActionTemplate wraps the action method providing utility for either
-   * global invocation or localized invocation.
+   * An Action can either be globally invoked or instantiated and invoked on that
+   * particular instance.
    */
-  function ActionTemplate(params) {
-    if (this instanceof ActionTemplate) {
-      return createActionFromTemplate(ActionTemplate, method, params);
+  function Action(params) {
+    if (this instanceof Action) {
+      return createActionInstance(Action, method, params);
     }
     else {
-      var self = new ActionInvoker(ActionTemplate, {});
+      var self = new ActionInvoker(Action, {});
       params = RefraxTools.extend({}, params);
-      return invokeAction.call(self, method, [ActionTemplate], params);
+      return invokeAction.call(self, method, [Action], params);
     }
   }
   // templates all share the same prototype so they can be identified above with instanceof
-  RefraxTools.setPrototypeOf(ActionTemplate, prototypeActionTemplate);
+  RefraxTools.setPrototypeOf(Action, prototypeAction);
 
-  mixinSubscribable(ActionTemplate);
-  mixinStatus(ActionTemplate);
+  mixinSubscribable(Action);
+  mixinStatus(Action);
 
-  return ActionTemplate;
+  return Action;
 }
 
-createAction.prototype = prototypeActionTemplate;
+createAction.prototype = prototypeAction;
 
 export default createAction;

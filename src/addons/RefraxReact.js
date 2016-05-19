@@ -106,7 +106,7 @@ function refraxifyComponent(component) {
   };
 }
 
-function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
+function attachAccessor(component, accessor, options) {
   var resource;
 
   options = RefraxTools.extend({
@@ -125,7 +125,7 @@ function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
   return resource;
 }
 
-function attachActionTemplateToComponent(component, ActionTemplate, options = {}) {
+function attachAction(component, Action, options) {
   var action;
 
   options = RefraxTools.extend({}, options);
@@ -135,7 +135,7 @@ function attachActionTemplateToComponent(component, ActionTemplate, options = {}
     }
   }, options.resource);
 
-  action = new ActionTemplate(options);
+  action = new Action(options);
   component.__refrax.actions.push(action);
   component.__refrax.disposers.push(action.subscribe('change', function() {
     RefraxTools.nextTick(function() {
@@ -150,10 +150,10 @@ export function attach(component, target, options) {
   refraxifyComponent(component);
 
   if (target instanceof RefraxSchemaNodeAccessor) {
-    return attachSchemaNodeAccessorToCompontent(component, target, options);
+    return attachAccessor(component, target, options);
   }
   else if (target instanceof createAction) {
-    return attachActionTemplateToComponent(component, target, options);
+    return attachAction(component, target, options);
   }
 
   throw new TypeError('RefraxReact::attach failed to identify `' + typeof(target) +
