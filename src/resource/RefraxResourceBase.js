@@ -23,7 +23,6 @@ class RefraxResourceBase {
 
     for (i=0; i<args.length; i++) {
       arg = args[i];
-      console.info("RefraxResourceBase found arg: %o", arg);
       if (typeof(arg) === 'string') {
         stack.push(new RefraxPath(arg));
       }
@@ -53,7 +52,6 @@ class RefraxResourceBase {
       stack.push(params);
     }
 
-    console.info('_generateDescriptor from stack: %o', stack);
     return new RefraxResourceDescriptor(stack);
   }
 }
