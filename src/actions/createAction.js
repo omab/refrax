@@ -25,6 +25,51 @@ function mixinStatus(target) {
   return RefraxTools.extend(target, MixinStatus);
 }
 
+const MixinMutable = {
+  get: function(attribute) {
+    return this.mutable[attribute] ||
+      (this.getDefault && this.getDefault()[attribute]);
+  },
+  set: function(attribute, value) {
+    this.mutable[attribute] = value;
+  },
+  setter: function(attribute) {
+    var self = this;
+
+    return function(value) {
+      self.mutable[attribute] = value;
+    };
+  },
+  setterHandler: function(attribute) {
+    var self = this;
+
+    return function(event) {
+      self.mutable[attribute] = event.target.value;
+      self.emit('change');
+    };
+  },
+  unset: function() {
+    this.mutable = {};
+    this.emit('change');
+  },
+  getErrors: function(attribute) {
+    return this.errors[attribute];
+  }
+};
+
+function mixinMutable(target) {
+  Object.defineProperty(target, 'mutable', {
+    value: {},
+    writable: true
+  });
+  Object.defineProperty(target, 'errors', {
+    value: {},
+    writable: true
+  });
+
+  return RefraxTools.extend(target, MixinMutable);
+}
+
 class ActionInvoker {
   constructor(action, options) {
     Object.defineProperty(this, '_action', {value: action});
@@ -32,21 +77,24 @@ class ActionInvoker {
   }
 
   mutableFrom(accessor, ...args) {
-    // @TODO is it better to pre-dispose vs track disposable on our invoker and
-    // cleanup on action "finish"?
-    return RefraxMutableResource.from(accessor, this._options.resource, ...args)._dispose();
+    return RefraxMutableResource.from(accessor, this._options.resource, ...args);
   }
 }
 
-function invokeAction(method, emitters, params) {
-  var action = this._action
+function invokeAction(emitters, method, params, options) {
+  var action = emitters[0]
+    , invoker = new ActionInvoker(action, options)
     , promise, result, i;
+
+  // reset errors on invocation
+  action.errors = {};
+  params = RefraxTools.extend({}, action.mutable, action.getDefault(), params);
 
   for (i=0; i<emitters.length; i++) {
     emitters[i].emit('start');
   }
 
-  promise = result = method.call(this, params);
+  promise = result = method.call(invoker, params);
 
   if (!RefraxTools.isPromise(result)) {
     promise = new Promise(function(resolve, reject) {
@@ -67,33 +115,22 @@ function invokeAction(method, emitters, params) {
   }
   promise.then(finalize, finalize);
 
+  promise.catch(function(response) {
+    if (RefraxTools.isPlainObject(response.data)) {
+      action.errors = RefraxTools.extend({}, response.data);
+    }
+    action.emit('change');
+  });
+
   return promise;
 }
 
 function createActionInstance(template, method, options) {
-  var mutable = {}
-    , errors = {};
-
   function ActionInstance(params) {
-    var promise
-      , self = new ActionInvoker(ActionInstance, options);
-
-    // reset errors on invocation
-    errors = {};
-    params = RefraxTools.extend({}, mutable, getDefaultMutable(), params);
-    promise = invokeAction.call(self, method, [template, ActionInstance], params);
-
-    promise.catch(function(response) {
-      if (RefraxTools.isPlainObject(response.data)) {
-        errors = RefraxTools.extend({}, response.data);
-      }
-      ActionInstance.emit('change');
-    });
-
-    return promise;
+    return invokeAction([ActionInstance, template], method, params, options);
   }
 
-  function getDefaultMutable() {
+  ActionInstance.getDefault = function() {
     var result = options.default || {};
 
     if (RefraxTools.isFunction(result)) {
@@ -108,42 +145,11 @@ function createActionInstance(template, method, options) {
     }
 
     return result;
-  }
+  };
 
   mixinSubscribable(ActionInstance);
   mixinStatus(ActionInstance);
-
-  // @TODO these seem like a "mutable" mixin candidate that could also be used on MutableResource
-
-  ActionInstance.get = function(attribute) {
-    return mutable[attribute] || getDefaultMutable()[attribute];
-  };
-
-  ActionInstance.set = function(attribute, value) {
-    mutable[attribute] = value;
-  };
-
-  ActionInstance.setter = function(attribute) {
-    return function(value) {
-      mutable[attribute] = value;
-    };
-  };
-
-  ActionInstance.setterHandler = function(attribute) {
-    return function(event) {
-      mutable[attribute] = event.target.value;
-      ActionInstance.emit('change');
-    };
-  };
-
-  ActionInstance.unset = function() {
-    mutable = {};
-    ActionInstance.emit('change');
-  };
-
-  ActionInstance.getErrors = function(attribute) {
-    return errors[attribute];
-  };
+  mixinMutable(ActionInstance);
 
   return ActionInstance;
 }
@@ -162,9 +168,7 @@ function createAction(method) {
       return createActionInstance(Action, method, params);
     }
     else {
-      var self = new ActionInvoker(Action, {});
-      params = RefraxTools.extend({}, params);
-      return invokeAction.call(self, method, [Action], params);
+      return invokeAction([Action], method, params, {});
     }
   }
   // templates all share the same prototype so they can be identified above with instanceof
@@ -172,6 +176,7 @@ function createAction(method) {
 
   mixinSubscribable(Action);
   mixinStatus(Action);
+  mixinMutable(Action);
 
   return Action;
 }
