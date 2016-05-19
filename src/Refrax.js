@@ -14,18 +14,21 @@ const createAction = require('createAction');
 const createCollection = require('createCollection');
 const createResource = require('createResource');
 const createNamespace = require('createNamespace');
+const processResponse = require('processResponse');
 const RefraxStore = require('RefraxStore');
 
 
 export default {
   Config: RefraxConfig,
   Store: RefraxStore.get,
+  resetStore: RefraxStore.reset,
   Schema: RefraxSchema,
   Tools: RefraxTools,
   createAction,
   createCollection,
   createResource,
   createNamespace,
+  processResponse,
   Resource: RefraxResource,
   MutableResource: RefraxMutableResource
 };

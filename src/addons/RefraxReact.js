@@ -125,14 +125,15 @@ function attachSchemaNodeAccessorToCompontent(component, accessor, options) {
   return resource;
 }
 
-function attachActionTemplateToComponent(component, ActionTemplate, options) {
+function attachActionTemplateToComponent(component, ActionTemplate, options = {}) {
   var action;
 
-  options = RefraxTools.extend({
+  options = RefraxTools.extend({}, options);
+  options.resource = RefraxTools.extend({}, {
     paramsGenerator: function() {
       return SHIMS.getComponentParams.call(component);
     }
-  }, options);
+  }, options.resource);
 
   action = new ActionTemplate(options);
   component.__refrax.actions.push(action);

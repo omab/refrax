@@ -7,6 +7,7 @@
  */
 const Promise = require('es6-promise').Promise;
 const RefraxTools = require('RefraxTools');
+const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const mixinSubscribable = require('mixinSubscribable');
 const prototypeActionTemplate = {};
@@ -31,7 +32,9 @@ class ActionInvoker {
   }
 
   mutableFrom(accessor, ...args) {
-    return RefraxMutableResource.from(accessor, this._options, ...args);
+    // @TODO is it better to pre-dispose vs track disposable on our invoker and
+    // cleanup on action "finish"?
+    return RefraxMutableResource.from(accessor, this._options.resource, ...args)._dispose();
   }
 }
 
@@ -77,7 +80,7 @@ function createActionFromTemplate(template, method, options) {
 
     // reset errors on invocation
     errors = {};
-    params = RefraxTools.extend({}, mutable, params);
+    params = RefraxTools.extend({}, mutable, getDefaultMutable(), params);
     promise = invokeAction.call(self, method, [template, Action], params);
 
     promise.catch(function(response) {
@@ -90,11 +93,30 @@ function createActionFromTemplate(template, method, options) {
     return promise;
   }
 
+  function getDefaultMutable() {
+    var result = options.default || {};
+
+    if (RefraxTools.isFunction(result)) {
+      result = result();
+    }
+
+    if (result instanceof RefraxResource) {
+      result = result.data || {};
+    }
+    else if (!RefraxTools.isPlainObject(result)) {
+      throw new TypeError('Action ' + template + ' failed to resolve default value');
+    }
+
+    return result;
+  }
+
   mixinSubscribable(Action);
   mixinStatus(Action);
 
+  // @TODO these seem like a "mutable" mixin candidate that could also be used on MutableResource
+
   Action.get = function(attribute) {
-    return mutable[attribute];
+    return mutable[attribute] || getDefaultMutable()[attribute];
   };
 
   Action.set = function(attribute, value) {

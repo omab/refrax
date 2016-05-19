@@ -43,7 +43,6 @@ class RefraxResource extends RefraxResourceBase {
     if (descriptor.store) {
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function() {
-          console.info('RefraxResource::subscription trigger(%o)', descriptor.event);
           self._fetch();
           self.emit('change', self);
         })
@@ -58,10 +57,11 @@ class RefraxResource extends RefraxResourceBase {
       disposer();
     });
     this._disposers.length = 0;
+
+    return this;
   }
 
   _fetch() {
-    console.groupCollapsed('RefraxResource::fetch');
     var descriptor
       , result;
 
@@ -79,8 +79,6 @@ class RefraxResource extends RefraxResourceBase {
       }
     }
 
-    console.info('  * result %o', result);
-    console.groupEnd('RefraxResource::fetch');
     MediaryFetches.set(this, result);
   }
 
