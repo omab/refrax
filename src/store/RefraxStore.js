@@ -11,6 +11,35 @@ const mixinSubscribable = require('mixinSubscribable');
 const StoreMap = {};
 
 
+function validateDefinition(definition) {
+  if (typeof(definition) === 'string') {
+    definition = {
+      type: definition
+    };
+  }
+
+  if (!RefraxTools.isPlainObject(definition)) {
+    throw new TypeError(
+      'RefraxStore - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
+      'A valid definition type is a regular object.'
+    );
+  }
+
+  if (!definition.type || typeof(definition.type) !== 'string') {
+    throw new TypeError(
+      'RefraxStore - `type` can only be of type String but found type ' + typeof(definition.type) + '`.'
+    );
+  }
+
+  if (StoreMap[definition.type]) {
+    throw new TypeError(
+      'RefraxStore - cannot create new store for type `' + definition.type + '` as it already has been defined.'
+    );
+  }
+
+  return definition;
+}
+
 /**
  * A RefraxStore is a wrapper around the RefraxFragmentCache object that offers
  * a Subscribable interface to resource mutations.
@@ -47,6 +76,8 @@ class RefraxStore {
   }
 
   constructor(definition) {
+    definition = validateDefinition(definition);
+
     mixinSubscribable(this);
 
     Object.defineProperty(this, 'definition', {

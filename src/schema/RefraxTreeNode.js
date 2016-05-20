@@ -20,7 +20,7 @@ function validateDefinition(definition) {
   if (!RefraxTools.isPlainObject(definition)) {
     throw new TypeError(
       'RefraxTreeNode - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
-      'A valid definition type is either a Dataset, Store or regular object.'
+      'A valid definition type is a regular object.'
     );
   }
 

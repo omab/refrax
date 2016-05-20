@@ -20,15 +20,14 @@ const RefraxStore = require('RefraxStore');
 
 export default {
   Config: RefraxConfig,
-  Store: RefraxStore.get,
-  resetStore: RefraxStore.reset,
+  MutableResource: RefraxMutableResource,
+  Resource: RefraxResource,
   Schema: RefraxSchema,
+  Store: RefraxStore,
   Tools: RefraxTools,
   createAction,
   createCollection,
-  createResource,
   createNamespace,
-  processResponse,
-  Resource: RefraxResource,
-  MutableResource: RefraxMutableResource
+  createResource,
+  processResponse
 };
