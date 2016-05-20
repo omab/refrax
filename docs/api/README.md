@@ -7,21 +7,25 @@ This section documents the complete Refrax API.
 * [Config](Config.md)
 * [MutableResource](MutableResource.md)
 * [Resource](Resource.md)
-* [Schema (SchemaNodeAccessor)](Schema.md)
+* [Schema (SchemaNodeAccessor)](SchemaNodeAccessor.md)
 * [Store](Store.md)
 * [Tools](Tools.md)
-* [createAction()](createAction.md)
-* [createCollection()](createCollection.md)
-* [createResource()](createResource.md)
-* [createNamespace()](createNamespace.md)
+* [createAction(method)](Action.md#helper-createAction)
+* [createCollection(path, store[, options])](SchemaNodeAccessor.md#helper-createCollection)
+* [createResource(path, store[, options])](SchemaNodeAccessor.md#helper-createResource)
+* [createNamespace(path[, options])](SchemaNodeAccessor.md#helper-createNamespace)
 * [processResponse()](processResponse.md)
+
+### Addons
+
+* [React](React.md)
 
 ### SchemaNodeAccessor API
 
-* [Schema](Schema.md)
-  * [inspect](Schema.md#inspect)
-  * [addLeaf](Schema.md#addLeaf)
-  * [addDetachedLeaf](Schema.md#addDetachedLeaf)
+* [SchemaNodeAccessor](SchemaNodeAccessor.md)
+  * [inspect()](SchemaNodeAccessor.md#inspect)
+  * [addLeaf([identifier, ]leaf)](SchemaNodeAccessor.md#addLeaf)
+  * [addDetachedLeaf()](SchemaNodeAccessor.md#addDetachedLeaf)
 
 ### Action API
 

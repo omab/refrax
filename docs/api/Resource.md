@@ -4,21 +4,21 @@ A resource is a [`Subscribable`](Subscribable.md) that represents a collection o
 
 #### Static Methods
 
-- [`from(accessor[, arg1][, arg2][, ...])`](#resource-from)
+- [`from(accessor[, arg1][, arg2][, ...])`](#static-from)
 
 #### Instance Methods
 
 - [`subscribable.subscribe(event, callback[, context])`](Subscribable.md#subscribe)
 - [`subscribable.emit(event[, arg1][, arg2][, ...])`](Subscribable.md#emit)
+- [`hasData()`](#hasData)
 - [`invalidate([options])`](#invalidate)
 - [`isLoading()`](#isLoading)
-- [`isUpdating()`](#isUpdating)
-- [`hasData()`](#hasData)
 - [`isStale()`](#isStale)
+
 
 ## Static Methods
 
-### <a id='resource-from'></a>[`from(accessor[, arg1][, arg2][, ...])`](#resource-from)
+### <a id='static-from'></a>[`from(accessor[, arg1][, arg2][, ...])`](#static-from)
 
 Alias for `new Resource(accessor[, arg1][, arg2][, ...])`.
 
@@ -34,7 +34,17 @@ Alias for `new Resource(accessor[, arg1][, arg2][, ...])`.
 
 ## Instance Methods
 
-### <a id='invalidate'></a>[`invalidate()`](#invalidate)
+### <a id='hasData'></a>[`hasData()`](#hasData)
+
+Does this resource contain any data (stale or not).
+
+##### Returns
+
+(*Boolean*): hasData status.
+
+---
+
+### <a id='invalidate'></a>[`invalidate([options])`](#invalidate)
 
 Invoke the [`store.invalidate([options])`](Store.md#invalidate) linked to this resource and mark all cache as stale.
 
@@ -42,22 +52,18 @@ Invoke the [`store.invalidate([options])`](Store.md#invalidate) linked to this r
 
 ### <a id='isLoading'></a>[`isLoading()`](#isLoading)
 
-TODO
+Is this resource actively processing a request.
 
----
+##### Returns
 
-### <a id='isUpdating'></a>[`isUpdating()`](#isUpdating)
-
-TODO
-
----
-
-### <a id='hasData'></a>[`hasData()`](#hasData)
-
-TODO
+(*Boolean*): isLoading status.
 
 ---
 
 ### <a id='isStale'></a>[`isStale()`](#isStale)
 
-TODO
+IS the data contained in this resource considered statle.
+
+##### Returns
+
+(*Boolean*): isStale status.

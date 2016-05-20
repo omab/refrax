@@ -12,7 +12,7 @@ const RefraxMutableResource = require('RefraxMutableResource');
 const createAction = require('createAction');
 
 
-export const SHIMS = {
+export const Shims = {
   getComponentParams: function() {
     return RefraxTools.extend({}, this.props);
   }
@@ -36,11 +36,6 @@ const MixinResourceStatus = {
       return resource.isLoading();
     });
   },
-  isUpdating: function(...targets) {
-    return detect.call(this, this.__refrax.resources, targets, function(resource) {
-      return resource.isUpdating();
-    });
-  },
   isPending: function(...targets) {
     return detect.call(this, this.__refrax.actions, targets, function(action) {
       return action.isPending();
@@ -62,11 +57,11 @@ const MixinBase = {
   attach: function(target, options) {
     return attach(this, target, options);
   },
-  from: function(accessor, ...args) {
+  mutableFrom: function(accessor, ...args) {
     var self = this
       , options = {
         paramsGenerator: function() {
-          return SHIMS.getComponentParams.call(self);
+          return Shims.getComponentParams.call(self);
         }
       };
 
@@ -116,7 +111,7 @@ function attachAccessor(component, accessor, options) {
 
   options = RefraxTools.extend({
     paramsGenerator: function() {
-      return SHIMS.getComponentParams.call(component);
+      return Shims.getComponentParams.call(component);
     }
   }, options);
 
@@ -136,7 +131,7 @@ function attachAction(component, Action, options) {
   options = RefraxTools.extend({}, options);
   options.resource = RefraxTools.extend({}, {
     paramsGenerator: function() {
-      return SHIMS.getComponentParams.call(component);
+      return Shims.getComponentParams.call(component);
     }
   }, options.resource);
 
@@ -183,10 +178,10 @@ export function extend(component) {
   return component;
 }
 
-export var mixin = {
+export const Mixin = {
   componentWillMount: function() {
     refraxifyComponent(this);
   }
 };
 
-RefraxTools.extend(mixin, MixinBase);
+RefraxTools.extend(Mixin, MixinBase);

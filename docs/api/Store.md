@@ -1,11 +1,11 @@
 # Store
 
-A store is a [`Subscribable`](Subscribable.md) that holds a cached state of data and all its different representations for a unique `type`.
+A Store is a [`Subscribable`](Subscribable.md) that holds a cached state of data and all its different representations for a unique `type`.
 
 #### Static Methods
 
-- [`get([type])`](#store-get)
-- [`reset()`](#store-reset)
+- [`get([type])`](#static-get)
+- [`reset()`](#static-reset)
 
 #### Instance Methods
 
@@ -17,13 +17,13 @@ A store is a [`Subscribable`](Subscribable.md) that holds a cached state of data
 
 ## Static Methods
 
-### <a id='store-get'></a>[`get([type])`](#store-get)
+### <a id='static-get'></a>[`get([type])`](#static-get)
 
 Find or create a `Store` instance for a given type and return it.
 
 #### Arguments
 
-1. `[type]` (*String*): An optional name identifying the type name this store will contain. **NOTE:** type names are unique and two or more stores cannot share the same type name.
+1. `[type]` (*String*): An optional name identifying the type name this Store will contain. **NOTE:** type names are unique and two or more Stores cannot share the same type name.
 
 ##### Returns
 
@@ -31,7 +31,7 @@ Find or create a `Store` instance for a given type and return it.
 
 ---
 
-### <a id='store-reset'></a>[`reset()`](#store-reset)
+### <a id='static-reset'></a>[`reset()`](#static-reset)
 
 Reset cache for all defined Stores.
 
@@ -47,7 +47,7 @@ Mark all cache as stale for this Store.
 1. `[options]` (*Object*): An optional options object.
   - `noQueries` (*Boolean*): When (`true`) will not mark queries as stale.
   - `noFragments` (*Boolean*): When (`true`) will not mark fragments as stale.
-  - `notify` (*Boolean*): When (`true`) will cause the store to emit a change event.
+  - `notify` (*Boolean*): When (`true`) will cause the Store to emit a change event.
 
 ---
 

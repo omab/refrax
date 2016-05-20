@@ -93,21 +93,15 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   isLoading() {
-    return this.timestamp === TIMESTAMP_LOADING &&
-           this.status === STATUS_STALE;
-  }
-
-  isUpdating() {
-    return this.timestamp === TIMESTAMP_LOADING &&
-           this.status !== STATUS_STALE;
-  }
-
-  hasData() {
-    return RefraxTools.keysFor(this.data).length != 0;
+    return this.timestamp === TIMESTAMP_LOADING;
   }
 
   isStale() {
-    return this.status !== STATUS_STALE;
+    return this.status === STATUS_STALE;
+  }
+
+  hasData() {
+    return this.data !== null;
   }
 }
 
