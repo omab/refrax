@@ -7,9 +7,19 @@ Refrax is a JavaScript framework for building api-based data-driven applications
 * **Partials:** Data can be partially represented across various resources allowing views to efficiently fetch a small subset of data that can be re-used when a more detailed subset of data is needed.
 * **Mutations:** Refrax lets you mutate data on the client and propagate to a server using actions and mutable resources directly, and offers automatic data consistency, optimistic updates, and error handling.
 
-[Learn how to use Refrax in your own project.](./docs/QuickStart-GettingStarted.md)
+### Installation
 
-## Example
+Using [npm](https://www.npmjs.com/):
+
+    $ npm install --save refrax
+
+### Documentation
+
+* [Basics](/docs/basics/README.md)
+* [API Reference](/docs/api/README.md)
+* [Change Log](/CHANGELOG.md)
+
+### Example
 
 The repository comes with an implementation of [TodoMVC](http://todomvc.com/). To try it out:
 
@@ -21,10 +31,6 @@ npm start
 
 Then, just point your browser at `http://localhost:3000`.
 
-## Contribute
-
-We actively welcome pull requests, learn how to [contribute](./CONTRIBUTING.md).
-
-## License
+### License
 
 Refrax is [BSD licensed](./LICENSE).
