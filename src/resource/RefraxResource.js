@@ -11,23 +11,27 @@ const RefraxResourceBase = require('RefraxResourceBase');
 const invokeDescriptor = require('invokeDescriptor');
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
-const MediaryFetches = new WeakMap();
+const ResourceMap = new WeakMap();
 
 
 /**
  * RefraxResource is a public facing interface class to querying a Schema Node.
  */
 class RefraxResource extends RefraxResourceBase {
+  static from(accessor, ...args) {
+    return new RefraxResource(accessor, ...args);
+  }
+
   get timestamp() {
-    return MediaryFetches.get(this).timestamp;
+    return ResourceMap.get(this).timestamp;
   }
 
   get status() {
-    return MediaryFetches.get(this).status;
+    return ResourceMap.get(this).status;
   }
 
   get data() {
-    return MediaryFetches.get(this).data;
+    return ResourceMap.get(this).data;
   }
 
   constructor(accessor, ...args) {
@@ -43,6 +47,7 @@ class RefraxResource extends RefraxResourceBase {
     if (descriptor.store) {
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function() {
+          console.info('RefraxResource::subscription trigger(%o)', descriptor.event);
           self._fetch();
           self.emit('change', self);
         })
@@ -53,6 +58,8 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _dispose() {
+    ResourceMap.delete(this);
+
     RefraxTools.each(this._disposers, function(disposer) {
       disposer();
     });
@@ -62,6 +69,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _fetch() {
+    console.groupCollapsed('RefraxResource::fetch');
     var descriptor
       , result;
 
@@ -79,7 +87,7 @@ class RefraxResource extends RefraxResourceBase {
       }
     }
 
-    MediaryFetches.set(this, result);
+    ResourceMap.set(this, result);
   }
 
   invalidate(opts) {
