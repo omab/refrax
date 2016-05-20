@@ -207,13 +207,15 @@ class RefraxFragmentCache {
    * NOTE: We opt to set value to undefined vs deleting the key itself due to
    * performance reasons (testing shows delete ~98% slower).
    */
-  invalidate(opts) {
-    RefraxTools.each(this.queries, function(query) {
-      query.status = STATUS_STALE;
-      query.timestamp = TIMESTAMP_STALE;
-    });
+  invalidate(options) {
+    if (options.noQueries !== true) {
+      RefraxTools.each(this.queries, function(query) {
+        query.status = STATUS_STALE;
+        query.timestamp = TIMESTAMP_STALE;
+      });
+    }
 
-    if (!opts.collectionsOnly) {
+    if (options.noFragments !== true) {
       RefraxTools.each(this.fragments, function(fragment) {
         RefraxTools.each(fragment, function(resource) {
           resource.status = STATUS_STALE;

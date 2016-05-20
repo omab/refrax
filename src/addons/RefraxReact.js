@@ -36,6 +36,11 @@ const MixinResourceStatus = {
       return resource.isLoading();
     });
   },
+  isUpdating: function(...targets) {
+    return detect.call(this, this.__refrax.resources, targets, function(resource) {
+      return resource.isUpdating();
+    });
+  },
   isPending: function(...targets) {
     return detect.call(this, this.__refrax.actions, targets, function(action) {
       return action.isPending();

@@ -97,12 +97,10 @@ class RefraxStore {
     this.cache = new RefraxFragmentCache();
   }
 
-  invalidate(opts) {
-    opts = opts || {};
+  invalidate(options = {}) {
+    this.cache.invalidate(options);
 
-    this.cache.invalidate(opts);
-
-    if (opts.notify) {
+    if (options.notify) {
       this.emit('change');
     }
   }
