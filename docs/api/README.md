@@ -11,9 +11,9 @@ This section documents the complete Refrax API.
 * [Store](Store.md)
 * [Tools](Tools.md)
 * [createAction(method)](Action.md#helper-createAction)
-* [createCollection(path, store[, options])](SchemaNodeAccessor.md#helper-createCollection)
-* [createResource(path, store[, options])](SchemaNodeAccessor.md#helper-createResource)
-* [createNamespace(path[, options])](SchemaNodeAccessor.md#helper-createNamespace)
+* [createSchemaCollection(path[, store][, options])](SchemaNodeAccessor.md#helper-createSchemaCollection)
+* [createSchemaResource(path[, store][, options])](SchemaNodeAccessor.md#helper-createSchemaResource)
+* [createSchemaNamespace(path[, options])](SchemaNodeAccessor.md#helper-createSchemaNamespace)
 * [processResponse()](processResponse.md)
 
 ### Addons

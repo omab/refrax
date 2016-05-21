@@ -10,29 +10,24 @@ const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaTools = require('RefraxSchemaTools');
-const RefraxConstants = require('RefraxConstants');
-const COERCE_ITEM = RefraxConstants.coerce.item;
 
 
-function createResource(path, store, options) {
+function createSchemaNamespace(path, options) {
   var treeNode, accessorNode, identifier;
 
-  path = RefraxSchemaTools.validatePath('createResource', path);
-
+  path = RefraxSchemaTools.validatePath('createSchemaNamespace', path);
   options = options || {};
   identifier = RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
-    uri: path,
-    coerce: COERCE_ITEM
-  }, options));
+    uri: path
+  }, options.namespace));
 
   accessorNode = new RefraxSchemaNodeAccessor(
-    new RefraxSchemaNode([store, treeNode], identifier)
+    new RefraxSchemaNode(treeNode, identifier)
   );
 
   return accessorNode;
 }
 
-export default createResource;
+export default createSchemaNamespace;

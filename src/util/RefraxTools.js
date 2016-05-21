@@ -209,7 +209,9 @@ export function isPromise(obj) {
 }
 
 export function cleanIdentifier(identifier) {
-  return identifier.replace('-', '_')
+  return identifier.split('/')
+                   .pop()
+                   .replace('-', '_')
                    .replace(/[^\w]+/g, '');
 }
 

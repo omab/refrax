@@ -16,17 +16,21 @@ const COERCE_COLLECTION = RefraxConstants.coerce.collection;
 const COERCE_ITEM = RefraxConstants.coerce.item;
 
 
-function createCollection(path, store, options) {
+function createSchemaCollection(path, store, options) {
   var treeNodeCollection, accessorNodeCollection
     , treeNodeMember
     , memberIdentifier, memberId
     , identifier;
 
-  path = RefraxSchemaTools.validatePath('createCollection', path);
+  if (RefraxTools.isPlainObject(store)) {
+    options = store;
+    store = null;
+  }
 
+  path = RefraxSchemaTools.validatePath('createSchemaCollection', path);
   options = options || {};
-  identifier = RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
+  identifier = options.identifier || RefraxTools.cleanIdentifier(path);
+  store = RefraxSchemaTools.defaultStore('createSchemaCollection', store, identifier);
 
   // Collection Node
 
@@ -62,4 +66,4 @@ function createCollection(path, store, options) {
   return accessorNodeCollection;
 }
 
-export default createCollection;
+export default createSchemaCollection;
