@@ -150,9 +150,9 @@ gulp.task('modules-test', function() {
   return gulp
     .src(paths.srcTest)
     .pipe(sourcemaps.init())
-      .pipe(babel(babelOpts.on('error', function(error) {
+      .pipe(babel(babelOpts).on('error', function(error) {
         gulpUtil.log(gulpUtil.colors.red('Babel Error: '), error.message);
-      })))
+      }))
       .pipe(flatten())
       // NOTE: this is somewhat of a hack so mocha will load source maps
       .pipe(header("require('source-map-support').install();\n"))
@@ -189,10 +189,7 @@ gulp.task('dist:min', ['modules'], function() {
 
 gulp.task('testMocha', ['modules-test'], function() {
   return gulp.src(['*test/**/*.spec.js'], {read: false})
-		.pipe(mocha()
-      .on('error', function(error) {
-        this.emit('end');
-      }));
+		.pipe(mocha());
 });
 
 gulp.task('watch', function() {
