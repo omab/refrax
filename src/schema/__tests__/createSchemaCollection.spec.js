@@ -6,42 +6,38 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const testHelper = require('testHelper');
+const TestHelper = require('TestHelper');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxStore = require('RefraxStore');
-const createCollection = require('createCollection');
+const createSchemaCollection = require('createSchemaCollection');
 const expect = chai.expect;
 
 
 /* eslint-disable no-new */
-describe('createCollection', function() {
-  afterEach(testHelper.deleteStores);
+describe('createSchemaCollection', function() {
+  afterEach(TestHelper.deleteStores);
 
   describe('invocation', function() {
     it('should throw an error with no arguments passed', function() {
       expect(function() {
-        createCollection();
-      }).to.throw(Error, 'A valid literal must be passed');
+        createSchemaCollection();
+      }).to.throw(Error, 'A valid path must be passed');
     });
 
     it('should throw an error with invalid arguments passed', function() {
       expect(function() {
-        createCollection(123);
-      }).to.throw(Error, 'A valid literal must be passed');
+        createSchemaCollection(123);
+      }).to.throw(Error, 'A valid path must be passed');
 
       expect(function() {
-        createCollection('users');
-      }).to.throw(Error, 'A valid store reference of either');
-
-      expect(function() {
-        createCollection('users', 123);
+        createSchemaCollection('users', 123);
       }).to.throw(Error, 'A valid store reference of either');
     });
 
-    it('should return the proper result when passed valid arguments', function() {
-      var collectionUsers = createCollection('users', 'user');
+    it('should use a default store based off our path in singular form', function() {
+      var collectionUsers = createSchemaCollection('users');
 
       expect(collectionUsers).to.be.an.instanceof(RefraxSchemaNodeAccessor);
       expect(collectionUsers).to.have.property('__node')
@@ -49,7 +45,21 @@ describe('createCollection', function() {
         .to.have.property('subject')
           .that.is.an.instanceof(Array);
 
-      expect(collectionUsers.__node).to.have.property('literal', 'users');
+      expect(collectionUsers.__node.subject).with.deep.property('[0]')
+        .that.is.an.instanceof(RefraxStore)
+        .to.have.deep.property('definition.type', 'user');
+    });
+
+    it('should return the proper result when passed valid arguments', function() {
+      var collectionUsers = createSchemaCollection('users', 'user');
+
+      expect(collectionUsers).to.be.an.instanceof(RefraxSchemaNodeAccessor);
+      expect(collectionUsers).to.have.property('__node')
+        .that.is.an.instanceof(RefraxSchemaNode)
+        .to.have.property('subject')
+          .that.is.an.instanceof(Array);
+
+      expect(collectionUsers.__node).to.have.property('identifier', 'users');
       expect(collectionUsers.__node.subject).with.deep.property('[0]')
         .that.is.an.instanceof(RefraxStore);
       expect(collectionUsers.__node.subject).with.deep.property('[1]')
@@ -59,7 +69,7 @@ describe('createCollection', function() {
         .that.is.an.instanceof(RefraxSchemaNodeAccessor)
         .to.have.property('__node')
           .that.is.instanceof(RefraxSchemaNode)
-          .to.have.property('literal', 'user');
+          .to.have.property('identifier', 'user');
     });
   });
 });

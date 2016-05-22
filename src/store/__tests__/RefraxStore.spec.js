@@ -7,6 +7,7 @@
  */
 const chai = require('chai');
 const sinon = require('sinon');
+const TestHelper = require('TestHelper');
 const RefraxConstants = require('RefraxConstants');
 const RefraxStore = require('RefraxStore');
 const expect = chai.expect;
@@ -23,15 +24,17 @@ const dataSegmentId_2 = {
 };
 
 describe('RefraxStore', function() {
+  afterEach(TestHelper.deleteStores);
+
   describe('instance methods', function() {
     describe('reset', function() {
       it('should properly reset the fragment map by assigning a new instance', function() {
-        var store = new RefraxStore()
+        var store = RefraxStore.get()
           , cache = store.cache;
 
-        store.updateResource({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
+        store.updateResource(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
         store.reset();
 
         expect(store.cache).to.not.equal(cache);
@@ -41,11 +44,11 @@ describe('RefraxStore', function() {
 
     describe('invalidate', function() {
       it('should properly mark data as stale', function() {
-        var store = new RefraxStore();
+        var store = RefraxStore.get();
 
-        store.updateResource({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
+        store.updateResource(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
 
         expect(store.fetchResource({id: 1}).status).to.not.equal(RefraxConstants.status.STALE);
         expect(store.fetchResource({id: 2}).status).to.not.equal(RefraxConstants.status.STALE);
@@ -61,13 +64,13 @@ describe('RefraxStore', function() {
       });
 
       it('should not trigger when not specified to', function() {
-        var store = new RefraxStore()
+        var store = RefraxStore.get()
           , callback = sinon.spy()
           , dispose;
 
-        store.updateResource({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
+        store.updateResource(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
 
         dispose = store.subscribe('change', callback);
         store.invalidate();
@@ -77,13 +80,13 @@ describe('RefraxStore', function() {
       });
 
       it('should trigger when specified to', function() {
-        var store = new RefraxStore()
+        var store = RefraxStore.get()
           , callback = sinon.spy()
           , dispose;
 
-        store.updateResource({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
+        store.updateResource(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
 
         dispose = store.subscribe('change', callback);
         store.invalidate({notify: true});

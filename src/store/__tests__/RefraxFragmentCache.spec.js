@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
+const TestHelper = require('TestHelper');
 const Constants = require('RefraxConstants');
 const RefraxFragmentCache = require('RefraxFragmentCache');
 const assert = chai.assert;
@@ -41,7 +42,7 @@ function assertQueryData(obj, key, data) {
 
 describe('RefraxFragmentCache', function() {
   describe('the update method', function() {
-    var fragmentMap
+    var fragmentCache
       , dataSegmentId_1 = {
         id: 1,
         title: 'Foo Project'
@@ -60,380 +61,378 @@ describe('RefraxFragmentCache', function() {
       };
 
     beforeEach(function() {
-      fragmentMap = new RefraxFragmentCache();
+      fragmentCache = new RefraxFragmentCache();
     });
 
     describe('when passed a collection descriptor', function() {
       it('should properly store the data for a specified partial', function() {
-        fragmentMap.update({
-          path: '/projects',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], 'foobar');
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], 'foobar');
       });
 
       it('should properly store the data for a default partial', function() {
-        fragmentMap.update({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
-          path: '/projects',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects',
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
 
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments.foobar, 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments.foobar, '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 3], 'foobar');
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '3'], 'foobar');
       });
     });
 
     describe('when passed an id descriptor', function() {
       it('should properly store the data with a specified partial', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
 
       it('should properly store the data with a default partial', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
+          basePath: '/projects/1'
+        }), dataSegmentId_1, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_2);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
     });
 
     describe('when passed an non-id descriptor', function() {
       it('should properly store the data with a specified partial', function() {
-        fragmentMap.update({
-          path: '/projects/1',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 1);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '1');
       });
 
       it('should properly store the data with a default partial', function() {
-        fragmentMap.update({
-          path: '/projects/1'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1'
+        }), dataSegmentId_1, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 1);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '1');
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
-          path: '/projects/1',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/1',
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 2);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '2');
       });
     });
 
     describe('when passed multiple collection descriptors', function() {
       it('should properly store the data for a specified partial', function() {
-        fragmentMap.update({
-          path: '/projects',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/active',
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/active',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments.foobar, 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments.foobar, '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], 'foobar');
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], 'foobar');
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], 'foobar');
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], 'foobar');
       });
 
       it('should properly store the data for a default partial', function() {
-        fragmentMap.update({
-          path: '/projects'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/active'
-        }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects'
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/active'
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
-          path: '/projects',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/active',
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/active',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
-
-        fragmentMap.update({
-          path: '/projects',
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_4], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_4], Constants.status.SUCCESS);
 
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3', '4']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments.foobar, '3', dataSegmentId_3);
+        assertFragmentData(fragmentCache.fragments.foobar, '4', dataSegmentId_4);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2', '3', '4']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments.foobar, 3, dataSegmentId_3);
-        assertFragmentData(fragmentMap.fragments.foobar, 4, dataSegmentId_4);
-
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 4], 'foobar');
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], 'foobar');
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '4'], 'foobar');
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], 'foobar');
       });
     });
 
     describe('when passed multiple id descriptors', function() {
       it('should properly store the data with a specified partial', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
-          path: '/projects/2',
+          basePath: '/projects/2',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
 
       it('should properly store the data with a default partial', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
+          basePath: '/projects/1'
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
-          path: '/projects/2'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+          basePath: '/projects/2'
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
-          path: '/projects/2',
+          basePath: '/projects/2',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
-        fragmentMap.update({
+        }), dataSegmentId_2, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
-          path: '/projects/1',
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_3);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_3);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
 
-        assert.deepEqual(fragmentMap.queries, {});
+        assert.deepEqual(fragmentCache.queries, {});
       });
     });
 
     describe('when passed multiple non-id descriptors', function() {
       it('should properly store the data with a specified partial', function() {
-        fragmentMap.update({
-          path: '/projects/1',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/2',
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/2',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1', '/projects/2']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 1);
-        assertQueryData(fragmentMap.queries, '/projects/2', 2);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1', '/projects/2']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '1');
+        assertQueryData(fragmentCache.queries, '/projects/2', '2');
       });
 
       it('should properly store the data with a default partial', function() {
-        fragmentMap.update({
-          path: '/projects/1'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/2'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1'
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/2'
+        }), dataSegmentId_2, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1', '/projects/2']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 1);
-        assertQueryData(fragmentMap.queries, '/projects/2', 2);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1', '/projects/2']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '1');
+        assertQueryData(fragmentCache.queries, '/projects/2', '2');
       });
 
       it('should properly update when updated multiple times', function() {
-        fragmentMap.update({
-          path: '/projects/1',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_1, Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/2',
+        }), dataSegmentId_1, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/2',
           partial: 'foobar'
-        }, dataSegmentId_2, Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects/1',
+        }), dataSegmentId_2, Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects/1',
           partial: 'foobar'
-        }, dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments.foobar, 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments.foobar, '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects/1', '/projects/2']);
-        assertQueryData(fragmentMap.queries, '/projects/1', 3);
-        assertQueryData(fragmentMap.queries, '/projects/2', 2);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects/1', '/projects/2']);
+        assertQueryData(fragmentCache.queries, '/projects/1', '3');
+        assertQueryData(fragmentCache.queries, '/projects/2', '2');
       });
 
       it('should properly update a collection when updated multiple times', function() {
-        fragmentMap.update({
-          path: '/projects',
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-        fragmentMap.update({
-          path: '/projects',
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        fragmentCache.update(TestHelper.descriptorFrom({
+          basePath: '/projects',
           partial: 'foobar'
-        }, dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.SUCCESS);
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), ['foobar']);
-        assert.sameMembers(Object.keys(fragmentMap.fragments.foobar), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments.foobar, 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments.foobar, 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments.foobar, 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
+        assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments.foobar, '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments.foobar, '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments.foobar, '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects']);
-        assertQueryData(fragmentMap.queries, '/projects', [1, 2, 3]);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects']);
+        assertQueryData(fragmentCache.queries, '/projects', ['1', '2', '3']);
       });
     });
   });
 
   describe('the fetch method', function() {
-    var fragmentMap
+    var fragmentCache
       , dataSegmentId_1 = {
         id: 1,
         title: 'Foo Project'
@@ -448,20 +447,20 @@ describe('RefraxFragmentCache', function() {
       };
 
     beforeEach(function() {
-      fragmentMap = new RefraxFragmentCache();
-      fragmentMap.update({
-        path: '/projects',
+      fragmentCache = new RefraxFragmentCache();
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects',
         partial: DefaultPartial
-      }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-      fragmentMap.update({
-        path: '/projects/active',
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects/active',
         partial: DefaultPartial
-      }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
     });
 
     describe('when passed an empty descriptor', function() {
       it('should return a stale resource', function() {
-        var result = fragmentMap.fetch({});
+        var result = fragmentCache.fetch(TestHelper.descriptorFrom({}));
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
@@ -474,7 +473,7 @@ describe('RefraxFragmentCache', function() {
 
     describe('when passed an id descriptor', function() {
       it('should return the proper resource for a valid id', function() {
-        var result = fragmentMap.fetch({id: 1});
+        var result = fragmentCache.fetch(TestHelper.descriptorFrom({id: 1}));
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
@@ -486,7 +485,7 @@ describe('RefraxFragmentCache', function() {
       });
 
       it('should return a stale resource for a invalid id', function() {
-        var result = fragmentMap.fetch({id: 4});
+        var result = fragmentCache.fetch(TestHelper.descriptorFrom({id: 4}));
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
@@ -499,7 +498,7 @@ describe('RefraxFragmentCache', function() {
 
     describe('when passed a path descriptor', function() {
       it('should return the proper resource for a valid path', function() {
-        var result = fragmentMap.fetch({path: '/projects'});
+        var result = fragmentCache.fetch(TestHelper.descriptorFrom({basePath: '/projects'}));
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
@@ -511,7 +510,7 @@ describe('RefraxFragmentCache', function() {
       });
 
       it('should return a stale resource for a invalid path', function() {
-        var result = fragmentMap.fetch({path: '/projectsz'});
+        var result = fragmentCache.fetch(TestHelper.descriptorFrom({basePath: '/projectsz'}));
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
@@ -524,7 +523,7 @@ describe('RefraxFragmentCache', function() {
   });
 
   describe('the delete method', function() {
-    var fragmentMap
+    var fragmentCache
       , dataSegmentId_1 = {
         id: 1,
         title: 'Foo Project'
@@ -539,66 +538,66 @@ describe('RefraxFragmentCache', function() {
       };
 
     beforeEach(function() {
-      fragmentMap = new RefraxFragmentCache();
-      fragmentMap.update({
-        path: '/projects'
-      }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-      fragmentMap.update({
-        path: '/projects/active'
-      }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      fragmentCache = new RefraxFragmentCache();
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects'
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects/active'
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
     });
 
     describe('when passed an empty descriptor', function() {
       it('should perform no action', function() {
-        fragmentMap.delete({});
+        fragmentCache.remove(TestHelper.descriptorFrom({}));
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
     });
 
     describe('when passed an id descriptor', function() {
       it('should properly delete resource and remove from collections', function() {
-        fragmentMap.delete({id: 2});
+        fragmentCache.remove(TestHelper.descriptorFrom({id: '2'}));
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, undefined);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', undefined);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
     });
 
     describe('when passed a path descriptor', function() {
       it('should properly delete only the query', function() {
-        fragmentMap.delete({path: '/projects'});
+        fragmentCache.remove(TestHelper.descriptorFrom({basePath: '/projects'}));
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', undefined);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', undefined);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
     });
   });
 
   describe('the touch method', function() {
-    var fragmentMap
+    var fragmentCache
       , dataSegmentId_1 = {
         id: 1,
         title: 'Foo Project'
@@ -613,80 +612,80 @@ describe('RefraxFragmentCache', function() {
       };
 
     beforeEach(function() {
-      fragmentMap = new RefraxFragmentCache();
-      fragmentMap.update({
-        path: '/projects'
-      }, [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
-      fragmentMap.update({
-        path: '/projects/active'
-      }, [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      fragmentCache = new RefraxFragmentCache();
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects'
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      fragmentCache.update(TestHelper.descriptorFrom({
+        basePath: '/projects/active'
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
     });
 
     describe('when passed an invalid descriptor', function() {
       it('should perform no action on empty descriptor', function() {
-        fragmentMap.touch({});
+        fragmentCache.touch(TestHelper.descriptorFrom({}));
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
 
       it('should perform no action on empty touch', function() {
-        fragmentMap.touch({id: 2}, {});
+        fragmentCache.touch(TestHelper.descriptorFrom({id: 2}), {});
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
     });
 
     describe('when passed an id descriptor', function() {
       it('should properly update metadata', function() {
-        assert.deepPropertyNotVal(fragmentMap.fragments[DefaultPartial], '2.timestamp', 123);
+        assert.deepPropertyNotVal(fragmentCache.fragments[DefaultPartial], '2.timestamp', 123);
 
-        fragmentMap.touch({id: 2}, {timestamp: 123});
+        fragmentCache.touch(TestHelper.descriptorFrom({id: 2}), {timestamp: 123});
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
-        assert.deepPropertyVal(fragmentMap.fragments[DefaultPartial], '2.timestamp', 123);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
+        assert.deepPropertyVal(fragmentCache.fragments[DefaultPartial], '2.timestamp', 123);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
       });
     });
 
     describe('when passed a path descriptor', function() {
       it('should properly update metadata', function() {
-        assert.propertyNotVal(fragmentMap.queries['/projects'], 'timestamp', 123);
+        assert.propertyNotVal(fragmentCache.queries['/projects'], 'timestamp', 123);
 
-        fragmentMap.touch({path: '/projects'}, {timestamp: 123});
+        fragmentCache.touch(TestHelper.descriptorFrom({basePath: '/projects'}), {timestamp: 123});
 
-        assert.sameMembers(Object.keys(fragmentMap.fragments), [DefaultPartial]);
-        assert.sameMembers(Object.keys(fragmentMap.fragments[DefaultPartial]), ['1', '2', '3']);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 1, dataSegmentId_1);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 2, dataSegmentId_2);
-        assertFragmentData(fragmentMap.fragments[DefaultPartial], 3, dataSegmentId_3);
+        assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
+        assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '1', dataSegmentId_1);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '2', dataSegmentId_2);
+        assertFragmentData(fragmentCache.fragments[DefaultPartial], '3', dataSegmentId_3);
 
-        assert.sameMembers(Object.keys(fragmentMap.queries), ['/projects', '/projects/active']);
-        assertFragmentData(fragmentMap.queries, '/projects', [1, 2], DefaultPartial);
-        assertFragmentData(fragmentMap.queries, '/projects/active', [1, 3], DefaultPartial);
-        assert.propertyVal(fragmentMap.queries['/projects'], 'timestamp', 123);
+        assert.sameMembers(Object.keys(fragmentCache.queries), ['/projects', '/projects/active']);
+        assertFragmentData(fragmentCache.queries, '/projects', ['1', '2'], DefaultPartial);
+        assertFragmentData(fragmentCache.queries, '/projects/active', ['1', '3'], DefaultPartial);
+        assert.propertyVal(fragmentCache.queries['/projects'], 'timestamp', 123);
       });
     });
   });

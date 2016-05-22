@@ -16,11 +16,11 @@ describe('RefraxSchemaNode', function() {
     it('should throw an error on invalid arguments', function() {
       expect(function() {
         new RefraxSchemaNode({partial: 123}, 321);
-      }).to.throw(Error, 'A literal argument can only be of type');
+      }).to.throw(Error, 'identifier argument can only be of type');
 
       expect(function() {
         new RefraxSchemaNode({fragments: 123}, {foo: 321});
-      }).to.throw(Error, 'A literal argument can only be of type');
+      }).to.throw(Error, 'identifier argument can only be of type');
     });
 
     it('should not throw an error on valid option values', function() {

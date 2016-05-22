@@ -41,7 +41,7 @@ describe('RefraxSchemaNodeAccessor', function() {
 
   describe('methods', function() {
     describe('addLeaf', function() {
-      it('should only accept a leaf object optionally preceeded by a literal', function() {
+      it('should only accept a leaf object optionally preceeded by an identifier', function() {
         var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
           , schemaNode = new RefraxSchemaNode(123);
 
@@ -59,7 +59,7 @@ describe('RefraxSchemaNodeAccessor', function() {
 
         expect(function() {
           nodeAccessor.addLeaf(schemaNode);
-        }).to.throw(Error, 'Failed to add leaf with no inherit literal');
+        }).to.throw(Error, 'Failed to add leaf with no inherit identifier');
       });
 
       it('should not throw an error on valid arguments', function() {
