@@ -18,11 +18,12 @@ function parseObject(object) {
     );
   }
 
-  if (!object.id) {
-    throw new TypeError(
-      'parseNested:parseObject: expected to find object id.'
-    );
-  }
+  // TODO: we can't depend on an id if we are simply a "resource" non collection-item
+  // if (!object.id) {
+  //   throw new TypeError(
+  //     'parseNested:parseObject: expected to find object id.'
+  //   );
+  // }
 
   RefraxTools.each(object, function(value, key) {
     if (key[0] === '_') {

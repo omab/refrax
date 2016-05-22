@@ -23,7 +23,6 @@ const ACTION_DELETE = RefraxConstants.action.delete;
  * any embedded data.
  */
 function updateStoreResource(store, resourceDescriptor, data, action) {
-  console.info("::updateStoreResource(%s) store(%o) descriptor(%o) data(%o)", action, store, resourceDescriptor, data);
   if (action == ACTION_FETCH) {
     processResponse(data, resourceDescriptor);
   }
@@ -66,7 +65,6 @@ function makeRequest(method, resourceDescriptor, action, touchParams, noTouchNot
 }
 
 export function get(resourceDescriptor, noTouchNotify) {
-  console.info('invokeDescriptor::get %o', resourceDescriptor);
   return makeRequest('get',
                      resourceDescriptor,
                      ACTION_FETCH,
@@ -75,28 +73,24 @@ export function get(resourceDescriptor, noTouchNotify) {
 }
 
 export function create(resourceDescriptor) {
-  console.info('invokeDescriptor::create %o', resourceDescriptor);
   return makeRequest('post',
                      resourceDescriptor,
                      ACTION_SAVE);
 }
 
 export function update(resourceDescriptor) {
-  console.info('invokeDescriptor::update %o', resourceDescriptor);
   return makeRequest('put',
                      resourceDescriptor,
                      ACTION_SAVE);
 }
 
 export function destroy(resourceDescriptor) {
-  console.info('invokeDescriptor::destroy %o', resourceDescriptor);
   return makeRequest('delete',
                      resourceDescriptor,
                      ACTION_DELETE);
 }
 
 export function fetch(resourceDescriptor, noFetchGet) {
-  console.info('invokeDescriptor::fetch %o', resourceDescriptor);
   var store = resourceDescriptor.store
     , resource = store.fetchResource(resourceDescriptor);
 

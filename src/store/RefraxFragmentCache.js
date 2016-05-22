@@ -153,10 +153,7 @@ class RefraxFragmentCache {
     };
 
     if (descriptor.id) {
-      if (fragmentItem = fragmentCache[descriptor.id]) {
-        RefraxTools.extend(fragmentItem, result);
-        RefraxTools.extend(fragmentItem.data, descriptor.payload, data);
-      }
+      fragmentCache[descriptor.id] = RefraxTools.extend(fragmentItem || {}, result, {data: data});
     }
     else {
       if (RefraxTools.isArray(data)) {
