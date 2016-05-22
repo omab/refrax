@@ -158,8 +158,12 @@ function processStack(resourceDescriptor, stack, resolveParams) {
   resourceDescriptor.type = resolvedType;
 }
 
-class ResourceDescriptor {
-  constructor(stack, resolveParams = true) {
+class RefraxResourceDescriptor {
+  constructor(stack = [], resolveParams = true) {
+    if (!RefraxTools.isArray(stack)) {
+      stack = [stack];
+    }
+
     processStack(this, stack, resolveParams);
   }
 
@@ -170,4 +174,4 @@ class ResourceDescriptor {
   }
 }
 
-export default ResourceDescriptor;
+export default RefraxResourceDescriptor;
