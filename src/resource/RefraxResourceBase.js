@@ -23,11 +23,17 @@ class RefraxResourceBase {
 
     for (i=0; i<args.length; i++) {
       arg = args[i];
-      if (typeof(arg) === 'string') {
+      if (arg === undefined || arg === null) {
+        continue;
+      }
+      else if (typeof(arg) === 'string') {
         stack.push(new RefraxPath(arg));
       }
       else if (RefraxTools.isPlainObject(arg)) {
         RefraxTools.extend(options, arg);
+      }
+      else {
+        console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');
       }
     }
 
