@@ -81,7 +81,7 @@ class ActionInvoker {
   }
 }
 
-function invokeAction(emitters, method, params, options) {
+function invokeAction(emitters, method, params, options, args) {
   var action = emitters[0]
     , invoker = new ActionInvoker(action, options)
     , promise, result, i;
@@ -94,7 +94,7 @@ function invokeAction(emitters, method, params, options) {
     emitters[i].emit('start');
   }
 
-  promise = result = method.call(invoker, params);
+  promise = result = method.apply(invoker, [params].concat(args));
 
   if (!RefraxTools.isPromise(result)) {
     promise = new Promise(function(resolve, reject) {
@@ -126,8 +126,8 @@ function invokeAction(emitters, method, params, options) {
 }
 
 function createActionInstance(template, method, options) {
-  function ActionInstance(params) {
-    return invokeAction([ActionInstance, template], method, params, options);
+  function ActionInstance(params, ...args) {
+    return invokeAction([ActionInstance, template], method, params, options, args);
   }
 
   ActionInstance.getDefault = function() {
@@ -163,12 +163,12 @@ function createAction(method) {
    * An Action can either be globally invoked or instantiated and invoked on that
    * particular instance.
    */
-  function Action(params) {
+  function Action(params, ...args) {
     if (this instanceof Action) {
       return createActionInstance(Action, method, params);
     }
     else {
-      return invokeAction([Action], method, params, {});
+      return invokeAction([Action], method, params, {}, args);
     }
   }
   // templates all share the same prototype so they can be identified above with instanceof
