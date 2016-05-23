@@ -204,21 +204,37 @@ class RefraxFragmentCache {
    * NOTE: We opt to set value to undefined vs deleting the key itself due to
    * performance reasons (testing shows delete ~98% slower).
    */
-  invalidate(options) {
-    if (options.noQueries !== true) {
-      RefraxTools.each(this.queries, function(query) {
-        query.status = STATUS_STALE;
-        query.timestamp = TIMESTAMP_STALE;
-      });
-    }
+  invalidate(descriptor, options = {}) {
+    var clearData = !!options.clear
+      , invalidator = function(item) {
+        item.status = STATUS_STALE;
+        item.timestamp = TIMESTAMP_STALE;
+        if (clearData) {
+          item.data = undefined;
+        }
+      };
 
-    if (options.noFragments !== true) {
-      RefraxTools.each(this.fragments, function(fragment) {
-        RefraxTools.each(fragment, function(resource) {
-          resource.status = STATUS_STALE;
-          resource.timestamp = TIMESTAMP_STALE;
+    if (descriptor) {
+      if (options.noQueries !== true) {
+        invalidator(this.queries[descriptor.basePath]);
+      }
+
+      if (options.noFragments !== true && descriptor.id) {
+        RefraxTools.each(this.fragments, function(fragment) {
+          invalidator(fragment[descriptor.id]);
         });
-      });
+      }
+    }
+    else {
+      if (options.noQueries !== true) {
+        RefraxTools.each(this.queries, invalidator);
+      }
+
+      if (options.noFragments !== true) {
+        RefraxTools.each(this.fragments, function(fragment) {
+          RefraxTools.each(fragment, invalidator);
+        });
+      }
     }
   }
 

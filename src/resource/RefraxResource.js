@@ -89,7 +89,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   invalidate(options) {
-    this._resourceDescriptor.store.invalidate(options);
+    this._resourceDescriptor.store.invalidate(this._resourceDescriptor, options);
   }
 
   isLoading() {

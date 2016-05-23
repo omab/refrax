@@ -97,8 +97,13 @@ class RefraxStore {
     this.cache = new RefraxFragmentCache();
   }
 
-  invalidate(options = {}) {
-    this.cache.invalidate(options);
+  invalidate(resourceDescriptor, options = {}) {
+    if (RefraxTools.isPlainObject(resourceDescriptor)) {
+      options = resourceDescriptor;
+      resourceDescriptor = null;
+    }
+
+    this.cache.invalidate(resourceDescriptor, options);
 
     if (options.notify) {
       this.emit('change');
