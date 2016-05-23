@@ -55,7 +55,7 @@ var babelOpts = {
     }
   ],
   _moduleMap: {
-    'es6-promise': 'es6-promise',
+    'bluebird': 'bluebird',
     'react': 'react',
     'axios': 'axios',
     'eventemitter3': 'eventemitter3',
@@ -71,7 +71,7 @@ var buildDist = function(opts) {
     debug: opts.debug,
     externals: {
       'react': 'react',
-      // 'es6-promise': 'es6-promise',
+      // 'bluebird': 'bluebird',
       // 'axios': 'axios',
       // 'eventemitter3': 'eventemitter3',
       // 'pluralize': 'pluralize'

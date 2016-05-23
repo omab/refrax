@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('es6-promise').Promise;
+const Promise = require('bluebird');
 const Axios = require('axios');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
