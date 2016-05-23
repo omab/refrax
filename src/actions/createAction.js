@@ -67,6 +67,13 @@ function mixinMutable(target) {
     writable: true
   });
 
+  Object.defineProperty(target, 'data', {
+    get: function() {
+      var base = this.getDefault && this.getDefault() || {};
+      return RefraxTools.setPrototypeOf(this.mutable, base);
+    }
+  });
+
   return RefraxTools.extend(target, MixinMutable);
 }
 
@@ -88,7 +95,7 @@ function invokeAction(emitters, method, params, options, args) {
 
   // reset errors on invocation
   action.errors = {};
-  params = RefraxTools.extend({}, action.mutable, action.getDefault(), params);
+  params = RefraxTools.extend({}, action.getDefault(), action.mutable, params);
 
   for (i=0; i<emitters.length; i++) {
     emitters[i].emit('start');
@@ -116,8 +123,8 @@ function invokeAction(emitters, method, params, options, args) {
   promise.then(finalize, finalize);
 
   promise.catch(function(response) {
-    if (RefraxTools.isPlainObject(response.data)) {
-      action.errors = RefraxTools.extend({}, response.data);
+    if (RefraxTools.isPlainObject(response.mutable)) {
+      action.errors = RefraxTools.extend({}, response.mutable);
     }
     action.emit('change');
   });
