@@ -156,8 +156,7 @@ export function attach(component, target, options) {
     return attachAction(component, target, options);
   }
 
-  throw new TypeError('RefraxReact::attach failed to identify `' + typeof(target) +
-  '` as a valid Refrax target');
+  throw new TypeError('RefraxReact::attach cannot attach invalid target `' + target + '`.');
 }
 
 /**
