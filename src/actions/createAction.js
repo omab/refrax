@@ -53,7 +53,7 @@ const MixinMutable = {
     this.emit('change');
   },
   getErrors: function(attribute) {
-    return this.errors[attribute];
+    return attribute ? this.errors[attribute] : this.errors;
   }
 };
 
