@@ -118,9 +118,7 @@ function attachAccessor(component, accessor, options) {
   resource = new RefraxResource(accessor, options);
   component.__refrax.resources.push(resource);
   component.__refrax.disposers.push(resource.subscribe('change', function() {
-    RefraxTools.nextTick(function() {
-      component.forceUpdate();
-    });
+    component.forceUpdate();
   }));
   return resource;
 }

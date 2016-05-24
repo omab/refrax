@@ -18,6 +18,24 @@ const ACTION_SAVE = RefraxConstants.action.save;
 const ACTION_DELETE = RefraxConstants.action.delete;
 
 
+// We only quietly consume RequestError's
+Promise.onPossiblyUnhandledRejection(function(err, promise) {
+  if (err instanceof RequestError) {
+    return;
+  }
+  throw err;
+});
+
+function RequestError(message, response) {
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this);
+  }
+  this.message = '' + message;
+  this.response = response;
+  this.name = 'RequestError';
+}
+RequestError.prototype = Object.create(Error.prototype);
+
 /**
  * Given a known Store update a resource descriptors data and repeat with
  * any embedded data.
@@ -56,9 +74,9 @@ function makeRequest(method, resourceDescriptor, action, touchParams, noTouchNot
         resolve(response);
       }, function(response) {
         store.touchResource(resourceDescriptor, {timestamp: Date.now()});
-        reject(response);
+        reject(new RequestError(response.statusText, response));
       })
-      .then(undefined, function(err) {
+      .catch(function(err) {
         console.assert(false, err);
       });
   });
