@@ -9,6 +9,7 @@ const RefraxTools = require('RefraxTools');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
+const RefraxOptions = require('RefraxOptions');
 const createAction = require('createAction');
 
 
@@ -115,7 +116,7 @@ function attachAccessor(component, accessor, options) {
     }
   }, options);
 
-  resource = new RefraxResource(accessor, options);
+  resource = new RefraxResource(accessor, new RefraxOptions(options));
   component.__refrax.resources.push(resource);
   component.__refrax.disposers.push(resource.subscribe('change', function() {
     component.forceUpdate();

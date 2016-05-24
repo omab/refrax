@@ -5,11 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+const mixinSubscribable = require('mixinSubscribable');
+const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
-const mixinSubscribable = require('mixinSubscribable');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
+const RefraxTools = require('RefraxTools');
 
 
 /**
@@ -26,11 +27,14 @@ class RefraxResourceBase {
       if (arg === undefined || arg === null) {
         continue;
       }
-      else if (typeof(arg) === 'string') {
+      else if (typeof(arg) === 'string' || arg instanceof RefraxPath) {
         stack.push(new RefraxPath(arg));
       }
-      else if (RefraxTools.isPlainObject(arg)) {
+      else if (arg instanceof RefraxOptions) {
         RefraxTools.extend(options, arg);
+      }
+      else if (RefraxTools.isPlainObject(arg)) {
+        stack.push(arg);
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');
@@ -39,26 +43,29 @@ class RefraxResourceBase {
 
     mixinSubscribable(this);
 
-    Object.defineProperty(this, '_stack', {value: accessor.__stack.concat(stack)});
+    Object.defineProperty(this, '_accessorStack', {value: accessor.__stack});
+    Object.defineProperty(this, '_stack', {value: stack});
     Object.defineProperty(this, '_options', {value: options});
   }
 
-  _generateDescriptor(params) {
-    var stack = this._stack.slice();
+  _generateDescriptor() {
+    var params = [];
 
     if (this._options.paramsGenerator) {
-      stack.push(new RefraxParameters(this._options.paramsGenerator()));
+      params.push(new RefraxParameters(this._options.paramsGenerator()));
     }
 
     if (this._options.params) {
-      stack.push(new RefraxParameters(this._options.params));
+      params.push(new RefraxParameters(this._options.params));
     }
 
-    if (params) {
-      stack.push(params);
-    }
-
-    return new RefraxResourceDescriptor(stack);
+    // params intentionally comes before our stack so paramsGenerator params
+    // can get overridden if needed
+    return new RefraxResourceDescriptor([].concat(
+      this._accessorStack,
+      params,
+      this._stack
+    ));
   }
 }
 

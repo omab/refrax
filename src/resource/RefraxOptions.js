@@ -9,12 +9,12 @@ const RefraxTools = require('RefraxTools');
 
 
 /**
- * A RefraxPath is a wrapper around a string to identify it as a uri path.
+ * A RefraxOptions is a wrapper around an object to identify it as a set of options.
  */
-class RefraxPath {
-  constructor(path) {
-    this.path = RefraxTools.cleanPath(path);
+class RefraxOptions {
+  constructor(options) {
+    RefraxTools.extend(this, options);
   }
 }
 
-export default RefraxPath;
+export default RefraxOptions;

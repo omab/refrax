@@ -5,9 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxFragmentCache = require('RefraxFragmentCache');
 const mixinSubscribable = require('mixinSubscribable');
+const RefraxFragmentCache = require('RefraxFragmentCache');
+const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
+const RefraxTools = require('RefraxTools');
 const StoreMap = {};
 
 
@@ -100,6 +101,9 @@ class RefraxStore {
   invalidate(resourceDescriptor, options = {}) {
     if (RefraxTools.isPlainObject(resourceDescriptor)) {
       options = resourceDescriptor;
+      resourceDescriptor = null;
+    }
+    else if (!(resourceDescriptor instanceof RefraxResourceDescriptor)) {
       resourceDescriptor = null;
     }
 

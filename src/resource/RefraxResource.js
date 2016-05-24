@@ -53,6 +53,10 @@ class RefraxResource extends RefraxResourceBase {
       );
     }
 
+    if (this._options.invalidate) {
+      this.invalidate(this._options.invalidate);
+    }
+
     this._fetch();
   }
 
