@@ -89,11 +89,16 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   invalidate(options) {
-    this._resourceDescriptor.store.invalidate(this._resourceDescriptor, options);
+    var descriptor = this._generateDescriptor();
+
+    if (descriptor.store) {
+      descriptor.store.invalidate(descriptor, options);
+    }
   }
 
   isLoading() {
-    return this.timestamp === TIMESTAMP_LOADING;
+    return this.timestamp === TIMESTAMP_LOADING &&
+           this.status === STATUS_STALE;
   }
 
   isStale() {
