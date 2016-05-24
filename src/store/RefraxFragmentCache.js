@@ -207,6 +207,11 @@ class RefraxFragmentCache {
   invalidate(descriptor, options = {}) {
     var clearData = !!options.clear
       , invalidator = function(item) {
+        // not yet cached so we can skip
+        if (!item) {
+          return;
+        }
+
         item.status = STATUS_STALE;
         item.timestamp = TIMESTAMP_STALE;
         if (clearData) {

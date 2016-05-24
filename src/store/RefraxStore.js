@@ -7,9 +7,9 @@
  */
 const mixinSubscribable = require('mixinSubscribable');
 const RefraxFragmentCache = require('RefraxFragmentCache');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxTools = require('RefraxTools');
 const StoreMap = {};
+var RefraxResourceDescriptor = null;
 
 
 function validateDefinition(definition) {
@@ -99,11 +99,15 @@ class RefraxStore {
   }
 
   invalidate(resourceDescriptor, options = {}) {
-    if (RefraxTools.isPlainObject(resourceDescriptor)) {
-      options = resourceDescriptor;
-      resourceDescriptor = null;
+    // circular dependency hack
+    if (!RefraxResourceDescriptor) {
+      RefraxResourceDescriptor = require('RefraxResourceDescriptor');
     }
-    else if (!(resourceDescriptor instanceof RefraxResourceDescriptor)) {
+
+    if (!(resourceDescriptor instanceof RefraxResourceDescriptor)) {
+      if (RefraxTools.isPlainObject(resourceDescriptor)) {
+        options = resourceDescriptor;
+      }
       resourceDescriptor = null;
     }
 
