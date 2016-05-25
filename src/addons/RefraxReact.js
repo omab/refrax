@@ -60,11 +60,11 @@ const MixinBase = {
   },
   mutableFrom: function(accessor, ...args) {
     var self = this
-      , options = {
+      , options = new RefraxOptions({
         paramsGenerator: function() {
           return Shims.getComponentParams.call(self);
         }
-      };
+      });
 
     return RefraxMutableResource.from(accessor, options, ...args);
   }

@@ -6,10 +6,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 const Promise = require('bluebird');
-const RefraxTools = require('RefraxTools');
-const RefraxResource = require('RefraxResource');
-const RefraxMutableResource = require('RefraxMutableResource');
 const mixinSubscribable = require('mixinSubscribable');
+const RefraxMutableResource = require('RefraxMutableResource');
+const RefraxOptions = require('RefraxOptions');
+const RefraxResource = require('RefraxResource');
+const RefraxTools = require('RefraxTools');
 const prototypeAction = {};
 
 
@@ -84,7 +85,7 @@ class ActionInvoker {
   }
 
   mutableFrom(accessor, ...args) {
-    return RefraxMutableResource.from(accessor, this._options.resource, ...args);
+    return RefraxMutableResource.from(accessor, new RefraxOptions(this._options.resource), ...args);
   }
 }
 

@@ -48,23 +48,24 @@ class RefraxResourceBase {
     Object.defineProperty(this, '_options', {value: options});
   }
 
-  _generateDescriptor() {
-    var params = [];
+  _generateDescriptor(params) {
+    var runtimeParams = [];
 
     if (this._options.paramsGenerator) {
-      params.push(new RefraxParameters(this._options.paramsGenerator()));
+      runtimeParams.push(new RefraxParameters(this._options.paramsGenerator()));
     }
 
     if (this._options.params) {
-      params.push(new RefraxParameters(this._options.params));
+      runtimeParams.push(new RefraxParameters(this._options.params));
     }
 
     // params intentionally comes before our stack so paramsGenerator params
     // can get overridden if needed
     return new RefraxResourceDescriptor([].concat(
       this._accessorStack,
-      params,
-      this._stack
+      runtimeParams,
+      this._stack,
+      params || []
     ));
   }
 }
