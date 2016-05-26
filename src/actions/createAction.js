@@ -124,6 +124,12 @@ function invokeAction(emitters, method, params, options, args) {
     });
   }
 
+  promise.catch(function(response) {
+    if (RefraxTools.isPlainObject(response.mutable)) {
+      action.errors = RefraxTools.extend({}, response.mutable);
+    }
+  });
+
   action._promises.push(promise);
   function finalize() {
     var i = action._promises.indexOf(promise);
@@ -134,15 +140,10 @@ function invokeAction(emitters, method, params, options, args) {
     for (i=0; i<emitters.length; i++) {
       emitters[i].emit('finish');
     }
+
+    action.emit('change');
   }
   promise.then(finalize, finalize);
-
-  promise.catch(function(response) {
-    if (RefraxTools.isPlainObject(response.mutable)) {
-      action.errors = RefraxTools.extend({}, response.mutable);
-    }
-    action.emit('change');
-  });
 
   return promise;
 }
