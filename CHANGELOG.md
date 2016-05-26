@@ -1,3 +1,11 @@
+## [v0.3.1]
+> May 26, 2016
+
+- **Bugfix:** Action mutable dispatching `change` event unless specified to not do so
+- **Bugfix:** Action invocation properly dispatching `change` when complete
+
+[v0.3.1]: https://github.com/netarc/refrax/compare/v0.3.0...v0.3.1
+
 ## [v0.3.0]
 > May 25, 2016
 
