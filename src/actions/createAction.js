@@ -31,27 +31,41 @@ const MixinMutable = {
     return this.mutable[attribute] ||
       (this.getDefault && this.getDefault()[attribute]);
   },
-  set: function(attribute, value) {
+  set: function(attribute, value, options = {}) {
     this.mutable[attribute] = value;
+
+    if (options.noPropagate !== true) {
+      this.emit('change');
+    }
   },
-  setter: function(attribute) {
+  setter: function(attribute, options = {}) {
     var self = this;
 
     return function(value) {
       self.mutable[attribute] = value;
+
+      if (options.noPropagate !== true) {
+        self.emit('change');
+      }
     };
   },
-  setterHandler: function(attribute) {
+  setterHandler: function(attribute, options = {}) {
     var self = this;
 
     return function(event) {
       self.mutable[attribute] = event.target.value;
-      self.emit('change');
+
+      if (options.noPropagate !== true) {
+        self.emit('change');
+      }
     };
   },
-  unset: function() {
+  unset: function(options = {}) {
     this.mutable = {};
-    this.emit('change');
+
+    if (options.noPropagate !== true) {
+      this.emit('change');
+    }
   },
   getErrors: function(attribute) {
     return attribute ? this.errors[attribute] : this.errors;
