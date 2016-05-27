@@ -44,7 +44,7 @@ class RefraxResource extends RefraxResourceBase {
 
     descriptor = this._generateDescriptor();
 
-    if (descriptor.store) {
+    if (this._options.noSubscribe !== true && descriptor.store) {
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function(event) {
           self._fetch();

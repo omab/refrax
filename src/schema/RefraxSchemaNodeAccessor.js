@@ -7,6 +7,8 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxSchemaNode = require('RefraxSchemaNode');
+const RefraxResource = require('RefraxResource');
+const RefraxOptions = require('RefraxOptions');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 
 const SchemaAccescessorMixins = [];
@@ -101,6 +103,12 @@ class RefraxSchemaNodeAccessor {
     });
 
     return result;
+  }
+
+  invalidate(options) {
+    RefraxResource
+      .from(this, new RefraxOptions({noSubscribe: true}))
+      .invalidate(options);
   }
 
   addLeaf(identifier, leaf) {
