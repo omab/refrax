@@ -121,7 +121,7 @@ class RefraxStore {
     event = RefraxTools.extend({storeType: this.definition.type}, event);
 
     this.emit('change', event);
-    if (resourceDescriptor.id) {
+    if (resourceDescriptor && resourceDescriptor.id) {
       this.emit(
         'change:' + resourceDescriptor.id,
         RefraxTools.extend({id: resourceDescriptor.id}, event)

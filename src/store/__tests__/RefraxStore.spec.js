@@ -63,7 +63,7 @@ describe('RefraxStore', function() {
         expect(store.fetchResource({id: 2}).timestamp).to.equal(RefraxConstants.timestamp.stale);
       });
 
-      it('should not trigger when not specified to', function() {
+      it('should trigger subscription', function() {
         var store = RefraxStore.get()
           , callback = sinon.spy()
           , dispose;
@@ -74,22 +74,6 @@ describe('RefraxStore', function() {
 
         dispose = store.subscribe('change', callback);
         store.invalidate();
-        dispose();
-
-        expect(callback.callCount).to.equal(0);
-      });
-
-      it('should trigger when specified to', function() {
-        var store = RefraxStore.get()
-          , callback = sinon.spy()
-          , dispose;
-
-        store.updateResource(TestHelper.descriptorFrom({
-          basePath: '/projects'
-        }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.SUCCESS);
-
-        dispose = store.subscribe('change', callback);
-        store.invalidate({notify: true});
         dispose();
 
         expect(callback.callCount).to.equal(1);
