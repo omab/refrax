@@ -1,3 +1,12 @@
+## [v0.3.4]
+> May 27, 2016
+
+- **Feature:** Store events now emit event data
+- **Bugfix:** Invalidate will properly invalidate collections off a resource
+- **Minor:** Invalidate noPropagate only affects Resource
+
+[v0.3.4]: https://github.com/netarc/refrax/compare/v0.3.3...v0.3.4
+
 ## [v0.3.3]
 > May 27, 2016
 
