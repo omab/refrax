@@ -13,6 +13,24 @@ const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 
 
+// simple-depth serialize to avoid circular references for error debugging
+function serializer() {
+  var stack = [];
+
+  return function(key, value) {
+    if (stack.length > 0) {
+      if (stack.indexOf(this) == -1 && typeof(value) === 'object') {
+        return '...';
+      }
+    }
+    else {
+      stack.push(value);
+    }
+
+    return value;
+  };
+}
+
 function fillURI(uri, params, paramMap) {
   var vars = uri.match(/:(\w+)/g) || []
     , lastParamKey = null
@@ -31,7 +49,7 @@ function fillURI(uri, params, paramMap) {
     }
     else {
       throw new TypeError('Failed to map path component `' + lastParamKey + '` for `' + uri + '`' +
-      ' while using params: ' + JSON.stringify(params));
+      ' while using params: ' + JSON.stringify(params, serializer()));
     }
   }
 
