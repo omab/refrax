@@ -70,7 +70,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
     , resolvedType = null
     , resolvedStore = null
     , resolvedPath = []
-    , resolvedFragments = []
+    , resolvedFragments = null
     , resolvedParamId = null
     , resolvedPayload = {}
     , resolvedCoercion = null
@@ -98,24 +98,20 @@ function processStack(resourceDescriptor, stack, resolveParams) {
       resolvedParamId = definition.paramId || null;
       resolvedType = definition.type;
       resolvedCoercion = null;
+      resolvedPartial = null;
+      resolvedFragments = null;
     }
     else if (item instanceof RefraxTreeNode) {
       if (definition.paramMap) {
         resolvedParamMap = RefraxTools.extend(resolvedParamMap, definition.paramMap);
       }
 
-      if (definition.partial) {
-        resolvedPartial = definition.partial;
-      }
-
-      if (definition.fragments) {
-        resolvedFragments = RefraxTools.concatUnique(resolvedFragments, definition.fragments);
-      }
-
       if (definition.paramId) {
         resolvedParamId = resolvedParamId;
       }
 
+      resolvedPartial = definition.partial;
+      resolvedFragments = definition.fragments
       resolvedCoercion = definition.coerce;
     }
     else if (item instanceof RefraxParameters) {
@@ -170,7 +166,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
   resourceDescriptor.partial = resolvedPartial;
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.params = resolvedParams;
-  resourceDescriptor.fragments = resolvedFragments.reverse();
+  resourceDescriptor.fragments = (resolvedFragments || []).reverse();
   resourceDescriptor.payload = resolvedPayload;
   resourceDescriptor.store = resolvedStore;
   resourceDescriptor.type = resolvedType;
