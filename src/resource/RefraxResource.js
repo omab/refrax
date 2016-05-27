@@ -46,9 +46,11 @@ class RefraxResource extends RefraxResourceBase {
 
     if (descriptor.store) {
       this._disposers.push(
-        descriptor.store.subscribe(descriptor.event, function() {
+        descriptor.store.subscribe(descriptor.event, function(event) {
           self._fetch();
-          self.emit('change', self);
+          if (event.noPropagate !== true) {
+            self.emit('change', self, event);
+          }
         })
       );
     }
@@ -73,11 +75,11 @@ class RefraxResource extends RefraxResourceBase {
 
   _fetch() {
     var descriptor
-      , result;
+      , result = {};
 
     descriptor = this._generateDescriptor();
     if (!descriptor.store) {
-      return;
+      return result;
     }
 
     result = invokeDescriptor.fetch(descriptor, this._options.noFetchGet);
@@ -90,6 +92,7 @@ class RefraxResource extends RefraxResourceBase {
     }
 
     ResourceMap.set(this, result);
+    return result;
   }
 
   invalidate(options) {

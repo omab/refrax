@@ -112,18 +112,20 @@ class RefraxStore {
     }
 
     this.cache.invalidate(resourceDescriptor, options);
-
-    if (options.notify) {
-      this.notifyChange(resourceDescriptor);
-    }
+    this.notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
   }
 
   //
 
-  notifyChange(resourceDescriptor) {
-    this.emit('change');
+  notifyChange(resourceDescriptor, event) {
+    event = RefraxTools.extend({storeType: this.definition.type}, event);
+
+    this.emit('change', event);
     if (resourceDescriptor.id) {
-      this.emit('change:' + resourceDescriptor.id);
+      this.emit(
+        'change:' + resourceDescriptor.id,
+        RefraxTools.extend({id: resourceDescriptor.id}, event)
+      );
     }
   }
 
@@ -137,18 +139,18 @@ class RefraxStore {
   touchResource(resourceDescriptor, data, noNotify) {
     this.cache.touch(resourceDescriptor, data);
     if (!noNotify) {
-      this.notifyChange(resourceDescriptor);
+      this.notifyChange(resourceDescriptor, {type: 'touch'});
     }
   }
 
   updateResource(resourceDescriptor, data, status) {
     this.cache.update(resourceDescriptor, data, status);
-    this.notifyChange(resourceDescriptor);
+    this.notifyChange(resourceDescriptor, {type: 'update'});
   }
 
   deleteResource(resourceDescriptor) {
     this.cache.remove(resourceDescriptor);
-    this.notifyChange(resourceDescriptor);
+    this.notifyChange(resourceDescriptor, {type: 'destroy'});
   }
 }
 
