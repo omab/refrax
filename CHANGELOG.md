@@ -1,3 +1,11 @@
+## [v0.3.6]
+> May 27, 2016
+
+- **Feature:** Add invalidate helper to SchemaNodeAccessor
+- **Feature:** Add ResourceBase options passthrough via params
+
+[v0.3.6]: https://github.com/netarc/refrax/compare/v0.3.5...v0.3.6
+
 ## [v0.3.5]
 > May 27, 2016
 
