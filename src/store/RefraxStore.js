@@ -114,7 +114,7 @@ class RefraxStore {
     this.cache.invalidate(resourceDescriptor, options);
 
     if (options.notify) {
-      this.emit('change');
+      this.notifyChange(resourceDescriptor);
     }
   }
 
