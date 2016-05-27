@@ -24,11 +24,11 @@ const Mixin = {
     }
 
     context = context || this;
-    eventHandler = function(args) {
+    eventHandler = function() {
       if (disposed) {
         return;
       }
-      callback.apply(context, args);
+      callback.apply(context, arguments);
     };
 
     this._emitter.addListener(event, eventHandler);
