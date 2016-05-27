@@ -1,3 +1,10 @@
+## [v0.3.2]
+> May 26, 2016
+
+- **Bugfix:** ResourceBase now consumes objects as Parameters
+
+[v0.3.2]: https://github.com/netarc/refrax/compare/v0.3.1...v0.3.2
+
 ## [v0.3.1]
 > May 26, 2016
 
