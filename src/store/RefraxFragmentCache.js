@@ -221,7 +221,14 @@ class RefraxFragmentCache {
 
     if (descriptor) {
       if (options.noQueries !== true) {
-        invalidator(this.queries[descriptor.basePath]);
+        RefraxTools.each(this.queries, function(query, path) {
+          if (path === descriptor.basePath ||
+              (descriptor.id &&
+                 RefraxTools.isArray(query.data) &&
+                 query.data.indexOf(descriptor.id) != -1)) {
+            invalidator(query);
+          }
+        });
       }
 
       if (options.noFragments !== true && descriptor.id) {
