@@ -137,9 +137,7 @@ function attachAction(component, Action, options) {
   action = new Action(options);
   component.__refrax.actions.push(action);
   component.__refrax.disposers.push(action.subscribe('change', function() {
-    RefraxTools.nextTick(function() {
-      component.forceUpdate();
-    });
+    component.forceUpdate();
   }));
 
   return action;
