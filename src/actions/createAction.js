@@ -28,8 +28,8 @@ function mixinStatus(target) {
 
 const MixinMutable = {
   get: function(attribute) {
-    return this.mutable[attribute] ||
-      (this.getDefault && this.getDefault()[attribute]);
+    return attribute && (this.mutable[attribute] ||
+      (this.getDefault && this.getDefault()[attribute]));
   },
   set: function(attribute, value, options = {}) {
     this.mutable[attribute] = value;
