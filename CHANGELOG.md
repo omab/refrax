@@ -1,3 +1,10 @@
+## [v0.3.5]
+> May 27, 2016
+
+- **Bugfix:** Fix null descriptor in Store notify
+
+[v0.3.5]: https://github.com/netarc/refrax/compare/v0.3.4...v0.3.5
+
 ## [v0.3.4]
 > May 27, 2016
 
