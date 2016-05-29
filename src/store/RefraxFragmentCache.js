@@ -256,7 +256,7 @@ class RefraxFragmentCache {
    * NOTE: We opt to set value to undefined vs deleting the key itself due to
    * performance reasons (testing shows delete ~98% slower).
    */
-  remove(descriptor) {
+  destroy(descriptor) {
     var fragmentCache = this._getFragment(descriptor.partial || FRAGMENT_DEFAULT)
       , resourcePath = descriptor.basePath
       , resourceID = descriptor.id;

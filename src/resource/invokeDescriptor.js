@@ -45,7 +45,7 @@ function updateStoreResource(store, resourceDescriptor, data, action) {
     processResponse(data, resourceDescriptor);
   }
   else if (action == ACTION_DELETE) {
-    store.deleteResource(resourceDescriptor);
+    store.destroyResource(resourceDescriptor);
   }
   else {
     store.updateResource(resourceDescriptor, data, STATUS_SUCCESS);

@@ -11,6 +11,11 @@ const RefraxTools = require('RefraxTools');
 const StoreMap = {};
 var RefraxResourceDescriptor = null;
 
+// circular dependency hack
+function getResourceDescriptor() {
+  return RefraxResourceDescriptor ||
+    (RefraxResourceDescriptor = require('RefraxResourceDescriptor'));
+}
 
 function validateDefinition(definition) {
   if (typeof(definition) === 'string') {
@@ -98,35 +103,31 @@ class RefraxStore {
     this.cache = new RefraxFragmentCache();
   }
 
-  invalidate(resourceDescriptor, options = {}) {
-    // circular dependency hack
-    if (!RefraxResourceDescriptor) {
-      RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-    }
-
-    if (!(resourceDescriptor instanceof RefraxResourceDescriptor)) {
-      if (RefraxTools.isPlainObject(resourceDescriptor)) {
+  invalidate(resourceDescriptor, options) {
+    if (!(resourceDescriptor instanceof getResourceDescriptor())) {
+      if (!options && RefraxTools.isPlainObject(resourceDescriptor)) {
         options = resourceDescriptor;
       }
+      else if (resourceDescriptor) {
+        throw new TypeError(
+          'RefraxStore:invalidate - Argument `resourceDescriptor` has invalid value `' + resourceDescriptor + '`.\n' +
+          'Expected type `ResourceDescriptor`, found `' + typeof(resourceDescriptor) + '`.'
+        );
+      }
+
       resourceDescriptor = null;
     }
 
-    this.cache.invalidate(resourceDescriptor, options);
-    this.notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
-  }
-
-  //
-
-  notifyChange(resourceDescriptor, event) {
-    event = RefraxTools.extend({storeType: this.definition.type}, event);
-
-    this.emit('change', event);
-    if (resourceDescriptor && resourceDescriptor.id) {
-      this.emit(
-        'change:' + resourceDescriptor.id,
-        RefraxTools.extend({id: resourceDescriptor.id}, event)
+    options = options || {};
+    if (!RefraxTools.isPlainObject(options)) {
+      throw new TypeError(
+        'RefraxStore:invalidate - Argument `options` has invalid value `' + options + '`.\n' +
+        'Expected type `Object`, found `' + typeof(options) + '`.'
       );
     }
+
+    this.cache.invalidate(resourceDescriptor, options);
+    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
   }
 
   // Fragment Map is intentionally separate to allow future switching depending
@@ -139,18 +140,32 @@ class RefraxStore {
   touchResource(resourceDescriptor, data, noNotify) {
     this.cache.touch(resourceDescriptor, data);
     if (!noNotify) {
-      this.notifyChange(resourceDescriptor, {type: 'touch'});
+      this._notifyChange(resourceDescriptor, {type: 'touch'});
     }
   }
 
   updateResource(resourceDescriptor, data, status) {
     this.cache.update(resourceDescriptor, data, status);
-    this.notifyChange(resourceDescriptor, {type: 'update'});
+    this._notifyChange(resourceDescriptor, {type: 'update'});
   }
 
-  deleteResource(resourceDescriptor) {
-    this.cache.remove(resourceDescriptor);
-    this.notifyChange(resourceDescriptor, {type: 'destroy'});
+  destroyResource(resourceDescriptor) {
+    this.cache.destroy(resourceDescriptor);
+    this._notifyChange(resourceDescriptor, {type: 'destroy'});
+  }
+
+  //
+
+  _notifyChange(resourceDescriptor, event) {
+    event = RefraxTools.extend({storeType: this.definition.type}, event);
+
+    this.emit('change', event);
+    if (resourceDescriptor && resourceDescriptor.id) {
+      this.emit(
+        'change:' + resourceDescriptor.id,
+        RefraxTools.extend({id: resourceDescriptor.id}, event)
+      );
+    }
   }
 }
 

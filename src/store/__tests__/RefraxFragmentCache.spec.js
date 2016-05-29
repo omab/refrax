@@ -549,7 +549,7 @@ describe('RefraxFragmentCache', function() {
 
     describe('when passed an empty descriptor', function() {
       it('should perform no action', function() {
-        fragmentCache.remove(TestHelper.descriptorFrom({}));
+        fragmentCache.destroy(TestHelper.descriptorFrom({}));
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
@@ -565,7 +565,7 @@ describe('RefraxFragmentCache', function() {
 
     describe('when passed an id descriptor', function() {
       it('should properly delete resource and remove from collections', function() {
-        fragmentCache.remove(TestHelper.descriptorFrom({id: '2'}));
+        fragmentCache.destroy(TestHelper.descriptorFrom({id: '2'}));
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
@@ -581,7 +581,7 @@ describe('RefraxFragmentCache', function() {
 
     describe('when passed a path descriptor', function() {
       it('should properly delete only the query', function() {
-        fragmentCache.remove(TestHelper.descriptorFrom({basePath: '/projects'}));
+        fragmentCache.destroy(TestHelper.descriptorFrom({basePath: '/projects'}));
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
