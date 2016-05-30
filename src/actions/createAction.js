@@ -99,10 +99,15 @@ function mixinMutable(target) {
     value: {},
     writable: true
   });
-
+  Object.defineProperty(target, 'default', {
+    value: null,
+    writable: true
+  });
   Object.defineProperty(target, 'data', {
     get: function() {
-      var base = this.getDefault && this.getDefault() || {};
+      var base = this.getDefault && this.getDefault() ||
+                 this.default ||
+                 {};
       return RefraxTools.setPrototypeOf(this.mutable, base);
     }
   });
@@ -173,7 +178,7 @@ function createActionInstance(Action, method, options) {
   }
 
   ActionInstance.getDefault = function() {
-    var result = options.default || {};
+    var result = ActionInstance.default || {};
 
     if (RefraxTools.isFunction(result)) {
       result = result();
@@ -192,6 +197,8 @@ function createActionInstance(Action, method, options) {
   mixinSubscribable(ActionInstance);
   mixinStatus(ActionInstance);
   mixinMutable(ActionInstance);
+
+  ActionInstance.default = options.default;
 
   return ActionInstance;
 }
