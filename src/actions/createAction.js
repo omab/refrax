@@ -140,17 +140,15 @@ function invokeAction(emitters, method, params, options, args) {
     for (i=0; i<emitters.length; i++) {
       emitters[i].emit('finish');
     }
-
-    action.emit('change');
   }
   promise.then(finalize, finalize);
 
   return promise;
 }
 
-function createActionInstance(template, method, options) {
+function createActionInstance(Action, method, options) {
   function ActionInstance(params, ...args) {
-    return invokeAction([ActionInstance, template], method, params, options, args);
+    return invokeAction([ActionInstance, Action], method, params, options, args);
   }
 
   ActionInstance.getDefault = function() {
@@ -164,7 +162,7 @@ function createActionInstance(template, method, options) {
       result = result.data || {};
     }
     else if (!RefraxTools.isPlainObject(result)) {
-      throw new TypeError('ActionInstance ' + template + ' failed to resolve default value');
+      throw new TypeError('ActionInstance ' + Action + ' failed to resolve default value');
     }
 
     return result;

@@ -136,10 +136,12 @@ function attachAction(component, Action, options) {
 
   action = new Action(options);
   component.__refrax.actions.push(action);
-  component.__refrax.disposers.push(action.subscribe('change', function() {
+  component.__refrax.disposers.push(action.subscribe('start', function() {
     component.forceUpdate();
   }));
-
+  component.__refrax.disposers.push(action.subscribe('finish', function() {
+    component.forceUpdate();
+  }));
   return action;
 }
 
