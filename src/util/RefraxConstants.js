@@ -7,8 +7,7 @@
  */
 export default {
   status: {
-    SUCCESS: 'success',
-    ERROR: 'error',
+    COMPLETE: 'complete',
     PARTIAL: 'partial',
     STALE: 'stale'
   },

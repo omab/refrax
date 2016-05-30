@@ -18,7 +18,7 @@ function assertFragmentData(obj, key, data, partial) {
   assert.property(obj, key);
 
   if (typeof(data) === 'object') {
-    assert.deepPropertyVal(obj, key + '.status', Constants.status.SUCCESS);
+    assert.deepPropertyVal(obj, key + '.status', Constants.status.COMPLETE);
     assert.deepProperty(obj, key + '.timestamp');
     assert.deepEqual(obj[key].data, data);
   }
@@ -35,7 +35,7 @@ function assertQueryData(obj, key, data) {
   assert.isObject(obj);
   assert.property(obj, key);
 
-  assert.deepPropertyVal(obj, key + '.status', Constants.status.SUCCESS);
+  assert.deepPropertyVal(obj, key + '.status', Constants.status.COMPLETE);
   assert.deepProperty(obj, key + '.timestamp');
   assert.deepEqual(obj[key].data, data);
 }
@@ -69,7 +69,7 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
@@ -83,7 +83,7 @@ describe('RefraxFragmentCache', function() {
       it('should properly store the data for a default partial', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
@@ -98,11 +98,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
 
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
@@ -122,7 +122,7 @@ describe('RefraxFragmentCache', function() {
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
@@ -135,7 +135,7 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
           basePath: '/projects/1'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1']);
@@ -149,12 +149,12 @@ describe('RefraxFragmentCache', function() {
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
@@ -169,7 +169,7 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1']);
@@ -182,7 +182,7 @@ describe('RefraxFragmentCache', function() {
       it('should properly store the data with a default partial', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1']);
@@ -196,11 +196,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
@@ -217,11 +217,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/active',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
@@ -237,10 +237,10 @@ describe('RefraxFragmentCache', function() {
       it('should properly store the data for a default partial', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/active'
-        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2', '3']);
@@ -257,15 +257,15 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/active',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_4], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_4], Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3', '4']);
@@ -286,12 +286,12 @@ describe('RefraxFragmentCache', function() {
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
           basePath: '/projects/2',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
@@ -305,11 +305,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
           basePath: '/projects/1'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
           basePath: '/projects/2'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
@@ -324,17 +324,17 @@ describe('RefraxFragmentCache', function() {
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 2,
           basePath: '/projects/2',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           id: 1,
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
@@ -350,11 +350,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/2',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2']);
@@ -369,10 +369,10 @@ describe('RefraxFragmentCache', function() {
       it('should properly store the data with a default partial', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/2'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), [DefaultPartial]);
         assert.sameMembers(Object.keys(fragmentCache.fragments[DefaultPartial]), ['1', '2']);
@@ -388,15 +388,15 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_1, Constants.status.SUCCESS);
+        }), dataSegmentId_1, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/2',
           partial: 'foobar'
-        }), dataSegmentId_2, Constants.status.SUCCESS);
+        }), dataSegmentId_2, Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects/1',
           partial: 'foobar'
-        }), dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
@@ -413,11 +413,11 @@ describe('RefraxFragmentCache', function() {
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+        }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
         fragmentCache.update(TestHelper.descriptorFrom({
           basePath: '/projects',
           partial: 'foobar'
-        }), dataSegmentId_3, Constants.status.SUCCESS);
+        }), dataSegmentId_3, Constants.status.COMPLETE);
 
         assert.sameMembers(Object.keys(fragmentCache.fragments), ['foobar']);
         assert.sameMembers(Object.keys(fragmentCache.fragments.foobar), ['1', '2', '3']);
@@ -451,11 +451,11 @@ describe('RefraxFragmentCache', function() {
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects',
         partial: DefaultPartial
-      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects/active',
         partial: DefaultPartial
-      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
     });
 
     describe('when passed an empty descriptor', function() {
@@ -477,7 +477,7 @@ describe('RefraxFragmentCache', function() {
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
-        assert.strictEqual(result.status, Constants.status.SUCCESS);
+        assert.strictEqual(result.status, Constants.status.COMPLETE);
         assert.property(result, 'timestamp');
         assert.notStrictEqual(result.timestamp, Constants.timestamp.stale);
         assert.property(result, 'data');
@@ -502,7 +502,7 @@ describe('RefraxFragmentCache', function() {
 
         assert.typeOf(result, 'object');
         assert.property(result, 'status');
-        assert.strictEqual(result.status, Constants.status.SUCCESS);
+        assert.strictEqual(result.status, Constants.status.COMPLETE);
         assert.property(result, 'timestamp');
         assert.notStrictEqual(result.timestamp, Constants.timestamp.stale);
         assert.property(result, 'data');
@@ -541,10 +541,10 @@ describe('RefraxFragmentCache', function() {
       fragmentCache = new RefraxFragmentCache();
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects'
-      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects/active'
-      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
     });
 
     describe('when passed an empty descriptor', function() {
@@ -615,10 +615,10 @@ describe('RefraxFragmentCache', function() {
       fragmentCache = new RefraxFragmentCache();
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects'
-      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_2], Constants.status.COMPLETE);
       fragmentCache.update(TestHelper.descriptorFrom({
         basePath: '/projects/active'
-      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.SUCCESS);
+      }), [dataSegmentId_1, dataSegmentId_3], Constants.status.COMPLETE);
     });
 
     describe('when passed an invalid descriptor', function() {

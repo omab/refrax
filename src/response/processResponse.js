@@ -10,7 +10,7 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxStore = require('RefraxStore');
 const parseNested = require('parseNested');
 const parseUnnested = require('parseUnnested');
-const STATUS_SUCCESS = RefraxConstants.status.SUCCESS;
+const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 
 
 function processResponse(data, resourceDescriptor, handler) {
@@ -34,7 +34,7 @@ function processResponse(data, resourceDescriptor, handler) {
                                result.partial ||
                                RefraxConstants.defaultFragment;
 
-  store.updateResource(resourceDescriptor, result.data, STATUS_SUCCESS);
+  store.updateResource(resourceDescriptor, result.data, STATUS_COMPLETE);
 }
 
 /**

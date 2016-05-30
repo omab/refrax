@@ -10,7 +10,7 @@ const Axios = require('axios');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const processResponse = require('processResponse');
-const STATUS_SUCCESS = RefraxConstants.status.SUCCESS;
+const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const ACTION_FETCH = RefraxConstants.action.fetch;
@@ -48,7 +48,7 @@ function updateStoreResource(store, resourceDescriptor, data, action) {
     store.destroyResource(resourceDescriptor);
   }
   else {
-    store.updateResource(resourceDescriptor, data, STATUS_SUCCESS);
+    store.updateResource(resourceDescriptor, data, STATUS_COMPLETE);
   }
 }
 
