@@ -112,7 +112,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   hasData() {
-    return this.data !== null;
+    return !!this.data;
   }
 }
 

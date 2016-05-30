@@ -142,7 +142,6 @@ class RefraxFragmentCache {
   update(descriptor, data, status) {
     var fragment = descriptor.partial || FRAGMENT_DEFAULT
       , fragmentCache = this._getFragment(fragment)
-      , fragmentItem = null
       , resourcePath = descriptor.basePath
       , result = {}
       , tmpId;
@@ -153,7 +152,7 @@ class RefraxFragmentCache {
     };
 
     if (descriptor.id) {
-      fragmentCache[descriptor.id] = RefraxTools.extend(fragmentItem || {}, result, {data: data});
+      fragmentCache[descriptor.id] = RefraxTools.extend(result, {data: data});
     }
     else {
       if (RefraxTools.isArray(data)) {
@@ -184,12 +183,13 @@ class RefraxFragmentCache {
         if (this.queries[resourcePath] &&
             RefraxTools.isArray(this.queries[resourcePath].data) &&
             tmpId) {
-          this.queries[resourcePath].data.push(tmpId);
+          this.queries[resourcePath] = RefraxTools.extend(result, {
+            data: this.queries[resourcePath].data.concat(tmpId)
+          });
         }
         else {
           this.queries[resourcePath] = RefraxTools.extend(result, {
-            data: tmpId || data,
-            partial: fragment
+            data: tmpId || data
           });
         }
       }
