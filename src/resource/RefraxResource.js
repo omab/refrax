@@ -104,8 +104,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   isLoading() {
-    return this.timestamp === TIMESTAMP_LOADING &&
-           this.status === STATUS_STALE;
+    return this.timestamp === TIMESTAMP_LOADING;
   }
 
   isStale() {
