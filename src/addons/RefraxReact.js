@@ -136,12 +136,12 @@ function attachAction(component, Action, options) {
 
   action = new Action(options);
   component.__refrax.actions.push(action);
-  component.__refrax.disposers.push(action.subscribe('start', function() {
-    component.forceUpdate();
-  }));
-  component.__refrax.disposers.push(action.subscribe('finish', function() {
-    component.forceUpdate();
-  }));
+  // TODO: finish/mutated can cause double updates due to a request failure
+  RefraxTools.each(['start', 'finish', 'mutated'], function(event) {
+    component.__refrax.disposers.push(action.subscribe(event, function() {
+      component.forceUpdate();
+    }));
+  });
   return action;
 }
 

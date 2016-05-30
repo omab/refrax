@@ -35,7 +35,11 @@ const MixinMutable = {
     this.mutable[attribute] = value;
 
     if (options.noPropagate !== true) {
-      this.emit('change');
+      this.emit('mutated', {
+        type: 'attribute',
+        target: attribute,
+        value: value
+      });
     }
   },
   setter: function(attribute, options = {}) {
@@ -45,7 +49,11 @@ const MixinMutable = {
       self.mutable[attribute] = value;
 
       if (options.noPropagate !== true) {
-        self.emit('change');
+        self.emit('mutated', {
+          type: 'attribute',
+          target: attribute,
+          value: value
+        });
       }
     };
   },
@@ -53,10 +61,16 @@ const MixinMutable = {
     var self = this;
 
     return function(event) {
-      self.mutable[attribute] = event.target.value;
+      var value = event.target.value;
+
+      self.mutable[attribute] = value;
 
       if (options.noPropagate !== true) {
-        self.emit('change');
+        self.emit('mutated', {
+          type: 'attribute',
+          target: attribute,
+          value: value
+        });
       }
     };
   },
@@ -64,7 +78,11 @@ const MixinMutable = {
     this.mutable = {};
 
     if (options.noPropagate !== true) {
-      this.emit('change');
+      this.emit('mutated', {
+        type: 'attribute',
+        target: null,
+        value: null
+      });
     }
   },
   getErrors: function(attribute) {
@@ -127,6 +145,9 @@ function invokeAction(emitters, method, params, options, args) {
   promise.catch(function(err) {
     if (RefraxTools.isPlainObject(err.response.data)) {
       action.errors = RefraxTools.extend({}, err.response.data);
+      action.emit('mutated', {
+        type: 'errors'
+      });
     }
   });
 
