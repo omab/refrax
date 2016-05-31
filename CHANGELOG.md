@@ -1,3 +1,13 @@
+## [v0.3.8]
+> May 30, 2016
+
+- **Feature:** Add FormData conversion for payloads that contain File data
+- **Bugfix:** Fix collection cache timestamp set
+- **Minor:** Change `isLoading` behavior to just check timestamp
+- **Minor:** General cleanup & refactoring
+
+[v0.3.8]: https://github.com/netarc/refrax/compare/v0.3.6...v0.3.8
+
 ## [v0.3.6]
 > May 27, 2016
 
