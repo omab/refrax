@@ -1,3 +1,10 @@
+## [v0.3.10]
+> May 31, 2016
+
+- **Feature:** React component Status mixin now queries Action as well
+
+[v0.3.10]: https://github.com/netarc/refrax/compare/v0.3.9...v0.3.10
+
 ## [v0.3.9]
 > May 30, 2016
 
