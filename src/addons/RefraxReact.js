@@ -35,6 +35,8 @@ const MixinResourceStatus = {
   isLoading: function(...targets) {
     return detect.call(this, this.__refrax.resources, targets, function(resource) {
       return resource.isLoading();
+    }) || detect.call(this, this.__refrax.actions, targets, function(action) {
+      return (action.default instanceof RefraxResource) && action.default.isLoading();
     });
   },
   isPending: function(...targets) {
@@ -45,11 +47,15 @@ const MixinResourceStatus = {
   hasData: function(...targets) {
     return !detect.call(this, this.__refrax.resources, targets, function(resource) {
       return !resource.hasData();
+    }) || detect.call(this, this.__refrax.actions, targets, function(action) {
+      return (action.default instanceof RefraxResource) && action.default.hasData();
     });
   },
   isStale: function(...targets) {
     return !detect.call(this, this.__refrax.resources, targets, function(resource) {
       return resource.isStale();
+    }) || detect.call(this, this.__refrax.actions, targets, function(action) {
+      return (action.default instanceof RefraxResource) && action.default.isStale();
     });
   }
 };
