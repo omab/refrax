@@ -1,3 +1,11 @@
+## [v0.3.9]
+> May 30, 2016
+
+- **Bugfix:** Refactor ResourceDescriptor to properly handle query params
+- **Bugfix:** Fix query cache updates
+
+[v0.3.9]: https://github.com/netarc/refrax/compare/v0.3.8...v0.3.9
+
 ## [v0.3.8]
 > May 30, 2016
 
