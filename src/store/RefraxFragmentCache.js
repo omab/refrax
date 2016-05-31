@@ -69,8 +69,8 @@ class RefraxFragmentCache {
         }
       }
     }
-    else if (descriptor.basePath) {
-      resource = this.queries[descriptor.basePath];
+    else if (descriptor.path) {
+      resource = this.queries[descriptor.path];
       if (resource) {
         result.status = resource.status;
         result.timestamp = resource.timestamp;
@@ -131,8 +131,8 @@ class RefraxFragmentCache {
     if (descriptor.id) {
       fragmentCache[descriptor.id] = RefraxTools.extend(fragmentCache[descriptor.id] || {}, touch);
     }
-    else if (descriptor.basePath) {
-      this.queries[descriptor.basePath] = RefraxTools.extend(this.queries[descriptor.basePath] || {}, touch);
+    else if (descriptor.path) {
+      this.queries[descriptor.path] = RefraxTools.extend(this.queries[descriptor.path] || {}, touch);
     }
   }
 
@@ -142,7 +142,7 @@ class RefraxFragmentCache {
   update(descriptor, data, status) {
     var fragment = descriptor.partial || FRAGMENT_DEFAULT
       , fragmentCache = this._getFragment(fragment)
-      , resourcePath = descriptor.basePath
+      , resourcePath = descriptor.path
       , result = {}
       , tmpId;
 
@@ -222,7 +222,7 @@ class RefraxFragmentCache {
     if (descriptor) {
       if (options.noQueries !== true) {
         RefraxTools.each(this.queries, function(query, path) {
-          if (path === descriptor.basePath ||
+          if (path === descriptor.path ||
               (descriptor.id &&
                  RefraxTools.isArray(query.data) &&
                  query.data.indexOf(descriptor.id) != -1)) {
@@ -258,7 +258,7 @@ class RefraxFragmentCache {
    */
   destroy(descriptor) {
     var fragmentCache = this._getFragment(descriptor.partial || FRAGMENT_DEFAULT)
-      , resourcePath = descriptor.basePath
+      , resourcePath = descriptor.path
       , resourceID = descriptor.id;
 
     if (resourceID) {

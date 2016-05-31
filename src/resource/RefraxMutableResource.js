@@ -7,7 +7,11 @@
  */
 const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxConstants = require('RefraxConstants');
 const invokeDescriptor = require('invokeDescriptor');
+const ACTION_CREATE = RefraxConstants.action.create;
+const ACTION_UPDATE = RefraxConstants.action.update;
+const ACTION_DELETE = RefraxConstants.action.delete;
 
 
 /**
@@ -30,15 +34,15 @@ class RefraxMutableResource extends RefraxResourceBase {
   }
 
   create(params) {
-    return invokeDescriptor.create(this._generateDescriptor(params));
+    return invokeDescriptor(this._generateDescriptor(ACTION_CREATE, params));
   }
 
   destroy(params) {
-    return invokeDescriptor.destroy(this._generateDescriptor(params));
+    return invokeDescriptor(this._generateDescriptor(ACTION_DELETE, params));
   }
 
   update(params) {
-    return invokeDescriptor.update(this._generateDescriptor(params));
+    return invokeDescriptor(this._generateDescriptor(ACTION_UPDATE, params));
   }
 }
 

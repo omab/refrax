@@ -17,9 +17,11 @@ export default {
     loading: 0
   },
   action: {
-    fetch: 'GET',
-    save: 'SAVE',
-    delete: 'DELETE'
+    get: 'get',
+    create: 'post',
+    update: 'put',
+    delete: 'delete',
+    inspect: 'inspect'
   },
   coerce: {
     collection: 'collection',

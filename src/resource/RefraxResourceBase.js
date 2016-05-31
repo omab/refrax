@@ -11,6 +11,8 @@ const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxTools = require('RefraxTools');
+const RefraxConstants = require('RefraxConstants');
+const ACTION_GET = RefraxConstants.action.get;
 
 
 /**
@@ -38,7 +40,7 @@ class RefraxResourceBase {
           RefraxTools.extend(options, arg.options);
           arg.options = undefined;
         }
-        stack.push(new RefraxParameters(arg));
+        stack.push(arg);
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');
@@ -52,7 +54,7 @@ class RefraxResourceBase {
     Object.defineProperty(this, '_options', {value: options});
   }
 
-  _generateDescriptor(params) {
+  _generateDescriptor(action, data) {
     var runtimeParams = [];
 
     if (this._options.paramsGenerator) {
@@ -65,11 +67,11 @@ class RefraxResourceBase {
 
     // params intentionally comes before our stack so paramsGenerator params
     // can get overridden if needed
-    return new RefraxResourceDescriptor([].concat(
+    return new RefraxResourceDescriptor(action || ACTION_GET, [].concat(
       this._accessorStack,
       runtimeParams,
       this._stack,
-      params || []
+      data || []
     ));
   }
 }

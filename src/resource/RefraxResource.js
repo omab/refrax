@@ -58,10 +58,10 @@ class RefraxResource extends RefraxResourceBase {
     if (this._options.invalidate) {
       // shortcut for no options
       if (this._options.invalidate === true) {
-        this._options.invalidate = {};
+        this._options.invalidate = {noPropagate: true};
       }
 
-      this.invalidate(this._options.invalidate);
+      // this.invalidate(this._options.invalidate);
     }
 
     this._fetch();

@@ -11,6 +11,8 @@ const RefraxStore = require('RefraxStore');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
+const RefraxConstants = require('RefraxConstants');
+const ACTION_GET = RefraxConstants.action.get;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -59,12 +61,32 @@ function fillURI(uri, params, paramMap) {
   };
 }
 
+function encodeURIData(data) {
+  var result = [];
+
+  RefraxTools.each(data || [], function(value, key) {
+    if (RefraxTools.isArray(value)) {
+      RefraxTools.each(value, function(v) {
+        result.push(key + '[]=' + v);
+      });
+    }
+    else {
+      result.push(key + '=' + global.encodeURIComponent(value));
+    }
+  });
+
+  return result.length > 0
+    ? '?' + result.join('&')
+    : '';
+}
+
 /**
  * Given a stack representing a path in our Schema tree and options affecting it, we
  * reduce and resolve it down to a descriptor describing a resource.
  */
-function processStack(resourceDescriptor, stack, resolveParams) {
-  var resolvedParams = {}
+function processStack(resourceDescriptor, action, stack) {
+  var canResolveParams = action !== 'inspect'
+    , resolvedParams = {}
     , resolvedParamMap = {}
     , resolvedPartial = null
     , resolvedType = null
@@ -111,7 +133,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
       }
 
       resolvedPartial = definition.partial;
-      resolvedFragments = definition.fragments
+      resolvedFragments = definition.fragments;
       resolvedCoercion = definition.coerce;
     }
     else if (item instanceof RefraxParameters) {
@@ -132,14 +154,14 @@ function processStack(resourceDescriptor, stack, resolveParams) {
 
     if (item instanceof RefraxTreeNode) {
       if (definition.uri) {
-        result = resolveParams ? fillURI(definition.uri, resolvedParams, resolvedParamMap)
-                               : {uri: definition.uri};
+        result = canResolveParams ? fillURI(definition.uri, resolvedParams, resolvedParamMap)
+                                  : {uri: definition.uri};
         resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
       else if (definition.paramId) {
-        result = resolveParams ? fillURI(':'+definition.paramId, resolvedParams, resolvedParamMap)
-                               : {uri: ':'+definition.paramId};
+        result = canResolveParams ? fillURI(':'+definition.paramId, resolvedParams, resolvedParamMap)
+                                  : {uri: ':'+definition.paramId};
         resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
@@ -152,6 +174,10 @@ function processStack(resourceDescriptor, stack, resolveParams) {
     resourceDescriptor.path+= '/' + resolvedAppendPaths.join('/');
   }
 
+  if (action === ACTION_GET) {
+    resourceDescriptor.path+= encodeURIData(resolvedPayload);
+  }
+
   key = resolvedParamId || lastURIParamId || 'id';
   if (resolvedParamMap[key]) {
     key = resolvedParamMap[key];
@@ -161,6 +187,7 @@ function processStack(resourceDescriptor, stack, resolveParams) {
 
   event = ['change'].concat(resolvedParamId || []).join(':');
 
+  resourceDescriptor.action = action;
   resourceDescriptor.event = event;
   resourceDescriptor.coerce = resolvedCoercion;
   resourceDescriptor.partial = resolvedPartial;
@@ -173,12 +200,12 @@ function processStack(resourceDescriptor, stack, resolveParams) {
 }
 
 class RefraxResourceDescriptor {
-  constructor(stack = [], resolveParams = true) {
+  constructor(action = ACTION_GET, stack = []) {
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];
     }
 
-    processStack(this, stack, resolveParams);
+    processStack(this, action, stack);
   }
 
   // Using our own descriptor's rules, grab an id from an object

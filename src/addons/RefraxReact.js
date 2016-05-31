@@ -55,8 +55,8 @@ const MixinResourceStatus = {
 };
 
 const MixinBase = {
-  attach: function(target, options) {
-    return attach(this, target, options);
+  attach: function(target, options, ...args) {
+    return attach(this, target, options, ...args);
   },
   mutableFrom: function(accessor, ...args) {
     var self = this
@@ -107,7 +107,7 @@ function refraxifyComponent(component) {
   };
 }
 
-function attachAccessor(component, accessor, options) {
+function attachAccessor(component, accessor, options, ...args) {
   var resource;
 
   options = RefraxTools.extend({
@@ -116,7 +116,7 @@ function attachAccessor(component, accessor, options) {
     }
   }, options);
 
-  resource = new RefraxResource(accessor, new RefraxOptions(options));
+  resource = new RefraxResource(accessor, new RefraxOptions(options), ...args);
   component.__refrax.resources.push(resource);
   component.__refrax.disposers.push(resource.subscribe('change', function() {
     component.forceUpdate();
@@ -145,11 +145,11 @@ function attachAction(component, Action, options) {
   return action;
 }
 
-export function attach(component, target, options) {
+export function attach(component, target, options, ...args) {
   refraxifyComponent(component);
 
   if (target instanceof RefraxSchemaNodeAccessor) {
-    return attachAccessor(component, target, options);
+    return attachAccessor(component, target, options, ...args);
   }
   else if (target instanceof createAction) {
     return attachAction(component, target, options);

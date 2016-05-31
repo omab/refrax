@@ -10,8 +10,10 @@ const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxResource = require('RefraxResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-
+const RefraxConstants = require('RefraxConstants');
+const ACTION_INSPECT = RefraxConstants.action.inspect;
 const SchemaAccescessorMixins = [];
+
 
 // Determine if a stack matches the ending of another
 function compareStack(part, stack) {
@@ -97,7 +99,7 @@ class RefraxSchemaNodeAccessor {
       , stack = this.__stack;
 
     enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
-      var descriptor = new RefraxResourceDescriptor(leafStack, false);
+      var descriptor = new RefraxResourceDescriptor(ACTION_INSPECT, leafStack);
       result[descriptor.path] = descriptor;
       new RefraxSchemaNodeAccessor(leafNode, node, leafStack).inspect(result);
     });

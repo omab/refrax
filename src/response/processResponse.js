@@ -11,6 +11,7 @@ const RefraxStore = require('RefraxStore');
 const parseNested = require('parseNested');
 const parseUnnested = require('parseUnnested');
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const ACTION_GET = RefraxConstants.action.get;
 
 
 function processResponse(data, resourceDescriptor, handler) {
@@ -27,7 +28,7 @@ function processResponse(data, resourceDescriptor, handler) {
   store = RefraxStore.get(type);
 
   if (!resourceDescriptor) {
-    resourceDescriptor = new RefraxResourceDescriptor([store]);
+    resourceDescriptor = new RefraxResourceDescriptor(ACTION_GET, [store]);
   }
   resourceDescriptor.type = type;
   resourceDescriptor.partial = resourceDescriptor.partial ||

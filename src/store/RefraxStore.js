@@ -137,9 +137,9 @@ class RefraxStore {
     return this.cache.fetch(resourceDescriptor);
   }
 
-  touchResource(resourceDescriptor, data, noNotify) {
+  touchResource(resourceDescriptor, data, options = {}) {
     this.cache.touch(resourceDescriptor, data);
-    if (!noNotify) {
+    if (options.noNotify !== true) {
       this._notifyChange(resourceDescriptor, {type: 'touch'});
     }
   }
