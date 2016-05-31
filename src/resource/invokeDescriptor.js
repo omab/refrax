@@ -52,6 +52,22 @@ function updateStoreResource(store, resourceDescriptor, data, action) {
   }
 }
 
+function containsMultipart(data) {
+  return RefraxTools.any(data, function(value) {
+    return value instanceof global.File;
+  });
+}
+
+function composeFormData(data) {
+  var result = new global.FormData();
+
+  RefraxTools.each(data, function(value, key) {
+    result.append(key, value);
+  });
+
+  return result;
+}
+
 function makeRequest(method, resourceDescriptor, action, touchParams, noTouchNotify) {
   var store = resourceDescriptor.store
     , requestConfig = {
@@ -60,9 +76,12 @@ function makeRequest(method, resourceDescriptor, action, touchParams, noTouchNot
       data: resourceDescriptor.payload
     };
 
-  touchParams = RefraxTools.extend({timestamp: TIMESTAMP_LOADING}, touchParams || {});
-
+  touchParams = RefraxTools.extend({timestamp: TIMESTAMP_LOADING}, touchParams);
   store.touchResource(resourceDescriptor, touchParams, noTouchNotify);
+
+  if (containsMultipart(requestConfig.data)) {
+    requestConfig.data = composeFormData(requestConfig.data);
+  }
 
   return new Promise(function(resolve, reject) {
     // eslint-disable-next-line new-cap
