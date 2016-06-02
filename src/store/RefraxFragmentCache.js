@@ -113,6 +113,12 @@ class RefraxFragmentCache {
       }
     }
 
+    if (!result.data && descriptor.coerce) {
+      if (descriptor.coerce === 'collection') {
+        result.data = [];
+      }
+    }
+
     return result;
   }
 
