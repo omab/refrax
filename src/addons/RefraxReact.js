@@ -83,6 +83,7 @@ function refraxifyComponent(component) {
 
   Object.defineProperty(component, '__refrax', {
     value: {
+      disposed: false,
       resources: [],
       actions: [],
       disposers: []
@@ -97,20 +98,32 @@ function refraxifyComponent(component) {
   // Hook existing componentWillUnmount for cleanup
   var _componentWillUnmount = component.componentWillUnmount;
   component.componentWillUnmount = function() {
-    RefraxTools.each(this.__refrax.disposers, function(disposer) {
+    RefraxTools.each(component.__refrax.disposers, function(disposer) {
       disposer();
     });
-    this.__refrax.disposers = [];
-
-    RefraxTools.each(this.__refrax.resources, function(resource) {
+    RefraxTools.each(component.__refrax.resources, function(resource) {
       resource._dispose();
     });
-    this.__refrax.resources = [];
+    component.__refrax.disposers = [];
+    component.__refrax.actions = [];
+    component.__refrax.resources = [];
+    component.__refrax.disposed = true;
 
     if (_componentWillUnmount) {
       _componentWillUnmount();
     }
   };
+}
+
+function dispatchRender(component) {
+  // subscription events occur during request/udpate promise chains, delaying
+  // until nextTick allows promise hooks to react before a potential re-render occurs
+  RefraxTools.nextTick(function() {
+    if (component.__refrax.disposed) {
+      return;
+    }
+    component.forceUpdate();
+  });
 }
 
 function attachAccessor(component, accessor, options, ...args) {
@@ -125,7 +138,7 @@ function attachAccessor(component, accessor, options, ...args) {
   resource = new RefraxResource(accessor, new RefraxOptions(options), ...args);
   component.__refrax.resources.push(resource);
   component.__refrax.disposers.push(resource.subscribe('change', function() {
-    component.forceUpdate();
+    dispatchRender(component);
   }));
   return resource;
 }
@@ -145,7 +158,7 @@ function attachAction(component, Action, options) {
   // TODO: finish/mutated can cause double updates due to a request failure
   RefraxTools.each(['start', 'finish', 'mutated'], function(event) {
     component.__refrax.disposers.push(action.subscribe(event, function() {
-      component.forceUpdate();
+      dispatchRender(component);
     }));
   });
   return action;
