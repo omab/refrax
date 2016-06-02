@@ -115,15 +115,20 @@ function refraxifyComponent(component) {
   };
 }
 
-function dispatchRender(component) {
-  // subscription events occur during request/udpate promise chains, delaying
-  // until nextTick allows promise hooks to react before a potential re-render occurs
-  RefraxTools.nextTick(function() {
-    if (component.__refrax.disposed) {
-      return;
-    }
+function dispatchRender(component, noDelay) {
+  if (noDelay) {
     component.forceUpdate();
-  });
+  }
+  else {
+    // subscription events occur during request/udpate promise chains, delaying
+    // until nextTick allows promise hooks to react before a potential re-render occurs
+    RefraxTools.nextTick(function() {
+      if (component.__refrax.disposed) {
+        return;
+      }
+      component.forceUpdate();
+    });
+  }
 }
 
 function attachAccessor(component, accessor, options, ...args) {
@@ -158,7 +163,7 @@ function attachAction(component, Action, options) {
   // TODO: finish/mutated can cause double updates due to a request failure
   RefraxTools.each(['start', 'finish', 'mutated'], function(event) {
     component.__refrax.disposers.push(action.subscribe(event, function() {
-      dispatchRender(component);
+      dispatchRender(component, event === 'start');
     }));
   });
   return action;
