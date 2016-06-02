@@ -79,6 +79,10 @@ function invokeDescriptor(resourceDescriptor, options) {
       url: resourceDescriptor.path
     };
 
+  if (!store) {
+    return Promise.reject(new Error('invokeDescriptor - No Store reference'));
+  }
+
   if (resourceDescriptor.action === ACTION_GET) {
     touchParams.status = STATUS_STALE;
   }
@@ -110,14 +114,20 @@ function invokeDescriptor(resourceDescriptor, options) {
 
 invokeDescriptor.fetch = function(resourceDescriptor, noFetchGet) {
   var store = resourceDescriptor.store
-    , resource = store.fetchResource(resourceDescriptor);
+    , result;
 
-  if (!noFetchGet && resource.timestamp < TIMESTAMP_LOADING) {
-    invokeDescriptor(resourceDescriptor, {noTouchNotify: true});
-    resource = store.fetchResource(resourceDescriptor);
+  if (!store) {
+    return null;
   }
 
-  return resource;
+  result = store.fetchResource(resourceDescriptor);
+
+  if (!noFetchGet && result.timestamp < TIMESTAMP_LOADING) {
+    invokeDescriptor(resourceDescriptor, {noTouchNotify: true});
+    result = store.fetchResource(resourceDescriptor);
+  }
+
+  return result;
 };
 
 export default invokeDescriptor;
