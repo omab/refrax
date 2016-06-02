@@ -65,7 +65,7 @@ class RefraxResource extends RefraxResourceBase {
         this._options.invalidate = {noPropagate: true};
       }
 
-      // this.invalidate(this._options.invalidate);
+      this.invalidate(this._options.invalidate);
     }
 
     this._fetchCache();
