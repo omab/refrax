@@ -11,6 +11,7 @@ const RefraxFragmentResult = require('RefraxFragmentResult');
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STATUS_PARTIAL = RefraxConstants.status.PARTIAL;
 const STATUS_STALE = RefraxConstants.status.STALE;
+const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 
@@ -142,13 +143,19 @@ class RefraxFragmentCache {
    */
   update(descriptor, data, status) {
     var fragment = descriptor.partial || FRAGMENT_DEFAULT
-      , fragmentCache = this._getFragment(fragment)
+      , fragmentCache
       , resourcePath = descriptor.path
       , result = {}
       , tmpId;
 
+    if (!data) {
+      return;
+    }
+
+    fragmentCache = this._getFragment(fragment);
+
     result = {
-      status: status,
+      status: status || STATUS_COMPLETE,
       timestamp: Date.now()
     };
 
