@@ -17,6 +17,15 @@ const prototypeAction = {};
 const MixinStatus = {
   isPending: function() {
     return this._promises.length > 0;
+  },
+  isLoading: function() {
+    return this.default && this.default.isLoading && this.default.isLoading();
+  },
+  hasData: function() {
+    return this.default && this.default.hasData && this.default.hasData();
+  },
+  isStale: function() {
+    return this.default && this.default.isStale && this.default.isStale();
   }
 };
 
