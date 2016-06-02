@@ -1,3 +1,12 @@
+## [v0.3.11]
+> June 2, 2016
+
+- **Feature:** Add status queries to Action objects
+- **BugFix:** Fix hasData/isStale status queries via React components
+- **Minor:** Re-enable invalidation option on Resource constructor
+
+[v0.3.11]: https://github.com/netarc/refrax/compare/v0.3.10...v0.3.11
+
 ## [v0.3.10]
 > May 31, 2016
 
