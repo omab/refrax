@@ -1,3 +1,10 @@
+## [v0.3.12]
+> June 3, 2016
+
+- **Feature:** `invokeAction` now optionally passes default data with the use of `includeDefault`
+
+[v0.3.12]: https://github.com/netarc/refrax/compare/v0.3.11...v0.3.12
+
 ## [v0.3.11]
 > June 2, 2016
 
