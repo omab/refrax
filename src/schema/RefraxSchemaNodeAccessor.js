@@ -109,7 +109,7 @@ class RefraxSchemaNodeAccessor {
 
   invalidate(options) {
     RefraxResource
-      .from(this, new RefraxOptions({noSubscribe: true}))
+      .from(this, new RefraxOptions(RefraxTools.extend({noSubscribe: true, params: options.params})))
       .invalidate(options);
   }
 
