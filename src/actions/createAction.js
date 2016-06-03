@@ -142,7 +142,12 @@ function invokeAction(emitters, method, params, options, args) {
 
   // reset errors on invocation
   action.errors = {};
-  params = RefraxTools.extend({}, action.getDefault(), action.mutable, params);
+  params = RefraxTools.extend(
+    {},
+    options.includeDefault === true ? action.getDefault() : null,
+    action.mutable,
+    params
+  );
 
   for (i=0; i<emitters.length; i++) {
     emitters[i].emit('start');
