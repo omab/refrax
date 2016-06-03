@@ -1,3 +1,12 @@
+## [v0.3.13]
+> June 3, 2016
+
+- **Feature:** `noNotify` option support for store invalidation
+- **Minor:** `params` option passing to Resource via SchemaNodeAccessor.invalidate
+- **Minor:** Move partial default assignment to ResourceDescriptor instead of in FragmentCache
+
+[v0.3.13]: https://github.com/netarc/refrax/compare/v0.3.12...v0.3.13
+
 ## [v0.3.12]
 > June 3, 2016
 
