@@ -127,7 +127,9 @@ class RefraxStore {
     }
 
     this.cache.invalidate(resourceDescriptor, options);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
+    if (options.noNotify !== true) {
+      this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
+    }
   }
 
   // Fragment Map is intentionally separate to allow future switching depending
