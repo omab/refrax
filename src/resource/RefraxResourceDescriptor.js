@@ -13,6 +13,7 @@ const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
+const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -190,7 +191,7 @@ function processStack(resourceDescriptor, action, stack) {
   resourceDescriptor.action = action;
   resourceDescriptor.event = event;
   resourceDescriptor.coerce = resolvedCoercion;
-  resourceDescriptor.partial = resolvedPartial;
+  resourceDescriptor.partial = resolvedPartial || FRAGMENT_DEFAULT;
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.params = resolvedParams;
   resourceDescriptor.fragments = (resolvedFragments || []).reverse();

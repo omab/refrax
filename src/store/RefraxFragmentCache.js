@@ -39,7 +39,7 @@ class RefraxFragmentCache {
    * supplied descriptor.
    */
   fetch(descriptor) {
-    var fragmentCache = this._getFragment(descriptor.partial || FRAGMENT_DEFAULT)
+    var fragmentCache = this._getFragment(descriptor.partial)
       , resourceId = descriptor.id
       , result = null
       , resource = null
@@ -129,7 +129,7 @@ class RefraxFragmentCache {
    * could change the `data` property.
    */
   touch(descriptor, touch) {
-    var fragmentCache = this._getFragment(descriptor.partial || FRAGMENT_DEFAULT)
+    var fragmentCache = this._getFragment(descriptor.partial)
       , resourceId = descriptor.id;
 
     if (!touch) {
@@ -148,7 +148,7 @@ class RefraxFragmentCache {
    * Update the content for a given resource.
    */
   update(descriptor, data, status) {
-    var fragment = descriptor.partial || FRAGMENT_DEFAULT
+    var fragment = descriptor.partial
       , fragmentCache
       , resourcePath = descriptor.path
       , result = {}
@@ -269,7 +269,7 @@ class RefraxFragmentCache {
    * performance reasons (testing shows delete ~98% slower).
    */
   destroy(descriptor) {
-    var fragmentCache = this._getFragment(descriptor.partial || FRAGMENT_DEFAULT)
+    var fragmentCache = this._getFragment(descriptor.partial)
       , resourcePath = descriptor.path
       , resourceID = descriptor.id;
 
