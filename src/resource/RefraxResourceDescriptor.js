@@ -51,7 +51,7 @@ function fillURI(uri, params, paramMap) {
       uri = uri.replace(v, value);
     }
     else {
-      throw new TypeError('Failed to map path component `' + lastParamKey + '` for `' + uri + '`' +
+      throw new TypeError('Failed to map path component `' + lastParamKey + '` from `' + uri + '`' +
       ' while using params: ' + JSON.stringify(params, serializer()));
     }
   }
