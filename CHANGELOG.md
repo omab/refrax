@@ -1,3 +1,10 @@
+## [v0.3.14]
+> June 6, 2016
+
+- **Minor:** Resource constructor behavior now always consumes objects as params
+
+[v0.3.14]: https://github.com/netarc/refrax/compare/v0.3.13...v0.3.14
+
 ## [v0.3.13]
 > June 3, 2016
 
