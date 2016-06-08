@@ -1,5 +1,12 @@
+## [v0.3.16]
+> June 8, 2016
+
+- **Minor:** MutableResource action methods pass all arguments
+
+[v0.3.16]: https://github.com/netarc/refrax/compare/v0.3.15...v0.3.16
+
 ## [v0.3.15]
-> June 6, 2016
+> June 8, 2016
 
 - **Minor:** ResourceBase no longer consumes objects as params
 - **Minor:** Action `.mutableFrom` consumes objects as params
