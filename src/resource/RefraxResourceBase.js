@@ -36,11 +36,7 @@ class RefraxResourceBase {
         RefraxTools.extend(options, arg);
       }
       else if (RefraxTools.isPlainObject(arg)) {
-        if (arg.options) {
-          RefraxTools.extend(options, arg.options);
-          arg.options = undefined;
-        }
-        stack.push(new RefraxParameters(arg));
+        stack.push(arg);
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');

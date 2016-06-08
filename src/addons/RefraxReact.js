@@ -10,6 +10,7 @@ const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
+const RefraxParameters = require('RefraxParameters');
 const createAction = require('createAction');
 
 
@@ -66,13 +67,21 @@ const MixinBase = {
   },
   mutableFrom: function(accessor, ...args) {
     var self = this
-      , options = new RefraxOptions({
+      , options = {
         paramsGenerator: function() {
           return Shims.getComponentParams.call(self);
         }
-      });
+      };
 
-    return RefraxMutableResource.from(accessor, options, ...args);
+    // Mutable has no need for data arguments so convert them to params
+    args = RefraxTools.map(args, function(arg) {
+      if (RefraxTools.isPlainObject(arg)) {
+        return new RefraxParameters(arg);
+      }
+      return arg;
+    });
+
+    return new RefraxMutableResource(accessor, new RefraxOptions(options), ...args);
   }
 };
 

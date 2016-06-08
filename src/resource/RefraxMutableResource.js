@@ -33,16 +33,16 @@ class RefraxMutableResource extends RefraxResourceBase {
     super(accessor, ...args);
   }
 
-  create(params) {
-    return invokeDescriptor(this._generateDescriptor(ACTION_CREATE, params));
+  create(data) {
+    return invokeDescriptor(this._generateDescriptor(ACTION_CREATE, data));
   }
 
-  destroy(params) {
-    return invokeDescriptor(this._generateDescriptor(ACTION_DELETE, params));
+  destroy(data) {
+    return invokeDescriptor(this._generateDescriptor(ACTION_DELETE, data));
   }
 
-  update(params) {
-    return invokeDescriptor(this._generateDescriptor(ACTION_UPDATE, params));
+  update(data) {
+    return invokeDescriptor(this._generateDescriptor(ACTION_UPDATE, data));
   }
 }
 
