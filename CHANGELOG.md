@@ -1,3 +1,11 @@
+## [v0.3.15]
+> June 6, 2016
+
+- **Minor:** ResourceBase no longer consumes objects as params
+- **Minor:** Action `.mutableFrom` consumes objects as params
+
+[v0.3.15]: https://github.com/netarc/refrax/compare/v0.3.14...v0.3.15
+
 ## [v0.3.14]
 > June 6, 2016
 
