@@ -124,6 +124,10 @@ function refraxifyComponent(component) {
   };
 }
 
+// TODO: Is it ok that an action trigger to update an end-point would trigger (2) renders in
+// short succession? First for the action trigger, second for the touch on the endpoint..
+// Maybe would be nice to replace this with some "event-id" approach so they are
+// considered as "one" render event?
 function dispatchRender(component, noDelay) {
   if (noDelay) {
     component.forceUpdate();
