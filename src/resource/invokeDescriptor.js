@@ -116,7 +116,7 @@ function invokeDescriptor(resourceDescriptor, options) {
   });
 }
 
-invokeDescriptor.fetch = function(resourceDescriptor, noFetchGet) {
+invokeDescriptor.fetch = function(resourceDescriptor, options = {}) {
   var store = resourceDescriptor.store
     , result;
 
@@ -126,7 +126,7 @@ invokeDescriptor.fetch = function(resourceDescriptor, noFetchGet) {
 
   result = store.fetchResource(resourceDescriptor);
 
-  if (!noFetchGet && result.timestamp < TIMESTAMP_LOADING) {
+  if (options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
     invokeDescriptor(resourceDescriptor, {noTouchNotify: true});
     result = store.fetchResource(resourceDescriptor);
   }
