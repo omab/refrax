@@ -42,6 +42,10 @@ RequestError.prototype = Object.create(Error.prototype);
 function processRequestSuccess(resourceDescriptor, response) {
   var data = response && response.data;
 
+  if (!resourceDescriptor.store) {
+    return;
+  }
+
   if (resourceDescriptor.action == ACTION_GET) {
     processResponse(data, resourceDescriptor);
   }
@@ -79,10 +83,6 @@ function invokeDescriptor(resourceDescriptor, options) {
       url: resourceDescriptor.path
     };
 
-  if (!store) {
-    return Promise.reject(new Error('invokeDescriptor - No Store reference'));
-  }
-
   if (resourceDescriptor.action === ACTION_GET) {
     touchParams.status = STATUS_STALE;
   }
@@ -94,7 +94,9 @@ function invokeDescriptor(resourceDescriptor, options) {
     }
   }
 
-  store.touchResource(resourceDescriptor, touchParams, options);
+  if (store) {
+    store.touchResource(resourceDescriptor, touchParams, options);
+  }
 
   return new Promise(function(resolve, reject) {
     // eslint-disable-next-line new-cap
@@ -103,7 +105,9 @@ function invokeDescriptor(resourceDescriptor, options) {
         processRequestSuccess(resourceDescriptor, response);
         resolve(response);
       }, function(response) {
-        store.touchResource(resourceDescriptor, {timestamp: Date.now()});
+        if (store) {
+          store.touchResource(resourceDescriptor, {timestamp: Date.now()});
+        }
         reject(new RequestError(response.statusText, response));
       })
       .catch(function(err) {
