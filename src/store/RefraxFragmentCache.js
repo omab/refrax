@@ -148,27 +148,24 @@ class RefraxFragmentCache {
    * Update the content for a given resource.
    */
   update(descriptor, data, status) {
-    var fragment = descriptor.partial
-      , fragmentCache
+    var fragmentCache = this._getFragment(descriptor.partial)
       , resourcePath = descriptor.path
       , result = {}
       , tmpId;
 
-    if (!data) {
-      return;
-    }
-
-    fragmentCache = this._getFragment(fragment);
-
+    // if no data is present (ie a 204 response) our data then becomes stale
     result = {
       status: status || STATUS_COMPLETE,
-      timestamp: Date.now()
+      timestamp: data ? Date.now() : TIMESTAMP_STALE
     };
 
+    // Fragments
     if (descriptor.id) {
-      fragmentCache[descriptor.id] = RefraxTools.extend({}, result, {data: data});
+      fragmentCache[descriptor.id] = RefraxTools.extend({}, result, {
+        data: data || fragmentCache[descriptor.id] && fragmentCache[descriptor.id].data
+      });
     }
-    else {
+    else if (data) {
       if (RefraxTools.isArray(data)) {
         // normalize set into entries
         data = RefraxTools.map(data, function(item) {
@@ -183,29 +180,29 @@ class RefraxFragmentCache {
           return itemId;
         });
       }
-      // data has an id so lets unload it into fragments
       else if (data.id) {
         fragmentCache[data.id] = RefraxTools.extend({}, result, {data: data});
       }
     }
 
+    // Queries
     if (resourcePath) {
-      tmpId = descriptor.idFrom(data);
+      this.queries[resourcePath] = RefraxTools.extend({}, result, {
+        data: this.queries[resourcePath] && this.queries[resourcePath].data
+      });
 
-      // TODO: Should we have to intentionally define a dataset as a collection?
-      // Or is it ok to check our query cache to see if its an array and treat it
-      // like a collection and just append our new data id into it
-      if (this.queries[resourcePath] &&
-          RefraxTools.isArray(this.queries[resourcePath].data) &&
-          tmpId) {
-        this.queries[resourcePath] = RefraxTools.extend({}, result, {
-          data: this.queries[resourcePath].data.concat(tmpId)
-        });
-      }
-      else {
-        this.queries[resourcePath] = RefraxTools.extend({}, result, {
-          data: tmpId || data
-        });
+      if (data) {
+        tmpId = descriptor.idFrom(data);
+
+        // TODO: Should we have to intentionally define a dataset as a collection?
+        // Or is it ok to check our query cache to see if its an array and treat it
+        // like a collection and just append our new data id into it
+        if (tmpId && RefraxTools.isArray(this.queries[resourcePath].data)) {
+          this.queries[resourcePath].data.push(tmpId);
+        }
+        else {
+          this.queries[resourcePath].data = tmpId || data;
+        }
       }
     }
   }

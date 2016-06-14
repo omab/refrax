@@ -212,7 +212,7 @@ class RefraxResourceDescriptor {
   // Using our own descriptor's rules, grab an id from an object
   idFrom(target) {
     // TODO: id map?
-    return target.id && ('' + target.id);
+    return target && target.id && ('' + target.id);
   }
 }
 
