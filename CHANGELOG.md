@@ -1,3 +1,11 @@
+## [v0.3.17]
+> June 13, 2016
+
+- **BugFix:** Resource will no longer get data on an update
+- **BugFix:** FragmentCache update will properly update the timestamp on falsey data
+
+[v0.3.17]: https://github.com/netarc/refrax/compare/v0.3.16...v0.3.17
+
 ## [v0.3.16]
 > June 8, 2016
 
