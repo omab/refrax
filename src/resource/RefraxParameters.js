@@ -5,14 +5,16 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+const RefraxTools = require('RefraxTools');
+
 
 /**
- * A RefraxStore is a wrapper around the RefraxFragmentCache object that offers
- * a Subscribable interface to resource mutations.
+ * A RefraxParameters is a wrapper around an object to identify it as a
+ * set of parameters.
  */
 class RefraxParameters {
   constructor(params) {
-    this.params = params;
+    RefraxTools.extend(this, params);
   }
 }
 
