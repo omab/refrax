@@ -147,6 +147,12 @@ function dispatchRender(component, noDelay) {
 function attachAccessor(component, accessor, options, ...args) {
   var resource;
 
+  // If options doesn't look like an option lets just prepend to args
+  if (options && !RefraxTools.isPlainObject(options)) {
+    args.unshift(options);
+    options = null;
+  }
+
   options = RefraxTools.extend({
     paramsGenerator: function() {
       return Shims.getComponentParams.call(component);
