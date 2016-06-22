@@ -10,6 +10,8 @@ const RefraxConfig = require('RefraxConfig');
 const RefraxTools = require('RefraxTools');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
+const RefraxParameters = require('RefraxParameters');
+const RefraxOptions = require('RefraxOptions');
 const createAction = require('createAction');
 const createSchemaCollection = require('createSchemaCollection');
 const createSchemaResource = require('createSchemaResource');
@@ -25,6 +27,8 @@ export default {
   Schema: RefraxSchema,
   Store: RefraxStore,
   Tools: RefraxTools,
+  Parameters: RefraxParameters,
+  Options: RefraxOptions,
   createAction,
   createSchemaCollection,
   createSchemaNamespace,
