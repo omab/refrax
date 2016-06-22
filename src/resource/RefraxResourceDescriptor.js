@@ -174,8 +174,10 @@ function processStack(resourceDescriptor, action, stack) {
     }
   }
 
-  resolvedAppendPaths = RefraxTools.select(resolvedAppendPaths, function(rPath) {
+  resolvedAppendPaths = RefraxTools.map(RefraxTools.select(resolvedAppendPaths, function(rPath) {
     return rPath.isModifier || resolvedPath.push(rPath.path);
+  }), function(rPath) {
+    return rPath.path;
   });
 
   resourceDescriptor.basePath =

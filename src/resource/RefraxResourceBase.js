@@ -30,13 +30,14 @@ class RefraxResourceBase {
       if (arg === undefined || arg === null) {
         continue;
       }
-      else if (typeof(arg) === 'string' || arg instanceof RefraxPath) {
+      else if (typeof(arg) === 'string') {
         stack.push(new RefraxPath(arg));
       }
       else if (arg instanceof RefraxOptions) {
         RefraxTools.extend(options, arg);
       }
-      else if (arg instanceof RefraxParameters) {
+      else if (arg instanceof RefraxParameters ||
+               arg instanceof RefraxPath) {
         stack.push(arg);
       }
       else if (RefraxTools.isPlainObject(arg)) {
