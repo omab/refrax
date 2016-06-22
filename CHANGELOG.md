@@ -1,3 +1,10 @@
+## [v0.3.20]
+> June 22, 2016
+
+- **BugFix:** Fix path handling from ResourceBase & Descriptor conversion
+
+[v0.3.20]: https://github.com/netarc/refrax/compare/v0.3.19...v0.3.20
+
 ## [v0.3.19]
 > June 22, 2016
 
