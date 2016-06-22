@@ -8,6 +8,7 @@
 const mixinSubscribable = require('mixinSubscribable');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
+const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxTools = require('RefraxTools');
@@ -35,8 +36,11 @@ class RefraxResourceBase {
       else if (arg instanceof RefraxOptions) {
         RefraxTools.extend(options, arg);
       }
-      else if (RefraxTools.isPlainObject(arg)) {
+      else if (arg instanceof RefraxParameters) {
         stack.push(arg);
+      }
+      else if (RefraxTools.isPlainObject(arg)) {
+        stack.push(new RefraxQueryParameters(arg));
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');

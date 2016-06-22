@@ -10,6 +10,7 @@ const RefraxConfig = require('RefraxConfig');
 const RefraxStore = require('RefraxStore');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxParameters = require('RefraxParameters');
+const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
@@ -96,6 +97,7 @@ function processStack(resourceDescriptor, action, stack) {
     , resolvedFragments = null
     , resolvedParamId = null
     , resolvedPayload = {}
+    , resolvedQueryParams = {}
     , resolvedCoercion = null
     , resolvedAppendPaths = []
     , i, item, definition
@@ -138,7 +140,10 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedCoercion = definition.coerce;
     }
     else if (item instanceof RefraxParameters) {
-      resolvedParams = RefraxTools.extend(resolvedParams, item.params);
+      resolvedParams = RefraxTools.extend(resolvedParams, item);
+    }
+    else if (item instanceof RefraxQueryParameters) {
+      resolvedQueryParams = RefraxTools.extend(resolvedQueryParams, item);
     }
     else if (item instanceof RefraxPath) {
       resolvedAppendPaths.push(item.path);
@@ -176,7 +181,7 @@ function processStack(resourceDescriptor, action, stack) {
   }
 
   if (action === ACTION_GET) {
-    resourceDescriptor.path+= encodeURIData(resolvedPayload);
+    resourceDescriptor.path+= encodeURIData(resolvedQueryParams);
   }
 
   key = resolvedParamId || lastURIParamId || 'id';
