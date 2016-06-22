@@ -1,9 +1,18 @@
+## [v0.3.19]
+> June 22, 2016
+
+- **Feature:** FragmentCache now uses basePath instead of full path. MutableResource now consumes paths as modifiers (non basePath editing) and Resource consumes as non-modifier.
+
+[v0.3.19]: https://github.com/netarc/refrax/compare/v0.3.18...v0.3.19
+
 ## [v0.3.18]
 > June 22, 2016
 
 - **Minor:** ResourceBase consumes all objects into QueryParamter objects which nets the same functionality
 - **Minor:** Descriptor now only consumes QueryParamter objects for its query params instead of payload data
 - **Minor:** Export Parameters & Options classes
+
+[v0.3.18]: https://github.com/netarc/refrax/compare/v0.3.17...v0.3.18
 
 ## [v0.3.17]
 > June 13, 2016
