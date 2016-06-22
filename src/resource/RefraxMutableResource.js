@@ -8,6 +8,8 @@
 const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxConstants = require('RefraxConstants');
+const RefraxPath = require('RefraxPath');
+const RefraxTools = require('RefraxTools');
 const invokeDescriptor = require('invokeDescriptor');
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_UPDATE = RefraxConstants.action.update;
@@ -29,6 +31,14 @@ class RefraxMutableResource extends RefraxResourceBase {
         'but found `' + typeof(accessor) + '`'
       );
     }
+
+    // Mutable path modifiers do not count as the basePath
+    args = RefraxTools.map(args, function(arg) {
+      if (typeof(arg) === 'string') {
+        arg = new RefraxPath(arg, true);
+      }
+      return arg;
+    });
 
     super(accessor, ...args);
   }

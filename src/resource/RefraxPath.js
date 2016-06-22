@@ -12,8 +12,9 @@ const RefraxTools = require('RefraxTools');
  * A RefraxPath is a wrapper around a string to identify it as a uri path.
  */
 class RefraxPath {
-  constructor(path) {
+  constructor(path, isModifier) {
     this.path = RefraxTools.cleanPath(path);
+    this.isModifier = !!isModifier;
   }
 }
 

@@ -11,6 +11,7 @@ exports.deleteStores = function() {
 
 exports.descriptorFrom = function(params) {
   var descriptor = new RefraxResourceDescriptor();
+  descriptor.basePath = params.path || descriptor.path;
   RefraxTools.extend(descriptor, params);
   return descriptor;
 }

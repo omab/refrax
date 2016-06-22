@@ -146,7 +146,7 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedQueryParams = RefraxTools.extend(resolvedQueryParams, item);
     }
     else if (item instanceof RefraxPath) {
-      resolvedAppendPaths.push(item.path);
+      resolvedAppendPaths.push(item);
     }
     else if (RefraxTools.isPlainObject(item)) {
       resolvedPayload = RefraxTools.extend(resolvedPayload, item);
@@ -173,6 +173,10 @@ function processStack(resourceDescriptor, action, stack) {
       }
     }
   }
+
+  resolvedAppendPaths = RefraxTools.select(resolvedAppendPaths, function(rPath) {
+    return rPath.isModifier || resolvedPath.push(rPath.path);
+  });
 
   resourceDescriptor.basePath =
     resourceDescriptor.path = RefraxConfig.hostname + '/' + resolvedPath.join('/');
