@@ -55,6 +55,25 @@ class RefraxResourceBase {
     Object.defineProperty(this, '_options', {value: options});
   }
 
+  // helper methods for a more idiomatic chaining approach
+
+  config(options) {
+    RefraxTools.extend(this._options, options);
+    return this;
+  }
+
+  params(params) {
+    this._stack.push(new RefraxParameters(params));
+    return this;
+  }
+
+  query(params) {
+    this._stack.push(new RefraxQueryParameters(params));
+    return this;
+  }
+
+  //
+
   _generateDescriptor(action, data) {
     var runtimeParams = [];
 
