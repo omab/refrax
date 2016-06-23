@@ -26,5 +26,9 @@ export default {
   coerce: {
     collection: 'collection',
     item: 'item'
+  },
+  cacheStrategy: {
+    replace: 'replace',
+    merge: 'merge'
   }
 };

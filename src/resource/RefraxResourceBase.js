@@ -91,6 +91,7 @@ class RefraxResourceBase {
       this._accessorStack,
       runtimeParams,
       this._stack,
+      new RefraxOptions(this._options),
       data || []
     ));
   }

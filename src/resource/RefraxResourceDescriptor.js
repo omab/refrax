@@ -12,9 +12,11 @@ const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
+const RefraxOptions = require('RefraxOptions');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
+const CACHE_STRATEGY_REPLACE = RefraxConstants.cacheStrategy.replace;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -100,6 +102,7 @@ function processStack(resourceDescriptor, action, stack) {
     , resolvedQueryParams = {}
     , resolvedCoercion = null
     , resolvedAppendPaths = []
+    , resolvedCacheStrategy = CACHE_STRATEGY_REPLACE
     , i, item, definition
     , lastURIParamId = null
     , key, event, result;
@@ -138,6 +141,9 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedPartial = definition.partial;
       resolvedFragments = definition.fragments;
       resolvedCoercion = definition.coerce;
+    }
+    else if (item instanceof RefraxOptions) {
+      resolvedCacheStrategy = item.cacheStrategy || resolvedCacheStrategy;
     }
     else if (item instanceof RefraxParameters) {
       resolvedParams = RefraxTools.extend(resolvedParams, item);
@@ -209,6 +215,7 @@ function processStack(resourceDescriptor, action, stack) {
   resourceDescriptor.payload = resolvedPayload;
   resourceDescriptor.store = resolvedStore;
   resourceDescriptor.type = resolvedType;
+  resourceDescriptor.cacheStrategy = resolvedCacheStrategy;
 }
 
 class RefraxResourceDescriptor {
