@@ -186,14 +186,18 @@ function processStack(resourceDescriptor, action, stack) {
     return rPath.path;
   });
 
-  resourceDescriptor.basePath =
-    resourceDescriptor.path = RefraxConfig.hostname + '/' + resolvedPath.join('/');
-  if (resolvedAppendPaths.length > 0) {
-    resourceDescriptor.path+= '/' + resolvedAppendPaths.join('/');
-  }
+  // If we have no base path's ignore pathing all together
+  if (resolvedPath.length > 0) {
+    resourceDescriptor.basePath =
+      resourceDescriptor.path = RefraxConfig.hostname + '/' + resolvedPath.join('/');
 
-  if (action === ACTION_GET) {
-    resourceDescriptor.path+= encodeURIData(resolvedQueryParams);
+    if (resolvedAppendPaths.length > 0) {
+      resourceDescriptor.path+= '/' + resolvedAppendPaths.join('/');
+    }
+
+    if (action === ACTION_GET) {
+      resourceDescriptor.path+= encodeURIData(resolvedQueryParams);
+    }
   }
 
   key = resolvedParamId || lastURIParamId || 'id';
