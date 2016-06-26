@@ -13,7 +13,7 @@ var validDefinitionKeys = [
   'fragments',
   'uri',
   'paramId',
-  'coerce'
+  'classify'
 ];
 
 function validateDefinition(definition) {

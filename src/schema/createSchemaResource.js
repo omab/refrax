@@ -11,7 +11,7 @@ const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaTools = require('RefraxSchemaTools');
 const RefraxConstants = require('RefraxConstants');
-const COERCE_ITEM = RefraxConstants.coerce.item;
+const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
 
 
 function createSchemaResource(path, store, options) {

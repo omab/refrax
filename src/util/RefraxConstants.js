@@ -23,9 +23,10 @@ export default {
     delete: 'delete',
     inspect: 'inspect'
   },
-  coerce: {
+  classify: {
     collection: 'collection',
-    item: 'item'
+    item: 'item',
+    resource: 'resource'
   },
   cacheStrategy: {
     replace: 'replace',

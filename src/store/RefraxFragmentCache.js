@@ -9,8 +9,8 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxFragmentResult = require('RefraxFragmentResult');
 const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
-const COERCE_COLLECTION = RefraxConstants.coerce.collection;
-const COERCE_ITEM = RefraxConstants.coerce.item;
+const CLASSIFICATION_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_PARTIAL = RefraxConstants.status.PARTIAL;
@@ -103,8 +103,8 @@ class RefraxFragmentCache {
       }
     }
 
-    if (!result.data && descriptor.coerce) {
-      if (descriptor.coerce === 'collection') {
+    if (!result.data && descriptor.classify) {
+      if (descriptor.classify === 'collection') {
         result.data = [];
       }
     }
@@ -152,7 +152,7 @@ class RefraxFragmentCache {
     };
 
     // Fragments
-    if (descriptor.coerce == COERCE_COLLECTION) {
+    if (descriptor.classify == CLASSIFICATION_COLLECTION) {
       if (RefraxTools.isArray(data)) {
         dataId = RefraxTools.map(data, function(item) {
           if (!RefraxTools.isPlainObject(item)) {
@@ -166,7 +166,7 @@ class RefraxFragmentCache {
         this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
       }
     }
-    else if (descriptor.coerce == COERCE_ITEM) {
+    else if (descriptor.classify == CLASSIFICATION_ITEM) {
       dataId = descriptor.idFrom(descriptor) || descriptor.idFrom(data);
       this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
     }
@@ -179,7 +179,7 @@ class RefraxFragmentCache {
         data: queryData
       });
 
-      if (descriptor.coerce == COERCE_COLLECTION) {
+      if (descriptor.classify == CLASSIFICATION_COLLECTION) {
         if (dataId) {
           if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
             this.queries[resourcePath].data = (queryData || []).concat(dataId);
@@ -189,7 +189,7 @@ class RefraxFragmentCache {
           }
         }
       }
-      else if (descriptor.coerce == COERCE_ITEM) {
+      else if (descriptor.classify == CLASSIFICATION_ITEM) {
         this.queries[resourcePath].data = dataId;
       }
       else {

@@ -17,6 +17,7 @@ const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const CACHE_STRATEGY_REPLACE = RefraxConstants.cacheStrategy.replace;
+const CLASSIFICATION_RESOURCE = RefraxConstants.classify.resource;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -100,7 +101,7 @@ function processStack(resourceDescriptor, action, stack) {
     , resolvedParamId = null
     , resolvedPayload = {}
     , resolvedQueryParams = {}
-    , resolvedCoercion = null
+    , resolvedClassification = CLASSIFICATION_RESOURCE
     , resolvedAppendPaths = []
     , resolvedCacheStrategy = CACHE_STRATEGY_REPLACE
     , i, item, definition
@@ -125,7 +126,7 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedStore = item;
       resolvedParamId = definition.paramId || null;
       resolvedType = definition.type;
-      resolvedCoercion = null;
+      resolvedClassification = null;
       resolvedPartial = null;
       resolvedFragments = null;
     }
@@ -140,7 +141,7 @@ function processStack(resourceDescriptor, action, stack) {
 
       resolvedPartial = definition.partial;
       resolvedFragments = definition.fragments;
-      resolvedCoercion = definition.coerce;
+      resolvedClassification = definition.classify;
     }
     else if (item instanceof RefraxOptions) {
       resolvedCacheStrategy = item.cacheStrategy || resolvedCacheStrategy;
@@ -211,7 +212,7 @@ function processStack(resourceDescriptor, action, stack) {
 
   resourceDescriptor.action = action;
   resourceDescriptor.event = event;
-  resourceDescriptor.coerce = resolvedCoercion;
+  resourceDescriptor.classification = resolvedClassification;
   resourceDescriptor.partial = resolvedPartial || FRAGMENT_DEFAULT;
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.params = resolvedParams;

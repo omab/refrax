@@ -9,8 +9,8 @@ const Refrax = require('Refrax');
 const RefraxConstants = require('RefraxConstants');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxTools = require('RefraxTools');
-const COERCE_COLLECTION = RefraxConstants.coerce.collection;
-const COERCE_ITEM = RefraxConstants.coerce.item;
+const CLASSIFICATION_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
 
 
 exports.deleteStores = function() {
@@ -28,12 +28,12 @@ export function descriptorFrom(params) {
 
 export function descriptorCollection(params) {
   return RefraxTools.extend(descriptorFrom(params), {
-    coerce: COERCE_COLLECTION
+    classify: CLASSIFICATION_COLLECTION
   });
 }
 
 export function descriptorCollectionItem(params) {
   return RefraxTools.extend(descriptorFrom(params), {
-    coerce: COERCE_ITEM
+    classify: CLASSIFICATION_ITEM
   });
 }
