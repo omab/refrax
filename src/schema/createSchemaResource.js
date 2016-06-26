@@ -28,8 +28,7 @@ function createSchemaResource(path, store, options) {
   store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
-    uri: path,
-    coerce: COERCE_ITEM
+    uri: path
   }, options.resource));
 
   accessorNode = new RefraxSchemaNodeAccessor(

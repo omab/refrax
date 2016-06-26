@@ -11,6 +11,7 @@ const RefraxTools = require('RefraxTools');
 const StoreMap = {};
 var RefraxResourceDescriptor = null;
 
+
 // circular dependency hack
 function getResourceDescriptor() {
   return RefraxResourceDescriptor ||

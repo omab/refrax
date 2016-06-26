@@ -8,26 +8,16 @@
 const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxFragmentResult = require('RefraxFragmentResult');
+const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
+const COERCE_COLLECTION = RefraxConstants.coerce.collection;
+const COERCE_ITEM = RefraxConstants.coerce.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
+const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_PARTIAL = RefraxConstants.status.PARTIAL;
 const STATUS_STALE = RefraxConstants.status.STALE;
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 
-/**
- * RefraxFragmentCache is the cache layer inside a store typically used for a single
- * resource type and manages all representations and collections of the given resource.
- *
- * Each action requires a Resource Descriptor which requires the following data:
- * @param {String} path The end-point URI where this resource is associated.
- * @param {String} [optional] id The unique id for a give resource.
- * @param {String} [optional] partial The fragment to associate the resource with.
- * @param {Array(String)} [optional] fragments A list of fragments we allow a fetch
- *   to use to compose a partial representation of data.
- *
- * TODO: Should we remove the need to understand status/timestamp externally?
- */
 class RefraxFragmentCache {
   constructor() {
     this.fragments = {};
@@ -148,10 +138,12 @@ class RefraxFragmentCache {
    * Update the content for a given resource.
    */
   update(descriptor, data, status) {
-    var fragmentCache = this._getFragment(descriptor.partial)
+    var self = this
+      , fragmentCache = this._getFragment(descriptor.partial)
+      , queryData
       , resourcePath = descriptor.basePath
-      , result = {}
-      , tmpId;
+      , result
+      , dataId = null;
 
     // if no data is present (ie a 204 response) our data then becomes stale
     result = {
@@ -160,51 +152,68 @@ class RefraxFragmentCache {
     };
 
     // Fragments
-    if (descriptor.id) {
-      fragmentCache[descriptor.id] = RefraxTools.extend({}, result, {
-        data: data || fragmentCache[descriptor.id] && fragmentCache[descriptor.id].data
-      });
-    }
-    else if (data) {
+    if (descriptor.coerce == COERCE_COLLECTION) {
       if (RefraxTools.isArray(data)) {
-        // normalize set into entries
-        data = RefraxTools.map(data, function(item) {
-          var itemId;
-
+        dataId = RefraxTools.map(data, function(item) {
           if (!RefraxTools.isPlainObject(item)) {
-            throw new TypeError('expected object type in array, found ' + typeof(item) + ' instead');
+            throw new TypeError('RefraxFragmentCache:update expected object type in array, found ' + typeof(item) + ' instead');
           }
 
-          itemId = descriptor.idFrom(item);
-          fragmentCache[itemId] = RefraxTools.extend({}, result, {data: item});
-          return itemId;
+          return self._updateFragmentCache(fragmentCache, descriptor, descriptor.idFrom(item), result, item);
         });
       }
-      else if (data.id) {
-        fragmentCache[data.id] = RefraxTools.extend({}, result, {data: data});
+      else if (dataId = descriptor.idFrom(data)) {
+        this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
       }
+    }
+    else if (descriptor.coerce == COERCE_ITEM) {
+      dataId = descriptor.idFrom(descriptor) || descriptor.idFrom(data);
+      this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
     }
 
     // Queries
     if (resourcePath) {
+      queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
+
       this.queries[resourcePath] = RefraxTools.extend({}, result, {
-        data: this.queries[resourcePath] && this.queries[resourcePath].data
+        data: queryData
       });
 
-      if (data) {
-        tmpId = descriptor.idFrom(data);
-
-        // TODO: Should we have to intentionally define a dataset as a collection?
-        // Or is it ok to check our query cache to see if its an array and treat it
-        // like a collection and just append our new data id into it
-        if (tmpId && RefraxTools.isArray(this.queries[resourcePath].data)) {
-          this.queries[resourcePath].data.push(tmpId);
-        }
-        else {
-          this.queries[resourcePath].data = tmpId || data;
+      if (descriptor.coerce == COERCE_COLLECTION) {
+        if (dataId) {
+          if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+            this.queries[resourcePath].data = (queryData || []).concat(dataId);
+          }
+          else {
+            this.queries[resourcePath].data = ([]).concat(dataId);
+          }
         }
       }
+      else if (descriptor.coerce == COERCE_ITEM) {
+        this.queries[resourcePath].data = dataId;
+      }
+      else {
+        this.queries[resourcePath].data = data || queryData;
+      }
     }
+  }
+
+  _updateFragmentCache(fragmentCache, descriptor, id, result, data) {
+    var fragmentData = fragmentCache[id] && fragmentCache[id].data || {};
+
+    if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+      fragmentData = RefraxTools.extend(fragmentData, data);
+    }
+    // default replace strategy
+    else {
+      fragmentData = data || fragmentData;
+    }
+
+    fragmentCache[id] = RefraxTools.extend({}, result, {
+      data: fragmentData
+    });
+
+    return id;
   }
 
   /**

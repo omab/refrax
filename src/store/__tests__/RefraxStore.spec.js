@@ -12,6 +12,7 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxStore = require('RefraxStore');
 const RefraxTools = require('RefraxTools');
 const expect = chai.expect;
+const COERCE_COLLECTION = RefraxConstants.coerce.collection;
 
 
 const dataSegmentId_1 = {
@@ -30,7 +31,8 @@ function fixtureStore() {
   refStore = RefraxStore.get();
 
   refStore.updateResource(TestHelper.descriptorFrom({
-    basePath: '/projects'
+    basePath: '/projects',
+    coerce: COERCE_COLLECTION
   }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.COMPLETE);
 }
 
