@@ -175,26 +175,36 @@ class RefraxFragmentCache {
     if (resourcePath) {
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
-      this.queries[resourcePath] = RefraxTools.extend({}, result, {
-        data: queryData
-      });
-
       if (descriptor.classify == CLASSIFICATION_COLLECTION) {
         if (dataId) {
           if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
-            this.queries[resourcePath].data = (queryData || []).concat(dataId);
+            queryData = (queryData || []).concat(dataId);
           }
           else {
-            this.queries[resourcePath].data = ([]).concat(dataId);
+            queryData = ([]).concat(dataId);
           }
         }
       }
       else if (descriptor.classify == CLASSIFICATION_ITEM) {
-        this.queries[resourcePath].data = dataId;
+        queryData = dataId;
       }
-      else {
-        this.queries[resourcePath].data = data || queryData;
+      else if (data) {
+        if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+          if (RefraxTools.isArray(queryData) || RefraxTools.isArray(data)) {
+            queryData = (queryData || []).concat(data);
+          }
+          else {
+            queryData = RefraxTools.extend(queryData || {}, data);
+          }
+        }
+        else {
+          queryData = data;
+        }
       }
+
+      this.queries[resourcePath] = RefraxTools.extend({}, result, {
+        data: queryData
+      });
     }
   }
 

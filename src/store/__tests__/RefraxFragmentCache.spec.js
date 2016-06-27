@@ -12,6 +12,7 @@ const partialFragmentCacheInvalidate = require('RefraxFragmentCache-invalidate.s
 const partialFragmentCacheTouch = require('RefraxFragmentCache-touch.specp');
 const partialFragmentCacheDestroy = require('RefraxFragmentCache-destroy.specp');
 const partialFragmentCacheUpdateReplace = require('RefraxFragmentCache-updateReplace.specp');
+const partialFragmentCacheUpdateMerge = require('RefraxFragmentCache-updateMerge.specp');
 const expect = chai.expect;
 
 
@@ -34,5 +35,6 @@ describe('RefraxFragmentCache', function() {
     partialFragmentCacheTouch();
     partialFragmentCacheDestroy();
     partialFragmentCacheUpdateReplace();
+    partialFragmentCacheUpdateMerge();
   });
 });

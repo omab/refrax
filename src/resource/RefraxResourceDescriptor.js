@@ -126,7 +126,7 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedStore = item;
       resolvedParamId = definition.paramId || null;
       resolvedType = definition.type;
-      resolvedClassification = null;
+      resolvedClassification = CLASSIFICATION_RESOURCE;
       resolvedPartial = null;
       resolvedFragments = null;
     }
@@ -141,7 +141,9 @@ function processStack(resourceDescriptor, action, stack) {
 
       resolvedPartial = definition.partial;
       resolvedFragments = definition.fragments;
-      resolvedClassification = definition.classify;
+      if (definition.classify) {
+        resolvedClassification = definition.classify;
+      }
     }
     else if (item instanceof RefraxOptions) {
       resolvedCacheStrategy = item.cacheStrategy || resolvedCacheStrategy;
@@ -212,7 +214,7 @@ function processStack(resourceDescriptor, action, stack) {
 
   resourceDescriptor.action = action;
   resourceDescriptor.event = event;
-  resourceDescriptor.classification = resolvedClassification;
+  resourceDescriptor.classify = resolvedClassification;
   resourceDescriptor.partial = resolvedPartial || FRAGMENT_DEFAULT;
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.params = resolvedParams;
