@@ -1,3 +1,14 @@
+## [v0.4.0]
+> June 28, 2016
+
+- **Feature:** Add `config`, `params`, `query` self chaining helper methods on ResourceBase
+- **Feature:** Add `cacheStrategy` option to MutableResource to allow control over received data
+- **Feature:** Add `invalidate` utility method for applying the same config to a list of items to invalidate
+- **Minor:** Test updates surrounding FragmentCache
+- **Bugfix:** Fix Resource not correctly updating cache on store change
+
+[v0.4.0]: https://github.com/netarc/refrax/compare/v0.3.20...v0.4.0
+
 ## [v0.3.20]
 > June 22, 2016
 
