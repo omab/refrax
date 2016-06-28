@@ -101,7 +101,7 @@ export default function() {
         path: '/projects/4'
       }), dataSegmentFull__ID_4, STATUS_COMPLETE);
 
-      fragmentCache.update(TestHelper.descriptorFrom({
+      fragmentCache.update(TestHelper.descriptorResource({
         path: '/other-resource'
       }), dataSegmentFull_Resource, STATUS_COMPLETE);
 
@@ -355,7 +355,7 @@ export default function() {
         describe('describing a resource', function() {
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/resource'
               }), dataSegmentFull_Resource);
 
@@ -372,7 +372,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource'
               }), dataSegmentUpdated_Resource);
 
@@ -391,7 +391,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/resource',
                 partial: MinimalPartial
               }), dataSegmentFull_Resource);
@@ -409,7 +409,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource',
                 partial: MinimalPartial
               }), dataSegmentUpdated_Resource);
@@ -627,10 +627,10 @@ export default function() {
       });
 
       // ============================================================================================
-      describe('describing a resource by path', function() {
+      describe('describing a resource', function() {
         describe('with no specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource'
             }), null);
 
@@ -647,7 +647,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource'
             }), null);
 
@@ -666,7 +666,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource',
               partial: MinimalPartial
             }), null);
@@ -684,7 +684,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource',
               partial: MinimalPartial
             }), null);

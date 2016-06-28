@@ -368,7 +368,7 @@ export default function() {
         describe('describing a resource', function() {
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/resource',
                 cacheStrategy: CACHE_STRATEGY_MERGE
               }), dataSegmentFull_Resource);
@@ -386,7 +386,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource',
                 cacheStrategy: CACHE_STRATEGY_MERGE
               }), dataSegmentUpdated_Resource);
@@ -406,7 +406,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/resource',
                 partial: MinimalPartial
               }), dataSegmentFull_Resource);
@@ -424,7 +424,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource',
                 partial: MinimalPartial,
                 cacheStrategy: CACHE_STRATEGY_MERGE
@@ -654,10 +654,10 @@ export default function() {
       });
 
       // ============================================================================================
-      describe('describing a resource by path', function() {
+      describe('describing a resource', function() {
         describe('with no specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource',
               cacheStrategy: CACHE_STRATEGY_MERGE
             }), null);
@@ -675,7 +675,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource',
               cacheStrategy: CACHE_STRATEGY_MERGE
             }), null);
@@ -695,7 +695,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource',
               partial: MinimalPartial,
               cacheStrategy: CACHE_STRATEGY_MERGE
@@ -714,7 +714,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource',
               partial: MinimalPartial,
               cacheStrategy: CACHE_STRATEGY_MERGE
