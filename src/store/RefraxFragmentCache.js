@@ -9,8 +9,8 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxFragmentResult = require('RefraxFragmentResult');
 const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
-const CLASSIFICATION_COLLECTION = RefraxConstants.classify.collection;
-const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_PARTIAL = RefraxConstants.status.PARTIAL;
@@ -152,7 +152,7 @@ class RefraxFragmentCache {
     };
 
     // Fragments
-    if (descriptor.classify == CLASSIFICATION_COLLECTION) {
+    if (descriptor.classify == CLASSIFY_COLLECTION) {
       if (RefraxTools.isArray(data)) {
         dataId = RefraxTools.map(data, function(item) {
           if (!RefraxTools.isPlainObject(item)) {
@@ -166,7 +166,7 @@ class RefraxFragmentCache {
         this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
       }
     }
-    else if (descriptor.classify == CLASSIFICATION_ITEM) {
+    else if (descriptor.classify == CLASSIFY_ITEM) {
       dataId = descriptor.idFrom(descriptor) || descriptor.idFrom(data);
       this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
     }
@@ -175,7 +175,7 @@ class RefraxFragmentCache {
     if (resourcePath) {
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
-      if (descriptor.classify == CLASSIFICATION_COLLECTION) {
+      if (descriptor.classify == CLASSIFY_COLLECTION) {
         if (dataId) {
           if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
             queryData = (queryData || []).concat(dataId);
@@ -185,7 +185,7 @@ class RefraxFragmentCache {
           }
         }
       }
-      else if (descriptor.classify == CLASSIFICATION_ITEM) {
+      else if (descriptor.classify == CLASSIFY_ITEM) {
         queryData = dataId;
       }
       else if (data) {

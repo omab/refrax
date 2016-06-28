@@ -9,8 +9,9 @@ const Refrax = require('Refrax');
 const RefraxConstants = require('RefraxConstants');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxTools = require('RefraxTools');
-const CLASSIFICATION_COLLECTION = RefraxConstants.classify.collection;
-const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
+const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 
 
 exports.deleteStores = function() {
@@ -28,12 +29,18 @@ export function descriptorFrom(params) {
 
 export function descriptorCollection(params) {
   return RefraxTools.extend(descriptorFrom(params), {
-    classify: CLASSIFICATION_COLLECTION
+    classify: CLASSIFY_COLLECTION
   });
 }
 
 export function descriptorCollectionItem(params) {
   return RefraxTools.extend(descriptorFrom(params), {
-    classify: CLASSIFICATION_ITEM
+    classify: CLASSIFY_ITEM
+  });
+}
+
+export function descriptorResource(params) {
+  return RefraxTools.extend(descriptorFrom(params), {
+    classify: CLASSIFY_RESOURCE
   });
 }

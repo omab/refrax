@@ -17,7 +17,7 @@ const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const CACHE_STRATEGY_REPLACE = RefraxConstants.cacheStrategy.replace;
-const CLASSIFICATION_RESOURCE = RefraxConstants.classify.resource;
+const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -101,7 +101,7 @@ function processStack(resourceDescriptor, action, stack) {
     , resolvedParamId = null
     , resolvedPayload = {}
     , resolvedQueryParams = {}
-    , resolvedClassification = CLASSIFICATION_RESOURCE
+    , resolvedClassification = CLASSIFY_RESOURCE
     , resolvedAppendPaths = []
     , resolvedCacheStrategy = CACHE_STRATEGY_REPLACE
     , i, item, definition
@@ -126,7 +126,7 @@ function processStack(resourceDescriptor, action, stack) {
       resolvedStore = item;
       resolvedParamId = definition.paramId || null;
       resolvedType = definition.type;
-      resolvedClassification = CLASSIFICATION_RESOURCE;
+      resolvedClassification = CLASSIFY_RESOURCE;
       resolvedPartial = null;
       resolvedFragments = null;
     }

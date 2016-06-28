@@ -12,8 +12,8 @@ const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxSchemaTools = require('RefraxSchemaTools');
 const RefraxConstants = require('RefraxConstants');
-const CLASSIFICATION_COLLECTION = RefraxConstants.classify.collection;
-const CLASSIFICATION_ITEM = RefraxConstants.classify.item;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
 
 
 function createSchemaCollection(path, store, options) {
@@ -36,7 +36,7 @@ function createSchemaCollection(path, store, options) {
 
   treeNodeCollection = new RefraxTreeNode(RefraxTools.extend({
     uri: path,
-    classify: CLASSIFICATION_COLLECTION
+    classify: CLASSIFY_COLLECTION
   }, options.collection));
 
   accessorNodeCollection = new RefraxSchemaNodeAccessor(
@@ -56,7 +56,7 @@ function createSchemaCollection(path, store, options) {
 
   treeNodeMember = new RefraxTreeNode(RefraxTools.extend({
     paramId: memberId,
-    classify: CLASSIFICATION_ITEM
+    classify: CLASSIFY_ITEM
   }, options.member));
 
   accessorNodeCollection.addLeaf(
