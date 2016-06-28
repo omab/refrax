@@ -17,6 +17,7 @@ const createSchemaCollection = require('createSchemaCollection');
 const createSchemaResource = require('createSchemaResource');
 const createSchemaNamespace = require('createSchemaNamespace');
 const processResponse = require('processResponse');
+const invalidateHelper = require('invalidateHelper');
 const RefraxStore = require('RefraxStore');
 
 
@@ -33,5 +34,6 @@ export default {
   createSchemaCollection,
   createSchemaNamespace,
   createSchemaResource,
-  processResponse
+  processResponse,
+  invalidate: invalidateHelper
 };
