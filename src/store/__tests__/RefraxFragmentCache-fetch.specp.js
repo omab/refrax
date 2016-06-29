@@ -36,6 +36,22 @@ const dataSegmentPartial__ID_2 = {
   title: 'Bar Project'
 };
 
+const dataSegmentResource_Array = [
+  {title: 'item 1 - foo', id: 'item:1'},
+  {title: 'item 2 - bar', id: 'item:2'},
+  {title: 'item 3 - zoo', id: 'item:3'}
+];
+
+const dataSegmentResource_Object = {
+  foo: 'bar',
+  zoo: 132,
+  baz: {
+    title: 'zipper'
+  }
+};
+
+const dataSegmentResource_String = "the foo went to the zoo";
+
 function expectResultDefault(result) {
   expect(result).to.be.an.instanceof(RefraxFragmentResult);
   expect(result).to.have.property('status')
@@ -73,6 +89,16 @@ export default function() {
       fragmentCache.update(TestHelper.descriptorCollectionItem({
         path: '/projects/2'
       }), dataSegmentFull__ID_2, STATUS_COMPLETE);
+
+      fragmentCache.update(TestHelper.descriptorResource({
+        path: '/resource-array'
+      }), dataSegmentResource_Array, STATUS_COMPLETE);
+      fragmentCache.update(TestHelper.descriptorResource({
+        path: '/resource-object'
+      }), dataSegmentResource_Object, STATUS_COMPLETE);
+      fragmentCache.update(TestHelper.descriptorResource({
+        path: '/resource-string'
+      }), dataSegmentResource_String, STATUS_COMPLETE);
     });
 
     describe('when passed a descriptor', function() {
@@ -181,6 +207,39 @@ export default function() {
             , result = fragmentCache.fetch(descriptor);
 
           expectResultDefault(result);
+        });
+      });
+
+      describe('describing an array resource', function() {
+        it('should return expected result', function() {
+          var descriptor = TestHelper.descriptorFrom({
+              path: '/resource-array'
+            })
+            , result = fragmentCache.fetch(descriptor);
+
+          expectResultWithContent(result, dataSegmentResource_Array);
+        });
+      });
+
+      describe('describing an object resource', function() {
+        it('should return expected result', function() {
+          var descriptor = TestHelper.descriptorFrom({
+              path: '/resource-object'
+            })
+            , result = fragmentCache.fetch(descriptor);
+
+          expectResultWithContent(result, dataSegmentResource_Object);
+        });
+      });
+
+      describe('describing a string resource', function() {
+        it('should return expected result', function() {
+          var descriptor = TestHelper.descriptorFrom({
+              path: '/resource-string'
+            })
+            , result = fragmentCache.fetch(descriptor);
+
+          expectResultWithContent(result, dataSegmentResource_String);
         });
       });
     });

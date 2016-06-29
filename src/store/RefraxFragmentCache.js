@@ -33,7 +33,7 @@ class RefraxFragmentCache {
       , resourceId = descriptor.id
       , result = null
       , resource = null
-      , fragments, i, data, entries, entry;
+      , fragments, i, data, entry;
 
     result = new RefraxFragmentResult();
 
@@ -71,9 +71,8 @@ class RefraxFragmentCache {
         return result;
       }
 
-      // Found a collection resource?
-      if (RefraxTools.isArray(data)) {
-        entries = RefraxTools.map(data, function(id) {
+      if (descriptor.classify == CLASSIFY_COLLECTION) {
+        result.data = RefraxTools.map(data || [], function(id) {
           var entry = fragmentCache[id];
 
           if (!entry) {
@@ -84,10 +83,8 @@ class RefraxFragmentCache {
 
           return RefraxTools.extend({}, entry.data);
         });
-
-        result.data = entries;
       }
-      else if (typeof(data) !== 'object') {
+      else if (descriptor.classify == CLASSIFY_ITEM) {
         entry = fragmentCache[data];
         if (!entry) {
           throw new TypeError(
@@ -97,16 +94,21 @@ class RefraxFragmentCache {
 
         result.data = RefraxTools.extend({}, entry.data);
       }
-      // Query was for a non-id resource?
       else {
-        result.data = RefraxTools.extend({}, data);
+        if (RefraxTools.isArray(data)) {
+          data = [].concat(data);
+        }
+        else if (RefraxTools.isObject(data)) {
+          data = RefraxTools.extend({}, data);
+        }
+
+        result.data = data;
       }
     }
 
-    if (!result.data && descriptor.classify) {
-      if (descriptor.classify === 'collection') {
-        result.data = [];
-      }
+    // If we are expecting a collection let's ensure we are an array atleast
+    if (!result.data && descriptor.classify == CLASSIFY_COLLECTION) {
+      result.data = [];
     }
 
     return result;
