@@ -1,3 +1,10 @@
+## [v0.4.1]
+> June 29, 2016
+
+- **Bugfix:** Update FragmentCache to use descriptor classification when fetching data fixing an issue with resource type accessors
+
+[v0.4.1]: https://github.com/netarc/refrax/compare/v0.4.0...v0.4.1
+
 ## [v0.4.0]
 > June 28, 2016
 
