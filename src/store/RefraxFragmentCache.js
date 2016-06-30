@@ -154,23 +154,26 @@ class RefraxFragmentCache {
     };
 
     // Fragments
-    if (descriptor.classify == CLASSIFY_COLLECTION) {
+    if (descriptor.classify == CLASSIFY_COLLECTION && data) {
+      if (!RefraxTools.isArray(data) && !RefraxTools.isPlainObject(data)) {
+        throw new TypeError(
+          'RefraxFragmentCache:update expected collection compatible type of Array/Object\n\r' +
+          'basePath: ' + resourcePath + '\n\r' +
+          'found: `' + typeof(data) + '`'
+        );
+      }
+
       if (RefraxTools.isArray(data)) {
         dataId = RefraxTools.map(data, function(item) {
-          if (!RefraxTools.isPlainObject(item)) {
-            throw new TypeError('RefraxFragmentCache:update expected object type in array, found ' + typeof(item) + ' instead');
-          }
-
-          return self._updateFragmentCache(fragmentCache, descriptor, descriptor.idFrom(item), result, item);
+          return self._updateFragmentCache(fragmentCache, descriptor, result, item);
         });
       }
-      else if (dataId = descriptor.idFrom(data)) {
-        this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
+      else {
+        dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
       }
     }
     else if (descriptor.classify == CLASSIFY_ITEM) {
-      dataId = descriptor.idFrom(descriptor) || descriptor.idFrom(data);
-      this._updateFragmentCache(fragmentCache, descriptor, dataId, result, data);
+      dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
     }
 
     // Queries
@@ -210,9 +213,29 @@ class RefraxFragmentCache {
     }
   }
 
-  _updateFragmentCache(fragmentCache, descriptor, id, result, data) {
-    var fragmentData = fragmentCache[id] && fragmentCache[id].data || {};
+  _updateFragmentCache(fragmentCache, descriptor, result, data) {
+    var itemId
+      , fragmentData;
 
+    if (data && !RefraxTools.isPlainObject(data)) {
+      throw new TypeError(
+        'RefraxFragmentCache:update expected collection item of type Object\n\r' +
+        'basePath: ' + descriptor.basePath + '\n\r' +
+        'classification: ' + descriptor.classify + '\n\r' +
+        'found: `' + typeof(data) + '`'
+      );
+    }
+
+    if (!(itemId = descriptor.idFrom(descriptor) || descriptor.idFrom(data))) {
+      throw new TypeError(
+        'RefraxFragmentCache:update could not resolve collection item id\n\r' +
+        'basePath: ' + descriptor.basePath + '\n\r' +
+        'classification: ' + descriptor.classify + '\n\r' +
+        'found: `' + JSON.stringify(data) + '`'
+      );
+    }
+
+    fragmentData = fragmentCache[itemId] && fragmentCache[itemId].data || {};
     if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
       fragmentData = RefraxTools.extend(fragmentData, data);
     }
@@ -221,11 +244,11 @@ class RefraxFragmentCache {
       fragmentData = data || fragmentData;
     }
 
-    fragmentCache[id] = RefraxTools.extend({}, result, {
+    fragmentCache[itemId] = RefraxTools.extend({}, result, {
       data: fragmentData
     });
 
-    return id;
+    return itemId;
   }
 
   /**

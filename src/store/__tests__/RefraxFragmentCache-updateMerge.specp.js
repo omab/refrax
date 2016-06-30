@@ -144,6 +144,46 @@ export default function() {
 
         // ============================================================================================
         describe('describing a collection resource', function() {
+          describe('with invalid data', function() {
+            it('should throw an error for non collection type data', function() {
+              expect(function() {
+                fragmentCache.update(TestHelper.descriptorCollection({
+                  path: '/projects'
+                }), 123);
+              }).to.throw(TypeError, 'expected collection compatible type of Array/Object');
+
+              expect(function() {
+                fragmentCache.update(TestHelper.descriptorCollection({
+                  path: '/projects'
+                }), 'foobar');
+              }).to.throw(TypeError, 'expected collection compatible type of Array/Object');
+            });
+
+            it('should throw an error for non id based item', function() {
+              expect(function() {
+                fragmentCache.update(TestHelper.descriptorCollection({
+                  path: '/projects'
+                }), {foo: 'bar'});
+              }).to.throw(TypeError, 'could not resolve collection item id');
+            });
+
+            it('should throw an error for collection of non objects', function() {
+              expect(function() {
+                fragmentCache.update(TestHelper.descriptorCollection({
+                  path: '/projects'
+                }), [123, 'foo']);
+              }).to.throw(TypeError, 'expected collection item of type Object');
+            });
+
+            it('should throw an error for collection of objects with no id', function() {
+              expect(function() {
+                fragmentCache.update(TestHelper.descriptorCollection({
+                  path: '/projects'
+                }), [{foo: 'bar'}]);
+              }).to.throw(TypeError, 'could not resolve collection item id');
+            });
+          });
+
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
