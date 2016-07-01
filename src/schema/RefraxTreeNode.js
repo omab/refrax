@@ -25,7 +25,7 @@ function validateDefinition(definition) {
   }
 
   RefraxTools.each(definition, function(value, key) {
-    if (validDefinitionKeys.indexOf(key) == -1) {
+    if (validDefinitionKeys.indexOf(key) === -1) {
       throw new TypeError(
         'RefraxTreeNode - Invalid definition option `' + key + '`.'
       );

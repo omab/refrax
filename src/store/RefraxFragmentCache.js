@@ -71,7 +71,7 @@ class RefraxFragmentCache {
         return result;
       }
 
-      if (descriptor.classify == CLASSIFY_COLLECTION) {
+      if (descriptor.classify === CLASSIFY_COLLECTION) {
         result.data = RefraxTools.map(data || [], function(id) {
           var entry = fragmentCache[id];
 
@@ -84,7 +84,7 @@ class RefraxFragmentCache {
           return RefraxTools.extend({}, entry.data);
         });
       }
-      else if (descriptor.classify == CLASSIFY_ITEM) {
+      else if (descriptor.classify === CLASSIFY_ITEM) {
         entry = fragmentCache[data];
         if (!entry) {
           throw new TypeError(
@@ -107,7 +107,7 @@ class RefraxFragmentCache {
     }
 
     // If we are expecting a collection let's ensure we are an array atleast
-    if (!result.data && descriptor.classify == CLASSIFY_COLLECTION) {
+    if (!result.data && descriptor.classify === CLASSIFY_COLLECTION) {
       result.data = [];
     }
 
@@ -154,7 +154,7 @@ class RefraxFragmentCache {
     };
 
     // Fragments
-    if (descriptor.classify == CLASSIFY_COLLECTION && data) {
+    if (descriptor.classify === CLASSIFY_COLLECTION && data) {
       if (!RefraxTools.isArray(data) && !RefraxTools.isPlainObject(data)) {
         throw new TypeError(
           'RefraxFragmentCache:update expected collection compatible type of Array/Object\n\r' +
@@ -172,7 +172,7 @@ class RefraxFragmentCache {
         dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
       }
     }
-    else if (descriptor.classify == CLASSIFY_ITEM) {
+    else if (descriptor.classify === CLASSIFY_ITEM) {
       dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
     }
 
@@ -180,7 +180,7 @@ class RefraxFragmentCache {
     if (resourcePath) {
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
-      if (descriptor.classify == CLASSIFY_COLLECTION) {
+      if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
           if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
             queryData = (queryData || []).concat(dataId);
@@ -190,7 +190,7 @@ class RefraxFragmentCache {
           }
         }
       }
-      else if (descriptor.classify == CLASSIFY_ITEM) {
+      else if (descriptor.classify === CLASSIFY_ITEM) {
         queryData = dataId;
       }
       else if (data) {

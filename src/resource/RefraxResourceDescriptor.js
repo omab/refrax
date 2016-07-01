@@ -26,7 +26,7 @@ function serializer() {
 
   return function(key, value) {
     if (stack.length > 0) {
-      if (stack.indexOf(this) == -1 && typeof(value) === 'object') {
+      if (stack.indexOf(this) === -1 && typeof(value) === 'object') {
         return '...';
       }
     }

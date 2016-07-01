@@ -46,7 +46,7 @@ function createSchemaCollection(path, store, options) {
   // Member Node
 
   memberIdentifier = pluralize.singular(identifier);
-  if (memberIdentifier == identifier) {
+  if (memberIdentifier === identifier) {
     memberIdentifier = 'member';
     memberId = identifier + 'Id';
   }
