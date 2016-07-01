@@ -30,7 +30,7 @@ function createSchemaCollection(path, store, options) {
   path = RefraxSchemaTools.validatePath('createSchemaCollection', path);
   options = options || {};
   identifier = options.identifier || RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createSchemaCollection', store, identifier);
+  store = RefraxSchemaTools.defaultStore('createSchemaCollection', identifier, store);
 
   // Collection Node
 

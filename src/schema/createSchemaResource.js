@@ -25,7 +25,7 @@ function createSchemaResource(path, store, options) {
   path = RefraxSchemaTools.validatePath('createSchemaResource', path);
   options = options || {};
   identifier = options.identifier || RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createCollection', store, identifier);
+  store = RefraxSchemaTools.defaultStore('createCollection', identifier, store);
 
   treeNode = new RefraxTreeNode(RefraxTools.extend({
     uri: path,

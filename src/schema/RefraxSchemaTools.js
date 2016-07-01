@@ -20,7 +20,7 @@ export function validatePath(scope, path) {
   return RefraxTools.cleanPath(path);
 }
 
-export function defaultStore(scope, store, identifier) {
+export function defaultStore(scope, identifier, store) {
   if (!store) {
     store = RefraxStore.get(pluralize.singular(identifier));
   }
