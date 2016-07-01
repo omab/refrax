@@ -15,6 +15,24 @@ export var setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
 };
 
 // eslint-disable-next-line one-var
+export var getPrototypeOf = Object.getPrototypeOf || function(obj) {
+  // eslint-disable-next-line no-proto
+  var proto = obj.__proto__;
+  if (proto || proto === null) {
+    return proto;
+  }
+  else if (objToString.call(obj.constructor) === '[object Function]') {
+    return obj.constructor.prototype;
+  }
+  else if (obj instanceof Object) {
+    return Object.prototype;
+  }
+  else {
+    return null;
+  }
+};
+
+// eslint-disable-next-line one-var
 export var keysFor = Object.keys || function(obj) {
   var keys = []
     , key;
@@ -46,7 +64,8 @@ export function isArray(obj) {
 }
 
 export function isPlainObject(obj) {
-  return typeof(obj) === 'object' && objToString.call(obj) === '[object Object]';
+  return typeof(obj) === 'object' &&
+         getPrototypeOf(obj) === Object.prototype;
 }
 
 export function extend(obj) {
