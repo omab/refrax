@@ -22,7 +22,7 @@ function createSchemaCollection(path, store, options) {
     , memberIdentifier, memberId
     , identifier;
 
-  if (RefraxTools.isPlainObject(store)) {
+  if (RefraxTools.isPlainObject(store) && !options) {
     options = store;
     store = null;
   }

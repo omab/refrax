@@ -33,6 +33,5 @@ export function defaultStore(scope, store, identifier) {
       'but found type `' + typeof(store)+ '`.'
     );
   }
-
   return store;
 }
