@@ -11,6 +11,7 @@ const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
+const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
@@ -24,6 +25,13 @@ class RefraxResourceBase {
     var i, arg
       , options = {}
       , stack = [];
+
+    if (!(accessor instanceof RefraxSchemaNodeAccessor)) {
+      throw new TypeError(
+        'RefraxResourceBase expected valid SchemaNodeAccessor\n\r' +
+        'found: `' + accessor + '`'
+      );
+    }
 
     for (i=0; i<args.length; i++) {
       arg = args[i];
