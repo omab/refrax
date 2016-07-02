@@ -7,12 +7,12 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxResource = require('RefraxResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_INSPECT = RefraxConstants.action.inspect;
 const SchemaAccescessorMixins = [];
+var RefraxResource = null;
 
 
 // Determine if a stack matches the ending of another
@@ -108,7 +108,8 @@ class RefraxSchemaNodeAccessor {
   }
 
   invalidate(options) {
-    RefraxResource
+    // circular dependency workaround
+    (RefraxResource || (RefraxResource = require('RefraxResource')))
       .from(this, new RefraxOptions(RefraxTools.extend({noSubscribe: true, params: options.params})))
       .invalidate(options);
   }
