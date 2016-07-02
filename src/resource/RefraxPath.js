@@ -13,6 +13,13 @@ const RefraxTools = require('RefraxTools');
  */
 class RefraxPath {
   constructor(path, isModifier) {
+    if (typeof(path) !== 'string') {
+      throw new TypeError(
+        'RefraxPath expected path argument of type `String`\n\r' +
+        'found: `' + path + '`'
+      );
+    }
+
     this.path = RefraxTools.cleanPath(path);
     this.isModifier = !!isModifier;
   }
