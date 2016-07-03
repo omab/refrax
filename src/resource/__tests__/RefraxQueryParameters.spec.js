@@ -32,6 +32,14 @@ describe('RefraxQueryParameters', function() {
       }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
     });
 
+    it('should accept no arguments', function() {
+      var result = new RefraxQueryParameters();
+
+      expect(result)
+        .that.is.an.instanceof(RefraxQueryParameters)
+        .to.deep.equal({});
+    });
+
     it('should accept correct arguments and look like a RefraxQueryParameters', function() {
       var result = new RefraxQueryParameters(dataParams);
 

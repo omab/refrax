@@ -12,14 +12,17 @@ const RefraxTools = require('RefraxTools');
  * A RefraxOptions is a wrapper around an object to identify it as a set of options.
  */
 class RefraxOptions {
-  constructor(options) {
+  static validate(options) {
     if (!RefraxTools.isPlainObject(options)) {
       throw new TypeError(
         'RefraxOptions expected argument of type `Object`\n\r' +
         'found: `' + options + '`'
       );
     }
+  }
 
+  constructor(options = {}) {
+    RefraxOptions.validate(options);
     RefraxTools.extend(this, options);
   }
 }

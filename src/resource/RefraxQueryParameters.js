@@ -13,15 +13,18 @@ const RefraxTools = require('RefraxTools');
  * set of query parameters.
  */
 class RefraxQueryParameters {
-  constructor(options) {
-    if (!RefraxTools.isPlainObject(options)) {
+  static validate(params) {
+    if (!RefraxTools.isPlainObject(params)) {
       throw new TypeError(
         'RefraxQueryParameters expected argument of type `Object`\n\r' +
-        'found: `' + options + '`'
+        'found: `' + params + '`'
       );
     }
+  }
 
-    RefraxTools.extend(this, options);
+  constructor(params = {}) {
+    RefraxQueryParameters.validate(params);
+    RefraxTools.extend(this, params);
   }
 }
 

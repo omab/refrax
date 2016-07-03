@@ -32,6 +32,14 @@ describe('RefraxOptions', function() {
       }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
     });
 
+    it('should accept no arguments', function() {
+      var result = new RefraxOptions();
+
+      expect(result)
+        .that.is.an.instanceof(RefraxOptions)
+        .to.deep.equal({});
+    });
+
     it('should accept correct arguments and look like a RefraxOptions', function() {
       var result = new RefraxOptions(dataOptions);
 

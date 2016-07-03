@@ -23,8 +23,10 @@ const ACTION_GET = RefraxConstants.action.get;
 class RefraxResourceBase {
   constructor(accessor, ...args) {
     var i, arg
-      , options = {}
-      , stack = [];
+      , options = new RefraxOptions()
+      , queryParams = new RefraxQueryParameters()
+      , parameters = new RefraxParameters()
+      , paths = [];
 
     if (!(accessor instanceof RefraxSchemaNodeAccessor)) {
       throw new TypeError(
@@ -39,17 +41,20 @@ class RefraxResourceBase {
         continue;
       }
       else if (typeof(arg) === 'string') {
-        stack.push(new RefraxPath(arg));
+        paths.push(new RefraxPath(arg));
+      }
+      else if (arg instanceof RefraxPath) {
+        paths.push(arg);
       }
       else if (arg instanceof RefraxOptions) {
         RefraxTools.extend(options, arg);
       }
-      else if (arg instanceof RefraxParameters ||
-               arg instanceof RefraxPath) {
-        stack.push(arg);
+      else if (arg instanceof RefraxParameters) {
+        RefraxTools.extend(parameters, arg);
       }
-      else if (RefraxTools.isPlainObject(arg)) {
-        stack.push(new RefraxQueryParameters(arg));
+      else if (arg instanceof RefraxQueryParameters ||
+               RefraxTools.isPlainObject(arg)) {
+        RefraxTools.extend(queryParams, arg);
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');
@@ -59,47 +64,54 @@ class RefraxResourceBase {
     mixinSubscribable(this);
 
     Object.defineProperty(this, '_accessorStack', {value: accessor.__stack});
-    Object.defineProperty(this, '_stack', {value: stack});
+    Object.defineProperty(this, '_paths', {value: paths});
     Object.defineProperty(this, '_options', {value: options});
+    Object.defineProperty(this, '_parameters', {value: parameters});
+    Object.defineProperty(this, '_queryParams', {value: queryParams});
   }
 
   // helper methods for a more idiomatic chaining approach
 
-  config(options) {
+  options(options) {
+    RefraxOptions.validate(options);
     RefraxTools.extend(this._options, options);
     return this;
   }
 
   params(params) {
-    this._stack.push(new RefraxParameters(params));
+    RefraxParameters.validate(params);
+    RefraxTools.extend(this._parameters, params);
     return this;
   }
 
-  query(params) {
-    this._stack.push(new RefraxQueryParameters(params));
+  queryParams(params) {
+    RefraxQueryParameters.validate(params);
+    RefraxTools.extend(this._queryParams, params);
     return this;
   }
 
   //
 
   _generateDescriptor(action, data) {
-    var runtimeParams = [];
+    var stack = [];
 
     if (this._options.paramsGenerator) {
-      runtimeParams.push(new RefraxParameters(this._options.paramsGenerator()));
+      stack.push(new RefraxParameters(this._options.paramsGenerator()));
     }
 
     if (this._options.params) {
-      runtimeParams.push(new RefraxParameters(this._options.params));
+      stack.push(new RefraxParameters(this._options.params));
     }
 
     // params intentionally comes before our stack so paramsGenerator params
     // can get overridden if needed
     return new RefraxResourceDescriptor(action || ACTION_GET, [].concat(
       this._accessorStack,
-      runtimeParams,
-      this._stack,
-      new RefraxOptions(this._options),
+      this._paths,
+      this._parameters,
+      this._queryParams,
+      this._options,
+      stack,
       data || []
     ));
   }
