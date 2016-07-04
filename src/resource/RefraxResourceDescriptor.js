@@ -89,8 +89,9 @@ function encodeURIData(data) {
  * Given a stack representing a path in our Schema tree and options affecting it, we
  * reduce and resolve it down to a descriptor describing a resource.
  */
-function processStack(resourceDescriptor, action, stack) {
-  var canResolveParams = action !== 'inspect'
+function processStack(resourceDescriptor, stack) {
+  var action = resourceDescriptor.action
+    , canResolveParams = action !== 'inspect'
     , resolvedParams = {}
     , resolvedParamMap = {}
     , resolvedPartial = null
@@ -212,7 +213,6 @@ function processStack(resourceDescriptor, action, stack) {
 
   event = ['change'].concat(resolvedParamId || []).join(':');
 
-  resourceDescriptor.action = action;
   resourceDescriptor.event = event;
   resourceDescriptor.classify = resolvedClassification;
   resourceDescriptor.partial = resolvedPartial || FRAGMENT_DEFAULT;
@@ -227,6 +227,8 @@ function processStack(resourceDescriptor, action, stack) {
 
 class RefraxResourceDescriptor {
   constructor(action = ACTION_GET, stack = []) {
+    this.action = action;
+
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];
     }

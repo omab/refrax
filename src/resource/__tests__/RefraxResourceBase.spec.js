@@ -10,8 +10,12 @@ const TestHelper = require('TestHelper');
 const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
+const RefraxPath = require('RefraxPath');
 const RefraxQueryParameters = require('RefraxQueryParameters');
+const RefraxConstants = require('RefraxConstants');
 const createSchemaCollection = require('createSchemaCollection');
+const ACTION_GET = RefraxConstants.action.get;
+const ACTION_CREATE = RefraxConstants.action.create;
 const expect = chai.expect;
 
 
@@ -181,7 +185,76 @@ describe('RefraxResourceBase', function() {
       });
     });
 
+    describe('_generateStack', function() {
+      it('correctly represents the stack', function() {
+        var resource = new RefraxResourceBase(
+          collectionAccessor,
+          new RefraxQueryParameters({queryFoo: 123}),
+          new RefraxParameters({paramFoo: 321}),
+          new RefraxOptions({optionFoo: 111}),
+          'pathFoo'
+        );
+
+        expect(resource._generateStack())
+          .to.deep.equal([].concat(
+            collectionAccessor.__stack,
+            new RefraxPath('pathFoo'),
+            {paramFoo: 321},
+            {queryFoo: 123},
+            {optionFoo: 111}
+          ));
+      });
+
+      it('correctly uses params options', function() {
+        var options = new RefraxOptions({
+            paramsGenerator: function() {
+              return {
+                paramFoo: 'abc'
+              };
+            },
+            params: {
+              paramBar: 'bar'
+            }
+          })
+          , resource = new RefraxResourceBase(
+          collectionAccessor,
+          new RefraxQueryParameters({queryFoo: 123}),
+          new RefraxParameters({paramFoo: 321}),
+          options,
+          'pathFoo'
+        );
+
+        expect(resource._generateStack())
+          .to.deep.equal([].concat(
+            collectionAccessor.__stack,
+            new RefraxPath('pathFoo'),
+            {paramFoo: 321},
+            {queryFoo: 123},
+            options,
+            {paramFoo: 'abc'},
+            {paramBar: 'bar'}
+          ));
+      });
+    });
+
     describe('_generateDescriptor', function() {
+      describe('invoked with no arguments', function() {
+        it('generates a descriptor with a default action ', function() {
+          var resource = new RefraxResourceBase(collectionAccessor)
+            , descriptor = resource._generateDescriptor();
+
+          expect(descriptor.action).to.equal(ACTION_GET);
+        });
+      });
+
+      describe('invoked with an action', function() {
+        it('generates a descriptor using that action ', function() {
+          var resource = new RefraxResourceBase(collectionAccessor)
+            , descriptor = resource._generateDescriptor(ACTION_CREATE);
+
+          expect(descriptor.action).to.equal(ACTION_CREATE);
+        });
+      });
     });
   });
 });

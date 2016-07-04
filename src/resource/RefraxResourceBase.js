@@ -92,7 +92,7 @@ class RefraxResourceBase {
 
   //
 
-  _generateDescriptor(action, data) {
+  _generateStack() {
     var stack = [];
 
     if (this._options.paramsGenerator) {
@@ -103,17 +103,20 @@ class RefraxResourceBase {
       stack.push(new RefraxParameters(this._options.params));
     }
 
-    // params intentionally comes before our stack so paramsGenerator params
-    // can get overridden if needed
-    return new RefraxResourceDescriptor(action || ACTION_GET, [].concat(
+    return [].concat(
       this._accessorStack,
       this._paths,
       this._parameters,
       this._queryParams,
       this._options,
-      stack,
-      data || []
-    ));
+      stack
+    );
+  }
+
+  _generateDescriptor(action, data) {
+    var stack = this._generateStack().concat(data || []);
+
+    return new RefraxResourceDescriptor(action || ACTION_GET, stack);
   }
 }
 
