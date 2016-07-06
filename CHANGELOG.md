@@ -1,3 +1,11 @@
+## [v0.4.2]
+> July 6, 2016
+
+- **Feature:** QueryParameters now encodes objects
+- **Minor:** Rename Resource `query` utility method to `queryParams`
+
+[v0.4.2]: https://github.com/netarc/refrax/compare/v0.4.1...v0.4.2
+
 ## [v0.4.1]
 > June 29, 2016
 
