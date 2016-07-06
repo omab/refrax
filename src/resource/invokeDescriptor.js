@@ -46,10 +46,10 @@ function processRequestSuccess(resourceDescriptor, response) {
     return;
   }
 
-  if (resourceDescriptor.action == ACTION_GET) {
+  if (resourceDescriptor.action === ACTION_GET) {
     processResponse(data, resourceDescriptor);
   }
-  else if (resourceDescriptor.action == ACTION_DELETE) {
+  else if (resourceDescriptor.action === ACTION_DELETE) {
     resourceDescriptor.store.destroyResource(resourceDescriptor);
   }
   else {
@@ -109,9 +109,6 @@ function invokeDescriptor(resourceDescriptor, options) {
           store.touchResource(resourceDescriptor, {timestamp: Date.now()});
         }
         reject(new RequestError(response.statusText, response));
-      })
-      .catch(function(err) {
-        console.assert(false, err);
       });
   });
 }
