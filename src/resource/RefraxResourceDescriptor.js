@@ -66,17 +66,25 @@ function fillURI(uri, params, paramMap) {
   };
 }
 
+function encodeURIValue(value) {
+  if (RefraxTools.isPlainObject(value)) {
+    value = JSON.stringify(value);
+  }
+
+  return global.encodeURIComponent(value);
+}
+
 function encodeURIData(data) {
   var result = [];
 
   RefraxTools.each(data || [], function(value, key) {
     if (RefraxTools.isArray(value)) {
       RefraxTools.each(value, function(v) {
-        result.push(key + '[]=' + v);
+        result.push(key + '[]=' + encodeURIValue(v));
       });
     }
     else {
-      result.push(key + '=' + global.encodeURIComponent(value));
+      result.push(key + '=' + encodeURIValue(value));
     }
   });
 
