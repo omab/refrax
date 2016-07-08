@@ -241,7 +241,7 @@ class RefraxResourceDescriptor {
       stack = [stack];
     }
 
-    processStack(this, action, stack);
+    processStack(this, stack);
   }
 
   // Using our own descriptor's rules, grab an id from an object
