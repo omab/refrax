@@ -1,3 +1,10 @@
+## [v0.4.3]
+> July 8, 2016
+
+- **Bugfix:** Fix bad param on descriptor processStack
+
+[v0.4.3]: https://github.com/netarc/refrax/compare/v0.4.2...v0.4.3
+
 ## [v0.4.2]
 > July 6, 2016
 
