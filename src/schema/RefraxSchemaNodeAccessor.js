@@ -110,7 +110,11 @@ class RefraxSchemaNodeAccessor {
   invalidate(options) {
     // circular dependency workaround
     (RefraxResource || (RefraxResource = require('RefraxResource')))
-      .from(this, new RefraxOptions(RefraxTools.extend({noSubscribe: true, params: options.params})))
+      .from(this, new RefraxOptions(RefraxTools.extend({
+        noFetchGet: true,
+        noSubscribe: true,
+        params: options.params
+      })))
       .invalidate(options);
   }
 
