@@ -128,9 +128,7 @@ class RefraxStore {
     }
 
     this.cache.invalidate(resourceDescriptor, options);
-    if (options.noNotify !== true) {
-      this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
-    }
+    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'invalidate'}, options));
   }
 
   // Fragment Map is intentionally separate to allow future switching depending
@@ -142,24 +140,26 @@ class RefraxStore {
 
   touchResource(resourceDescriptor, data, options = {}) {
     this.cache.touch(resourceDescriptor, data);
-    if (options.noNotify !== true) {
-      this._notifyChange(resourceDescriptor, {type: 'touch'});
-    }
+    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'touch'}, options));
   }
 
-  updateResource(resourceDescriptor, data, status) {
+  updateResource(resourceDescriptor, data, status, options = {}) {
     this.cache.update(resourceDescriptor, data, status);
-    this._notifyChange(resourceDescriptor, {type: 'update'});
+    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'update'}, options));
   }
 
-  destroyResource(resourceDescriptor) {
+  destroyResource(resourceDescriptor, options = {}) {
     this.cache.destroy(resourceDescriptor);
-    this._notifyChange(resourceDescriptor, {type: 'destroy'});
+    this._notifyChange(resourceDescriptor, RefraxTools.extend({type: 'destroy'}, options));
   }
 
   //
 
   _notifyChange(resourceDescriptor, event) {
+    if (event.noNotify === true) {
+      return;
+    }
+
     event = RefraxTools.extend({storeType: this.definition.type}, event);
 
     this.emit('change', event);

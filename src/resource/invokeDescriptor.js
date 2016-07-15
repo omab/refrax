@@ -39,7 +39,7 @@ RequestError.prototype = Object.create(Error.prototype);
  * Given a known Store update a resource descriptors data and repeat with
  * any embedded data.
  */
-function processRequestSuccess(resourceDescriptor, response) {
+function processRequestSuccess(resourceDescriptor, response, options) {
   var data = response && response.data;
 
   if (!resourceDescriptor.store) {
@@ -50,10 +50,10 @@ function processRequestSuccess(resourceDescriptor, response) {
     processResponse(data, resourceDescriptor);
   }
   else if (resourceDescriptor.action === ACTION_DELETE) {
-    resourceDescriptor.store.destroyResource(resourceDescriptor);
+    resourceDescriptor.store.destroyResource(resourceDescriptor, options);
   }
   else {
-    resourceDescriptor.store.updateResource(resourceDescriptor, data, STATUS_COMPLETE);
+    resourceDescriptor.store.updateResource(resourceDescriptor, data, STATUS_COMPLETE, options);
   }
 }
 
@@ -102,11 +102,11 @@ function invokeDescriptor(resourceDescriptor, options) {
     // eslint-disable-next-line new-cap
     Axios(requestConfig)
       .then(function(response) {
-        processRequestSuccess(resourceDescriptor, response);
+        processRequestSuccess(resourceDescriptor, response, options);
         resolve(response);
       }, function(response) {
         if (store) {
-          store.touchResource(resourceDescriptor, {timestamp: Date.now()});
+          store.touchResource(resourceDescriptor, {timestamp: Date.now()}, options);
         }
         reject(new RequestError(response.statusText, response));
       });
