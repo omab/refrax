@@ -1,3 +1,10 @@
+## [v0.4.4]
+> July 15, 2016
+
+- **Bugfix:** Fix SchemaNodeAccessor invalidate fetching data
+
+[v0.4.4]: https://github.com/netarc/refrax/compare/v0.4.3...v0.4.4
+
 ## [v0.4.3]
 > July 8, 2016
 
