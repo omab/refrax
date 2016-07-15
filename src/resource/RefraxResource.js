@@ -11,6 +11,7 @@ const RefraxResourceBase = require('RefraxResourceBase');
 const invokeDescriptor = require('invokeDescriptor');
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
 // WeakMap offers a ~743% performance boost (~0.55ms => ~0.074ms) per fetch
 const ResourceMap = new WeakMap();
 
@@ -51,7 +52,14 @@ class RefraxResource extends RefraxResourceBase {
     if (this._options.noSubscribe !== true && descriptor.store) {
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function(event) {
+          // If we are an item resource and we encounter a destroy event, we switch on the
+          // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
+          if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
+            self._options.noFetchGet = true;
+          }
+
           self._fetchCache();
+
           if (event.noPropagate !== true) {
             self.emit('change', self, event);
           }

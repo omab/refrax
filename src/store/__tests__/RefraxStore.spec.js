@@ -65,8 +65,8 @@ function testInvalidateSubscriber(args) {
     expect(event)
       .to.be.a('object')
       .to.deep.equal(RefraxTools.extend({
-        storeType: refStore.definition.type,
-        type: 'invalidate'
+        type: refStore.definition.type,
+        action: 'invalidate'
       }, refStore.cache.invalidate.getCall(0).args[1]));
   });
 }
