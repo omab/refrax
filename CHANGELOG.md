@@ -1,3 +1,11 @@
+## [v0.4.5]
+> July 20, 2016
+
+- **Bugfix:** Resource switches to passive when it detects resource destroy
+- **Minor:** Rename Store event `type` to `action` and now `type` is the actual model type
+
+[v0.4.5]: https://github.com/netarc/refrax/compare/v0.4.4...v0.4.5
+
 ## [v0.4.4]
 > July 15, 2016
 
