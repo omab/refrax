@@ -107,7 +107,7 @@ class RefraxSchemaNodeAccessor {
     return result;
   }
 
-  invalidate(options) {
+  invalidate(options = {}) {
     // circular dependency workaround
     (RefraxResource || (RefraxResource = require('RefraxResource')))
       .from(this, new RefraxOptions(RefraxTools.extend({
