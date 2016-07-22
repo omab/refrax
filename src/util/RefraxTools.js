@@ -159,17 +159,29 @@ export function map(obj, iteratee) {
   return results;
 }
 
-export function concatUnique(src, values) {
-  var results = [].concat(src || [])
-    , i;
+export function concatUnique() {
+  var length = arguments.length
+    , hash = {}
+    , result = []
+    , arr, arrLength, val, i, j;
 
-  values = values || [];
-  for (i = 0; i < values.length; i++) {
-    if (results.indexOf(values[i]) == -1) {
-      results.push(values[i]);
+  for (i = 0; i < length; i++) {
+    arr = arguments[i] || [];
+    if (!arr.hasOwnProperty('length')) {
+      arr = [arr];
+    }
+
+    arrLength = arr.length;
+    for (j = 0; j < arrLength; j++) {
+      val = arr[j];
+
+      if (hash[val] !== true) {
+        result[result.length] = val;
+        hash[val] = true;
+      }
     }
   }
-  return results;
+  return result;
 }
 
 export function deepCopy(obj) {
