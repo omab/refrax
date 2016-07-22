@@ -145,6 +145,7 @@ class RefraxFragmentCache {
       , queryData
       , resourcePath = descriptor.basePath
       , result
+      , touchedIds = []
       , dataId = null;
 
     // if no data is present (ie a 204 response) our data then becomes stale
@@ -165,15 +166,15 @@ class RefraxFragmentCache {
 
       if (RefraxTools.isArray(data)) {
         dataId = RefraxTools.map(data, function(item) {
-          return self._updateFragmentCache(fragmentCache, descriptor, result, item);
+          return self._updateFragmentCache(fragmentCache, descriptor, result, item, touchedIds);
         });
       }
       else {
-        dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
+        dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds);
       }
     }
     else if (descriptor.classify === CLASSIFY_ITEM) {
-      dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data);
+      dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds);
     }
 
     // Queries
@@ -211,11 +212,14 @@ class RefraxFragmentCache {
         data: queryData
       });
     }
+
+    return touchedIds;
   }
 
-  _updateFragmentCache(fragmentCache, descriptor, result, data) {
+  _updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds) {
     var itemId
-      , fragmentData;
+      , fragmentData
+      , snapshot = null;
 
     if (data && !RefraxTools.isPlainObject(data)) {
       throw new TypeError(
@@ -236,6 +240,10 @@ class RefraxFragmentCache {
     }
 
     fragmentData = fragmentCache[itemId] && fragmentCache[itemId].data || {};
+    if (touchedIds) {
+      snapshot = JSON.stringify(fragmentData);
+    }
+
     if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
       fragmentData = RefraxTools.extend(fragmentData, data);
     }
@@ -248,6 +256,10 @@ class RefraxFragmentCache {
       data: fragmentData
     });
 
+    if (touchedIds && JSON.stringify(fragmentData) != snapshot) {
+      touchedIds.push(itemId);
+    }
+
     return itemId;
   }
 
@@ -259,10 +271,15 @@ class RefraxFragmentCache {
    */
   invalidate(descriptor, options = {}) {
     var clearData = !!options.clear
+      , results = []
       , invalidator = function(item) {
         // not yet cached so we can skip
         if (!item) {
           return;
+        }
+
+        if (item.data && item.data.id) {
+          results.push(item.data.id);
         }
 
         item.status = STATUS_STALE;
@@ -301,6 +318,8 @@ class RefraxFragmentCache {
         });
       }
     }
+
+    return results;
   }
 
   /**
