@@ -181,14 +181,15 @@ class RefraxFragmentCache {
     if (resourcePath) {
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
+      // from a REST perspective collections are typically modified when creating into them
       if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
-          if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
-            queryData = (queryData || []).concat(dataId);
-          }
-          else {
-            queryData = ([]).concat(dataId);
-          }
+          queryData = RefraxTools.concatUnique(queryData, dataId);
+        }
+        // if no data was received creating into a collection we can mark it as stale
+        else {
+          result.status = STATUS_STALE;
+          result.timestamp = TIMESTAMP_STALE;
         }
       }
       else if (descriptor.classify === CLASSIFY_ITEM) {
@@ -197,7 +198,7 @@ class RefraxFragmentCache {
       else if (data) {
         if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
           if (RefraxTools.isArray(queryData) || RefraxTools.isArray(data)) {
-            queryData = (queryData || []).concat(data);
+            queryData = RefraxTools.concatUnique(queryData, data);
           }
           else {
             queryData = RefraxTools.extend(queryData || {}, data);

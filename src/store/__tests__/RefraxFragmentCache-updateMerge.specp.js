@@ -15,6 +15,7 @@ const expect = chai.expect;
 const DefaultPartial = RefraxConstants.defaultFragment;
 const MinimalPartial = 'minimal';
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
 
@@ -611,7 +612,7 @@ export default function() {
 
             expectedQueries['/projects'] = {
               timestamp: TIMESTAMP_STALE,
-              status: STATUS_COMPLETE,
+              status: STATUS_STALE,
               data: undefined
             };
 
@@ -656,7 +657,7 @@ export default function() {
 
             expectedQueries['/projects'] = {
               timestamp: TIMESTAMP_STALE,
-              status: STATUS_COMPLETE,
+              status: STATUS_STALE,
               data: undefined
             };
 

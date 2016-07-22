@@ -14,6 +14,7 @@ const expect = chai.expect;
 const DefaultPartial = RefraxConstants.defaultFragment;
 const MinimalPartial = 'minimal';
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 
@@ -225,7 +226,7 @@ export default function() {
               expectedQueries['/other-projects'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: ['1', '2']
+                data: ['3', '4', '1', '2']
               };
 
               expect(fragmentCache).to.have.property('fragments')
@@ -283,7 +284,7 @@ export default function() {
               expectedQueries['/other-projects'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: ['1', '2']
+                data: ['3', '4', '1', '2']
               };
 
               expect(fragmentCache).to.have.property('fragments')
@@ -587,7 +588,7 @@ export default function() {
 
             expectedQueries['/projects'] = {
               timestamp: TIMESTAMP_STALE,
-              status: STATUS_COMPLETE,
+              status: STATUS_STALE,
               data: undefined
             };
 
@@ -630,7 +631,7 @@ export default function() {
 
             expectedQueries['/projects'] = {
               timestamp: TIMESTAMP_STALE,
-              status: STATUS_COMPLETE,
+              status: STATUS_STALE,
               data: undefined
             };
 
