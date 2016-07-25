@@ -49,6 +49,16 @@ class RefraxResource extends RefraxResourceBase {
 
     descriptor = this._generateDescriptor();
 
+    // NOTE: we invalidate before potentially subscribing
+    if (this._options.invalidate) {
+      // shortcut for no options
+      if (this._options.invalidate === true) {
+        this._options.invalidate = {noPropagate: true};
+      }
+
+      this.invalidate(this._options.invalidate);
+    }
+
     if (this._options.noSubscribe !== true && descriptor.store) {
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function(event) {
@@ -65,15 +75,6 @@ class RefraxResource extends RefraxResourceBase {
           }
         })
       );
-    }
-
-    if (this._options.invalidate) {
-      // shortcut for no options
-      if (this._options.invalidate === true) {
-        this._options.invalidate = {noPropagate: true};
-      }
-
-      this.invalidate(this._options.invalidate);
     }
 
     this._fetchCache();
