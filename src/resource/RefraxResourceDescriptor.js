@@ -206,7 +206,11 @@ function processStack(resourceDescriptor, stack) {
     }
 
     if (action === ACTION_GET) {
-      resourceDescriptor.path+= encodeURIData(resolvedQueryParams);
+      // NOTE: we append QueryParams to both basePath & path since basePath is typically used
+      //  for cache query reference and path is used as the actual request path
+      resolvedQueryParams = encodeURIData(resolvedQueryParams);
+      resourceDescriptor.basePath+= resolvedQueryParams;
+      resourceDescriptor.path+= resolvedQueryParams;
     }
   }
 
