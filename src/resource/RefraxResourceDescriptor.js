@@ -100,22 +100,14 @@ function encodeURIData(data) {
 function processStack(resourceDescriptor, stack) {
   var action = resourceDescriptor.action
     , canResolveParams = action !== 'inspect'
-    , resolvedParams = {}
     , resolvedParamMap = {}
-    , resolvedPartial = null
-    , resolvedType = null
-    , resolvedStore = null
     , resolvedPath = []
-    , resolvedFragments = null
     , resolvedParamId = null
-    , resolvedPayload = {}
     , resolvedQueryParams = {}
-    , resolvedClassification = CLASSIFY_RESOURCE
     , resolvedAppendPaths = []
-    , resolvedCacheStrategy = CACHE_STRATEGY_REPLACE
     , i, item, definition
     , lastURIParamId = null
-    , key, event, result;
+    , key, result;
 
   if (!stack) {
     throw new TypeError('generateDescriptor: expected non-null stack');
@@ -132,12 +124,12 @@ function processStack(resourceDescriptor, stack) {
 
     if (item instanceof RefraxStore) {
       // every store encounter is considered a hard scope change
-      resolvedStore = item;
+      resourceDescriptor.store = item;
       resolvedParamId = definition.paramId || null;
-      resolvedType = definition.type;
-      resolvedClassification = CLASSIFY_RESOURCE;
-      resolvedPartial = null;
-      resolvedFragments = null;
+      resourceDescriptor.type = definition.type;
+      resourceDescriptor.classify = CLASSIFY_RESOURCE;
+      resourceDescriptor.partial = FRAGMENT_DEFAULT;
+      resourceDescriptor.fragments = [];
     }
     else if (item instanceof RefraxTreeNode) {
       if (definition.paramMap) {
@@ -148,17 +140,19 @@ function processStack(resourceDescriptor, stack) {
         resolvedParamId = resolvedParamId;
       }
 
-      resolvedPartial = definition.partial;
-      resolvedFragments = definition.fragments;
+      resourceDescriptor.partial = definition.partial || FRAGMENT_DEFAULT;
+      resourceDescriptor.fragments = definition.fragments || [];
       if (definition.classify) {
-        resolvedClassification = definition.classify;
+        resourceDescriptor.classify = definition.classify;
       }
     }
     else if (item instanceof RefraxOptions) {
-      resolvedCacheStrategy = item.cacheStrategy || resolvedCacheStrategy;
+      if (item.cacheStrategy) {
+        resourceDescriptor.cacheStrategy = item.cacheStrategy;
+      }
     }
     else if (item instanceof RefraxParameters) {
-      resolvedParams = RefraxTools.extend(resolvedParams, item);
+      RefraxTools.extend(resourceDescriptor.params, item);
     }
     else if (item instanceof RefraxQueryParameters) {
       resolvedQueryParams = RefraxTools.extend(resolvedQueryParams, item);
@@ -167,7 +161,7 @@ function processStack(resourceDescriptor, stack) {
       resolvedAppendPaths.push(item);
     }
     else if (RefraxTools.isPlainObject(item)) {
-      resolvedPayload = RefraxTools.extend(resolvedPayload, item);
+      RefraxTools.extend(resourceDescriptor.payload, item);
     }
   }
 
@@ -178,13 +172,17 @@ function processStack(resourceDescriptor, stack) {
 
     if (item instanceof RefraxTreeNode) {
       if (definition.uri) {
-        result = canResolveParams ? fillURI(definition.uri, resolvedParams, resolvedParamMap)
+        result = canResolveParams ? fillURI(definition.uri,
+                                            resourceDescriptor.params,
+                                            resolvedParamMap)
                                   : {uri: definition.uri};
         resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
       else if (definition.paramId) {
-        result = canResolveParams ? fillURI(':'+definition.paramId, resolvedParams, resolvedParamMap)
+        result = canResolveParams ? fillURI(':'+definition.paramId,
+                                            resourceDescriptor.params,
+                                            resolvedParamMap)
                                   : {uri: ':'+definition.paramId};
         resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
@@ -216,26 +214,27 @@ function processStack(resourceDescriptor, stack) {
   if (resolvedParamMap[key]) {
     key = resolvedParamMap[key];
   }
-  resolvedParamId = (resolvedParamId = resolvedParams[key]) &&
+  resolvedParamId = (resolvedParamId = resourceDescriptor.params[key]) &&
                     ('' + resolvedParamId);
 
-  event = ['change'].concat(resolvedParamId || []).join(':');
-
-  resourceDescriptor.event = event;
-  resourceDescriptor.classify = resolvedClassification;
-  resourceDescriptor.partial = resolvedPartial || FRAGMENT_DEFAULT;
+  resourceDescriptor.event = ['change'].concat(resolvedParamId || []).join(':');
   resourceDescriptor.id = resolvedParamId;
-  resourceDescriptor.params = resolvedParams;
-  resourceDescriptor.fragments = (resolvedFragments || []).reverse();
-  resourceDescriptor.payload = resolvedPayload;
-  resourceDescriptor.store = resolvedStore;
-  resourceDescriptor.type = resolvedType;
-  resourceDescriptor.cacheStrategy = resolvedCacheStrategy;
+  resourceDescriptor.fragments = resourceDescriptor.fragments.reverse();
 }
 
 class RefraxResourceDescriptor {
   constructor(action = ACTION_GET, stack = []) {
     this.action = action;
+    this.event = ['change'];
+    this.classify = CLASSIFY_RESOURCE;
+    this.partial = FRAGMENT_DEFAULT;
+    this.id = null;
+    this.params = {};
+    this.fragments = [];
+    this.payload = {};
+    this.store = null;
+    this.type = null;
+    this.cacheStrategy = CACHE_STRATEGY_REPLACE;
 
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];
