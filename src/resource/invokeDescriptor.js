@@ -73,7 +73,7 @@ function composeFormData(data) {
   return result;
 }
 
-function invokeDescriptor(resourceDescriptor, options) {
+function invokeDescriptor(resourceDescriptor, options = {}) {
   var store = resourceDescriptor.store
     , touchParams = {
       timestamp: TIMESTAMP_LOADING
@@ -124,7 +124,7 @@ invokeDescriptor.fetch = function(resourceDescriptor, options = {}) {
   result = store.fetchResource(resourceDescriptor);
 
   if (options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
-    invokeDescriptor(resourceDescriptor, {noTouchNotify: true});
+    invokeDescriptor(resourceDescriptor, options);
     result = store.fetchResource(resourceDescriptor);
   }
 
