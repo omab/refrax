@@ -5,17 +5,16 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 export var objToString = Object.prototype.toString;
 
-// eslint-disable-next-line one-var
-export var setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
+export const setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
   // eslint-disable-next-line no-proto
   obj.__proto__ = proto;
   return obj;
 };
 
-// eslint-disable-next-line one-var
-export var getPrototypeOf = Object.getPrototypeOf || function(obj) {
+export const getPrototypeOf = Object.getPrototypeOf || function(obj) {
   // eslint-disable-next-line no-proto
   var proto = obj.__proto__;
   if (proto || proto === null) {
@@ -32,8 +31,7 @@ export var getPrototypeOf = Object.getPrototypeOf || function(obj) {
   }
 };
 
-// eslint-disable-next-line one-var
-export var keysFor = Object.keys || function(obj) {
+export const keysFor = Object.keys || function(obj) {
   var keys = []
     , key;
 
@@ -59,9 +57,9 @@ export function isFunction(value) {
   return typeof value === 'function';
 }
 
-export function isArray(obj) {
+export const isArray = Array.isArray || function(obj) {
   return isObject(obj) && objToString.call(obj) === '[object Array]';
-}
+};
 
 export function isPlainObject(obj) {
   return typeof(obj) === 'object' &&
@@ -167,7 +165,7 @@ export function concatUnique() {
 
   for (i = 0; i < length; i++) {
     arr = arguments[i] || [];
-    if (!arr.hasOwnProperty('length')) {
+    if (!isArray(arr)) {
       arr = [arr];
     }
 
@@ -190,7 +188,7 @@ export function deepCopy(obj) {
     , length
     , keys;
 
-  if (objToString.call(obj) === '[object Array]') {
+  if (isArray(obj)) {
     length = obj.length;
     out = [];
     for (i = 0; i < length; i++) {
