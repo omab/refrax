@@ -1,3 +1,10 @@
+## [v0.4.7]
+> July 25, 2016
+
+- **Bugfix:** Fix Tools concatUnique consuming string key as array
+
+[v0.4.7]: https://github.com/netarc/refrax/compare/v0.4.6...v0.4.7
+
 ## [v0.4.6]
 > July 25, 2016
 
