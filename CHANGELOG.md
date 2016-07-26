@@ -1,3 +1,15 @@
+## [v0.4.6]
+> July 25, 2016
+
+- **Bugfix:** SchemaAccessor invalidate error when no options specified
+- **Bugfix:** ResourceDescriptor not properly appending QueryParams to basePath
+- **Minor:** FragmentCache returns ids affected on invalidate/update
+- **Minor:** Tools concatUnique improved
+- **Minor:** FragmentCache now concats id results (prev merge strategy)
+- **Minor:** Resource will now invalidate prior to subscribing to descriptor Store
+
+[v0.4.6]: https://github.com/netarc/refrax/compare/v0.4.5...v0.4.6
+
 ## [v0.4.5]
 > July 20, 2016
 
