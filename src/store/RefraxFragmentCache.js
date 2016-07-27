@@ -122,18 +122,25 @@ class RefraxFragmentCache {
    */
   touch(descriptor, touch) {
     var fragmentCache = this._getFragment(descriptor.partial)
-      , resourceId = descriptor.id;
+      , resourceId = descriptor.id
+      , touchedFragments = []
+      , touchedQueries = [];
 
-    if (!touch) {
-      return;
+    if (touch) {
+      if (resourceId) {
+        fragmentCache[resourceId] = RefraxTools.extend(fragmentCache[resourceId] || {}, touch);
+        touchedFragments.push(resourceId);
+      }
+      else if (descriptor.basePath) {
+        this.queries[descriptor.basePath] = RefraxTools.extend(this.queries[descriptor.basePath] || {}, touch);
+        touchedQueries.push(descriptor.basePath);
+      }
     }
 
-    if (resourceId) {
-      fragmentCache[resourceId] = RefraxTools.extend(fragmentCache[resourceId] || {}, touch);
-    }
-    else if (descriptor.basePath) {
-      this.queries[descriptor.basePath] = RefraxTools.extend(this.queries[descriptor.basePath] || {}, touch);
-    }
+    return {
+      fragments: touchedFragments,
+      queries: touchedQueries
+    };
   }
 
   /**
@@ -145,7 +152,8 @@ class RefraxFragmentCache {
       , queryData
       , resourcePath = descriptor.basePath
       , result
-      , touchedIds = []
+      , touchedFragments = []
+      , touchedQueries = []
       , dataId = null;
 
     // if no data is present (ie a 204 response) our data then becomes stale
@@ -166,19 +174,20 @@ class RefraxFragmentCache {
 
       if (RefraxTools.isArray(data)) {
         dataId = RefraxTools.map(data, function(item) {
-          return self._updateFragmentCache(fragmentCache, descriptor, result, item, touchedIds);
+          return self._updateFragmentCache(fragmentCache, descriptor, result, item, touchedFragments);
         });
       }
       else {
-        dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds);
+        dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedFragments);
       }
     }
     else if (descriptor.classify === CLASSIFY_ITEM) {
-      dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds);
+      dataId = this._updateFragmentCache(fragmentCache, descriptor, result, data, touchedFragments);
     }
 
     // Queries
     if (resourcePath) {
+      touchedQueries.push(resourcePath);
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
       // from a REST perspective collections are typically modified when creating into them
@@ -214,7 +223,10 @@ class RefraxFragmentCache {
       });
     }
 
-    return touchedIds;
+    return {
+      fragments: touchedFragments,
+      queries: touchedQueries
+    };
   }
 
   _updateFragmentCache(fragmentCache, descriptor, result, data, touchedIds) {
@@ -272,7 +284,8 @@ class RefraxFragmentCache {
    */
   invalidate(descriptor, options = {}) {
     var clearData = !!options.clear
-      , results = []
+      , touchedFragments = []
+      , touchedQueries = []
       , invalidator = function(item) {
         // not yet cached so we can skip
         if (!item) {
@@ -280,7 +293,7 @@ class RefraxFragmentCache {
         }
 
         if (item.data && item.data.id) {
-          results.push(item.data.id);
+          touchedFragments.push('' + item.data.id);
         }
 
         item.status = STATUS_STALE;
@@ -297,6 +310,7 @@ class RefraxFragmentCache {
               (descriptor.id &&
                  RefraxTools.isArray(query.data) &&
                  query.data.indexOf(descriptor.id) != -1)) {
+            touchedQueries.push(path);
             invalidator(query);
           }
         });
@@ -310,7 +324,10 @@ class RefraxFragmentCache {
     }
     else {
       if (options.noQueries !== true) {
-        RefraxTools.each(this.queries, invalidator);
+        RefraxTools.each(this.queries, function(query, path) {
+          touchedQueries.push(path);
+          invalidator(query);
+        });
       }
 
       if (options.noFragments !== true) {
@@ -320,7 +337,10 @@ class RefraxFragmentCache {
       }
     }
 
-    return results;
+    return {
+      fragments: touchedFragments,
+      queries: touchedQueries
+    };
   }
 
   /**
@@ -332,28 +352,36 @@ class RefraxFragmentCache {
   destroy(descriptor) {
     var fragmentCache = this._getFragment(descriptor.partial)
       , resourcePath = descriptor.basePath
-      , resourceID = descriptor.id;
+      , resourceID = descriptor.id
+      , touchedFragments = []
+      , touchedQueries = [];
 
     if (resourceID) {
-      if (!fragmentCache[resourceID]) {
-        return;
-      }
+      if (fragmentCache[resourceID]) {
+        touchedFragments.push(resourceID);
+        fragmentCache[resourceID] = undefined;
+        // Remove our-self from any collection queries we know about
+        RefraxTools.each(this.queries, function(query, path) {
+          if (RefraxTools.isArray(query.data)) {
+            var i = query.data.indexOf(resourceID);
 
-      fragmentCache[resourceID] = undefined;
-      // Remove our-self from any collection queries we know about
-      RefraxTools.each(this.queries, function(query, path) {
-        if (RefraxTools.isArray(query.data)) {
-          var i = query.data.indexOf(resourceID);
-
-          if (i !== -1) {
-            query.data.splice(i, 1);
+            if (i !== -1) {
+              touchedQueries.push(path);
+              query.data.splice(i, 1);
+            }
           }
-        }
-      });
+        });
+      }
     }
     else if (resourcePath && this.queries[resourcePath]) {
       this.queries[resourcePath] = undefined;
+      touchedQueries.push(resourcePath);
     }
+
+    return {
+      fragments: touchedFragments,
+      queries: touchedQueries
+    };
   }
 
   _getFragment(fragment) {

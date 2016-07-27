@@ -7,10 +7,10 @@ TODO
 
 - [`get(attribute)`](#get)
 - [`getErrors(attribute)`](#getErrors)
-- [`set(attribute, value)`](#set)
-- [`setter(attribute)`](#setter)
-- [`setterHandler(attribute)`](#setterHandler)
-- [`unset()`](#unset)
+- [`set(attribute, value[, options])`](#set)
+- [`setter(attribute[, options])`](#setter)
+- [`setterHandler(attribute[, options])`](#setterHandler)
+- [`unset([options])`](#unset)
 
 
 ## Instance Methods
@@ -27,24 +27,24 @@ TODO
 
 ---
 
-### <a id='set'></a>[`set(attribute, value)`](#set)
+### <a id='set'></a>[`set(attribute, value[, options])`](#set)
 
 TODO
 
 ---
 
-### <a id='setter'></a>[`setter(attribute)`](#setter)
+### <a id='setter'></a>[`setter(attribute[, options])`](#setter)
 
 TODO
 
 ---
 
-### <a id='setterHandler'></a>[`setterHandler(attribute)`](#setterHandler)
+### <a id='setterHandler'></a>[`setterHandler(attribute[, options])`](#setterHandler)
 
 TODO
 
 ---
 
-### <a id='unset'></a>[`unset()`](#unset)
+### <a id='unset'></a>[`unset([options])`](#unset)
 
 TODO

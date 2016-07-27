@@ -221,7 +221,7 @@ function processStack(resourceDescriptor, stack) {
   resolvedParamId = (resolvedParamId = resourceDescriptor.params[key]) &&
                     ('' + resolvedParamId);
 
-  resourceDescriptor.event = ['change'].concat(resolvedParamId || []).join(':');
+  resourceDescriptor.event = resolvedParamId || resourceDescriptor.basePath; // ['change'].concat(resolvedParamId || []).join(':');
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.fragments = resourceDescriptor.fragments.reverse();
 }
@@ -229,7 +229,7 @@ function processStack(resourceDescriptor, stack) {
 class RefraxResourceDescriptor {
   constructor(action = ACTION_GET, stack = []) {
     this.action = action;
-    this.event = ['change'];
+    this.event = null; // ['change'];
     this.classify = CLASSIFY_RESOURCE;
     this.partial = FRAGMENT_DEFAULT;
     this.id = null;

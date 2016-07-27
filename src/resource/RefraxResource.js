@@ -40,6 +40,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   constructor(accessor, ...args) {
+    // console.groupCollapsed('new Resource');
     super(accessor, ...args);
 
     var self = this
@@ -48,36 +49,49 @@ class RefraxResource extends RefraxResourceBase {
     Object.defineProperty(this, '_disposers', {value: []});
 
     descriptor = this._generateDescriptor();
+    // console.info('  * descriptor: %o', descriptor);
 
-    // NOTE: we invalidate before potentially subscribing
     if (this._options.invalidate) {
-      // shortcut for no options
+      // alias for no options
       if (this._options.invalidate === true) {
-        this._options.invalidate = {noPropagate: true};
+        this._options.invalidate = {};
       }
 
       this.invalidate(this._options.invalidate);
     }
 
+    this._fetchCache();
+
     if (this._options.noSubscribe !== true && descriptor.store) {
+      // console.info('  * subscribe: %o', descriptor.event);
       this._disposers.push(
         descriptor.store.subscribe(descriptor.event, function(event) {
+          // console.info('resource event; %o', event);
+
+          // If we are coming from ourself and touching data that means fetchCache below
+          // triggerd a get and was touched for loading status so we can ignore it as
+          // the original event will propagate
+          if (event.action === 'touch' && event.invoker === self) {
+            // console.info('  * ignored');
+            return;
+          }
+
           // If we are an item resource and we encounter a destroy event, we switch on the
           // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
           if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
             self._options.noFetchGet = true;
           }
 
-          self._fetchCache();
+          self._fetchCache({noPropagate: event.noPropagate});
 
           if (event.noPropagate !== true) {
+            // console.info('  * render!');
             self.emit('change', self, event);
           }
         })
       );
     }
-
-    this._fetchCache();
+    // console.groupEnd();
   }
 
   _dispose() {
@@ -91,24 +105,27 @@ class RefraxResource extends RefraxResourceBase {
     return this;
   }
 
-  _fetch() {
-    return invokeDescriptor.fetch(this._generateDescriptor(), {
+  _fetch(options) {
+    return invokeDescriptor.fetch(this._generateDescriptor(), RefraxTools.extend({
+      invoker: this,
       noFetchGet: this._options.noFetchGet
-    });
+    }, options));
   }
 
-  _fetchCache() {
-    var result = this._fetch();
+  _fetchCache(options) {
+    var result = this._fetch(options);
 
     ResourceMap.set(this, result);
     return result;
   }
 
-  invalidate(options) {
+  invalidate(options = {}) {
     var descriptor = this._generateDescriptor();
 
     if (descriptor.store) {
-      descriptor.store.invalidate(descriptor, options);
+      descriptor.store.invalidate(descriptor, RefraxTools.extend({
+        invoker: this
+      }, options));
     }
   }
 

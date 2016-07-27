@@ -13,6 +13,7 @@ function parseObject(object) {
     , data = (result.data = {});
 
   if (!RefraxTools.isPlainObject(object)) {
+    console.info("parseObject failed parsing: %o", object);
     throw new TypeError(
       'parseNested:parseObject: expected object type but found `' + typeof(object) + '`.'
     );

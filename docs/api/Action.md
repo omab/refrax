@@ -9,10 +9,10 @@ An Action is a [Subscribable](Subscribable.md) mechanism to functionally represe
 #### Instance Methods
 
 - [`mutable.get(attribute)`](Mutable.md#get)
-- [`mutable.set(attribute, value)`](Mutable.md#set)
-- [`mutable.setter(attribute)`](Mutable.md#setter)
-- [`mutable.setterHandler(attribute)`](Mutable.md#setterHandler)
-- [`mutable.unset()`](Mutable.md#unset)
+- [`mutable.set(attribute, value[, options])`](Mutable.md#set)
+- [`mutable.setter(attribute[, options])`](Mutable.md#setter)
+- [`mutable.setterHandler(attribute[, options])`](Mutable.md#setterHandler)
+- [`mutable.unset([options])`](Mutable.md#unset)
 - [`mutable.getErrors(attribute)`](Mutable.md#getErrors)
 - [`subscribable.subscribe(event, callback[, context])`](Subscribable.md#subscribe)
 - [`subscribable.emit(event[, arg1][, arg2][, ...])`](Subscribable.md#emit)

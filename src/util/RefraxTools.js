@@ -216,6 +216,79 @@ export function nextTick(callback) {
   setTimeout(callback, 0);
 }
 
+export function debounce(func, wait) {
+  var timeout, args, context, timestamp, result;
+
+  function later() {
+    var last = (new Date().getTime()) - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    }
+    else {
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) {
+        context = args = null;
+      }
+    }
+  }
+
+  return function() {
+    context = this;
+    args = arguments;
+    timestamp = (new Date().getTime());
+
+    if (!timeout) {
+      timeout = setTimeout(later, wait);
+    }
+    return result;
+  };
+}
+
+export function throttleTrailing(func, wait) {
+  var context, args, result
+    , timeout = null
+    , previous = 0;
+
+  function later() {
+    previous = 0;
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) {
+      context = args = null;
+    }
+  }
+
+  return function() {
+    var remaining
+      , now = (new Date().getTime());
+
+    if (!previous) {
+      previous = now;
+    }
+
+    remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) {
+        context = args = null;
+      }
+    }
+    else if (!timeout) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+}
+
 export function randomString(length) {
   var str = ''
     , min = 0

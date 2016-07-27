@@ -175,4 +175,12 @@ Projects.addDataset("project", {
 
 
 
-this.createUser = Datasets.users.
+// this.createUser = Datasets.users.
+
+new MutableResource(
+    Refrax.Schema.api.projects.project.crew.timecards.timecard,
+    new Refrax.Parameters({
+      timecardId: 1
+    })
+  )
+  .update({city: 123})

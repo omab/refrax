@@ -105,6 +105,8 @@ class RefraxStore {
   }
 
   invalidate(resourceDescriptor, options) {
+    var touched;
+
     if (!(resourceDescriptor instanceof getResourceDescriptor())) {
       if (!options && RefraxTools.isPlainObject(resourceDescriptor)) {
         options = resourceDescriptor;
@@ -127,8 +129,8 @@ class RefraxStore {
       );
     }
 
-    this.cache.invalidate(resourceDescriptor, options);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'invalidate'}, options));
+    touched = this.cache.invalidate(resourceDescriptor, options);
+    this._notifyChange(resourceDescriptor, 'invalidate', options, touched);
   }
 
   // Fragment Map is intentionally separate to allow future switching depending
@@ -139,35 +141,54 @@ class RefraxStore {
   }
 
   touchResource(resourceDescriptor, data, options = {}) {
-    this.cache.touch(resourceDescriptor, data);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'touch'}, options));
+    var touched = this.cache.touch(resourceDescriptor, data);
+
+    if (options.noTouchNotify !== true) {
+      this._notifyChange(resourceDescriptor, 'touch', options, touched);
+    }
   }
 
   updateResource(resourceDescriptor, data, status, options = {}) {
-    this.cache.update(resourceDescriptor, data, status);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'update'}, options));
+    // console.info('updateResource:');
+    // console.info('  * resourceDescriptor: %o', resourceDescriptor);
+    // console.info('  * data: %o', data);
+
+    var touched = this.cache.update(resourceDescriptor, data, status);
+    this._notifyChange(resourceDescriptor, 'update', options, touched);
   }
 
   destroyResource(resourceDescriptor, options = {}) {
-    this.cache.destroy(resourceDescriptor);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'destroy'}, options));
+    var touched = this.cache.destroy(resourceDescriptor);
+    this._notifyChange(resourceDescriptor, 'destroy', options, touched);
   }
 
   //
 
-  _notifyChange(resourceDescriptor, event) {
-    if (event.noNotify === true) {
+  _notifyChange(resourceDescriptor, action, options, touched) {
+    var i, len, id, event;
+
+    if (options.noNotify === true) {
       return;
     }
 
-    event = RefraxTools.extend({type: this.definition.type}, event);
+    event = RefraxTools.extend({}, options, {
+      action: action,
+      type: this.definition.type
+    });
 
-    this.emit('change', event);
-    if (resourceDescriptor && resourceDescriptor.id) {
-      this.emit(
-        'change:' + resourceDescriptor.id,
-        RefraxTools.extend({id: resourceDescriptor.id}, event)
-      );
+    // console.info('_notifyChange (%s)', action);
+    // console.info('  * fragments %o', touched.fragments);
+    // console.info('  * queries %o', touched.queries);
+
+    // fragments
+    for (i = 0, len = touched.fragments.length; i < len; i++) {
+      id = touched.fragments[i];
+      this.emit(id, RefraxTools.extend({}, event, {fragment: id}));
+    }
+    // queries
+    for (i = 0, len = touched.queries.length; i < len; i++) {
+      id = touched.queries[i];
+      this.emit(id, RefraxTools.extend({}, event, {query: id}));
     }
   }
 }
